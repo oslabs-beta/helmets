@@ -1,29 +1,63 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import ReactFlow, {
+  addEdge,
   MiniMap,
   Controls,
   Background,
+  Panel,
   useNodesState,
   useEdgesState,
 } from 'reactflow';
-
 import 'reactflow/dist/style.css';
-import './flow.scss';
+import './Flow.scss';
 
-const initialNodes = [
-  { id: '1', position: { x: 10, y: 10 }, data: { label: '1' } },
-  { id: '2', position: { x: 10, y: 100 }, data: { label: '2' } },
-];
+import {
+  nodes as initialNodes,
+  edges as initialEdges,
+} from './initial-elements';
 
-const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
+const onInit = (reactFlowInstance) =>
+  console.log('flow loaded:', reactFlowInstance);
 
 export default function Flow() {
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const onConnect = useCallback(
+    (params) => setEdges((eds) => addEdge(params, eds)),
+    [setEdges]
+  );
+
   return (
     <div className="flow-container">
-      <ReactFlow nodes={initialNodes} edges={initialEdges} id="flow">
-        <MiniMap />
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onInit={onInit}
+        fitView
+        attributionPosition="top-right"
+      >
+        <MiniMap
+          nodeStrokeColor={(n) => {
+            if (n.style?.background) return n.style.background;
+            if (n.type === 'input') return '#0041d0';
+            if (n.type === 'output') return '#ff0072';
+            if (n.type === 'default') return '#1a192b';
+
+            return '#eee';
+          }}
+          nodeColor={(n) => {
+            if (n.style?.background) return n.style.background;
+
+            return '#fff';
+          }}
+          nodeBorderRadius={2}
+        />
         <Controls />
         <Background color="#aaa" gap={16} />
+        <Panel />
       </ReactFlow>
     </div>
   );
