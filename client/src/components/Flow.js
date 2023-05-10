@@ -8,7 +8,7 @@ import ReactFlow, {
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
-import './Flow.scss';
+import './flow.scss';
 
 const initialNodes = [
   { id: '1', position: { x: 10, y: 10 }, data: { label: '1' } },
@@ -20,7 +20,7 @@ const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
 export default function Flow() {
   return (
     <div className="flow-container">
-      <ReactFlow nodes={initialNodes} edges={initialEdges}>
+      <ReactFlow nodes={initialNodes} edges={initialEdges} id="flow">
         <MiniMap />
         <Controls />
         <Background color="#aaa" gap={16} />

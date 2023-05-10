@@ -1,3 +1,10 @@
+.app {
+  background-color: aqua;
+  .flow-container {
+    background-color: aquamarine;
+  }
+}
+
 .backsplash {
   display: flex;
   flex-wrap: wrap;
