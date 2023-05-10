@@ -26,9 +26,9 @@ export default function Flow() {
     <div className="flow-container">
       <ReactFlow
         nodes={nodes}
-        edges={edges}
+        // edges={edges}
         onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
+        // onEdgesChange={onEdgesChange}
         onInit={onInit}
         fitView
         attributionPosition="top-right"

@@ -1,79 +1,80 @@
 import React from 'react';
 import { MarkerType } from 'reactflow';
 
+// nodes are in an array
+// would we create nodes array based on passed in info?
+// how do we pass props?
+// how do we update state?
+
 export const nodes = [
-  {
-    id: '1',
-    type: 'input',
-    data: {
-      label: (
-        <>
-          Welcome to <strong>React Flow!</strong>
-        </>
-      ),
-    },
-    position: { x: 250, y: 0 },
-  },
-  {
-    id: '2',
-    data: {
-      label: (
-        <>
-          This is a <strong>default node</strong>
-        </>
-      ),
-    },
-    position: { x: 100, y: 100 },
-  },
-  {
-    id: '3',
-    data: {
-      label: (
-        <>
-          This one has a <strong>custom style</strong>
-        </>
-      ),
-    },
-    position: { x: 400, y: 100 },
-    style: {
-      background: '#D6D5E6',
-      color: '#333',
-      border: '1px solid #222138',
-      width: 180,
-    },
-  },
-  {
-    id: '4',
-    position: { x: 250, y: 200 },
-    data: {
-      label: 'Another default node',
-    },
-  },
-  {
-    id: '5',
-    data: {
-      label: 'Node id: 5',
-    },
-    position: { x: 250, y: 325 },
-  },
-  {
-    id: '6',
-    type: 'output',
-    data: {
-      label: (
-        <>
-          An <strong>output node</strong>
-        </>
-      ),
-    },
-    position: { x: 100, y: 480 },
-  },
-  {
-    id: '7',
-    type: 'output',
-    data: { label: 'Another output node' },
-    position: { x: 400, y: 450 },
-  },
+  //   {
+  //     id: '1',
+  //     type: 'input',
+  //     data: {
+  //       label: 'do we need the react fragment? Apparently not',
+  //     },
+  //     position: { x: 250, y: 0 },
+  //   },
+  //   {
+  //     id: '2',
+  //     data: {
+  //       label: (
+  //         <>
+  //           This is a <strong>default node</strong>
+  //         </>
+  //       ),
+  //     },
+  //     position: { x: 100, y: 100 },
+  //   },
+  //   {
+  //     id: '3',
+  //     data: {
+  //       label: (
+  //         <>
+  //           This one has a <strong>custom style</strong>
+  //         </>
+  //       ),
+  //     },
+  //     position: { x: 400, y: 100 },
+  //     style: {
+  //       background: '#D6D5E6',
+  //       color: '#333',
+  //       border: '1px solid #222138',
+  //       width: 180,
+  //     },
+  //   },
+  //   {
+  //     id: '4',
+  //     position: { x: 250, y: 200 },
+  //     data: {
+  //       label: 'Another default node',
+  //     },
+  //   },
+  //   {
+  //     id: '5',
+  //     data: {
+  //       label: 'Node id: 5',
+  //     },
+  //     position: { x: 250, y: 325 },
+  //   },
+  //   {
+  //     id: '6',
+  //     type: 'output',
+  //     data: {
+  //       label: (
+  //         <>
+  //           An <strong>output node</strong>
+  //         </>
+  //       ),
+  //     },
+  //     position: { x: 100, y: 480 },
+  //   },
+  //   {
+  //     id: '7',
+  //     type: 'output',
+  //     data: { label: 'Another output node' },
+  //     position: { x: 400, y: 450 },
+  //   },
 ];
 
 export const edges = [
@@ -113,3 +114,38 @@ export const edges = [
     labelStyle: { fill: '#f6ab6c', fontWeight: 700 },
   },
 ];
+
+// for testing purposes?
+const fakeChart = {
+  apiVersion: 'v2',
+  appVersion: '1.16.0',
+  dependencies: {
+    condition: 'installToggle.backend',
+    name: 'backend',
+    repository: '',
+    condition: 'installToggle.web',
+    name: 'web',
+    repository: '',
+  },
+  description: 'A Helm chart for Kubernetes',
+  name: 'helm-chart-sample',
+  type: 'application',
+  version: '0.1.0',
+};
+
+const chartArray = Object.entries(fakeChart);
+
+for (let i = 0; i < chartArray.length; i++) {
+  let type = 'default';
+  if (i === 0) type = 'input';
+  if (i === chartArray.length - 1) type = 'output';
+  console.log(type);
+  nodes.push({
+    id: `${i}`,
+    type: `${type}`,
+    data: {
+      label: `${chartArray[i].join(' : ')}`,
+    },
+    position: { x: i + 100, y: i + 100 },
+  });
+}
