@@ -1,3 +1,5 @@
+// Purpose: sample data for testing helmets backend functionality
+
 const testobj = 
 {
   apiVersion: 'apps/v1',
