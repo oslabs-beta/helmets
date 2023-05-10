@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 require("dotenv").config();
 
-const MONGO_URI = process.env.MONGO_URI;
+// const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = 'mongodb+srv://devtestingdumm60:Asdf3211@helmetsdb.ptukjtj.mongodb.net/';     // <<< delete line 5 and uncomment line 4. used for testing front-end
 mongoose.connect(MONGO_URI, {
   // options for the connect method to parse the URI
   useNewUrlParser: true,

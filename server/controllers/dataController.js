@@ -10,13 +10,19 @@ const dataController = {};
 
 //on initial load of chart folder
 dataController.addFiles = async (req, res, next) => {
-  try {
-    console.log(fs.readFileSync(path.join(__dirname, sampleChartPath),'utf8'));
-    // const output = await yaml.load(fs.readFileSync(path.join(__dirname, sampleChartPath),'utf8'));
-    // console.log('OUTPUT', output);
+  try{
+    console.log('datacontroller.addfiles invoked');
+    console.log('request files: ', req.files);
   } catch (e) {
     console.log('ERROR: ', e);
   }
+  // try {
+  //   console.log(fs.readFileSync(path.join(__dirname, sampleChartPath),'utf8'));
+  //   // const output = await yaml.load(fs.readFileSync(path.join(__dirname, sampleChartPath),'utf8'));
+  //   // console.log('OUTPUT', output);
+  // } catch (e) {
+  //   console.log('ERROR: ', e);
+  // }
   next();
 }
 

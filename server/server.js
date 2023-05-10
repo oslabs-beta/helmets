@@ -2,9 +2,26 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 const path = require('path');
+const multer = require('multer');
 
 const models = require('./models/dataModel');
 const dataController = require('./controllers/dataController');
+
+app.use(express.json());
+
+const cors = require('cors');
+app.use(cors());
+const allowCrossDomain = function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+};
+app.use(allowCrossDomain);
+
+const upload = multer({
+  dest: './uploads'
+});
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/public/index.html'));
@@ -12,7 +29,8 @@ app.get('/', (req, res) => {
 
 // helmets-specific routes
 // POST to /chart
-app.post('/chart', dataController.addFiles, (req, res) => {
+// *** NOTE: added the multer middleware that is seen below with upload.fields() and above at line2 22-24. must install multer with 'npm i multer'. Multer adds a body object and a file or files object to the request object.  more multer details here: https://www.npmjs.com/package/multer
+app.post('/chart', upload.fields([{name: 'files'}]), dataController.addFiles, (req, res) => {
   res.status(200).json(res.locals.responseData)
 });
 

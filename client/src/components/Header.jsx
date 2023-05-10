@@ -19,18 +19,16 @@ const Header = () => {
     return;
   }
   //declare a let to hold the files selected by user during handleChange()
-  let selectedFiles;
+  let chartFormData;
 
   /* The handleChange() function to allow user to select a folder. contents are displayed.*/
   /*TO DO >> post contents to database */
   const handleChange = async (event) => {
-    let chartFormData;
+    
     const fileCache = event.target.files;
     chartFormData = new FormData();
     //manages display of selected data on the front-end
     try{
-      //update selectedFiles with the event data for use outside of handleChange()
-      selectedFiles = event.target;
       //grab the html element of the unordered list
       const fileInfo = document.getElementById('fileInfo');
       //if there is already content in the unordered list, clear it out
@@ -53,26 +51,26 @@ const Header = () => {
       for(const file of fileCache) {
         chartFormData.append('files', file, file.name);
       }
-      for(var pair of chartFormData.entries()) {
-        console.log(pair[0]+', '+pair[1].name+' Path = '+pair[1].webkitRelativePath);
-      }
     } catch (error) {
       console.log('error occurred while converting fileList to FormData: ', error);
     }
     //upload FormData to database
-    // try{
-    //   const options = {
-    //     method: 'POST',
-    //     body: formData,
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data'
-    //     }
-    //   };
+    try{
+
+      console.log('req body: ', chartFormData);
+
+      const options = {
+        method: 'POST',
+        body: chartFormData,
+        // headers: {
+        //   'Content-Type': 'multipart/form-data'   // << removing content-type header per warning at https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
+        // }
+      };
       
-    //   fetch('/upload', options)   // <<< UPDATE POST LOCATION URL
-    // } catch (error) {
-    //   console.log('error occurred while attempting to upload FormData to database:', error);
-    // }
+      fetch('http://localhost:3000/chart', options)   // <<< UPDATE POST LOCATION URL & database URI value in dataModel.js
+    } catch (error) {
+      console.log('error occurred while attempting to upload FormData to database:', error);
+    }
   }
  
   return (
@@ -82,7 +80,7 @@ const Header = () => {
 
       <img style={{height: '100px'}}src='https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Kubernetes_logo_without_workmark.svg/617px-Kubernetes_logo_without_workmark.svg.png' />
 
-      <form>
+      <form encType="multipart/form-data">
         { /* The handleChange() is triggered when text is entered */}
         <div>
           <input
