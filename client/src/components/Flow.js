@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import ReactFlow, {
-  addEdge,
   MiniMap,
   Controls,
   Background,
@@ -22,10 +21,6 @@ const onInit = (reactFlowInstance) =>
 export default function Flow() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
 
   return (
     <div className="flow-container">
@@ -34,7 +29,6 @@ export default function Flow() {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
         onInit={onInit}
         fitView
         attributionPosition="top-right"
