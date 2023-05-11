@@ -7,4 +7,11 @@ import App from './src/App.jsx';
 const rootEl = document.getElementById('root');
 const root = createRoot(rootEl);
 
+<<<<<<< HEAD
 root.render(<App />);
+=======
+
+root.render(
+  <App />
+);
+>>>>>>> dev
