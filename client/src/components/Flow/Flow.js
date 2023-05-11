@@ -13,7 +13,7 @@ import './Flow.scss';
 import {
   nodes as initialNodes,
   edges as initialEdges,
-} from './initial-elements';
+} from '../initial-elements/initial-elements';
 
 const onInit = (reactFlowInstance) =>
   console.log('flow loaded:', reactFlowInstance);

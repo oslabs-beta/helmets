@@ -139,7 +139,6 @@ for (let i = 0; i < chartArray.length; i++) {
   let type = 'default';
   if (i === 0) type = 'input';
   if (i === chartArray.length - 1) type = 'output';
-  console.log(type);
   nodes.push({
     id: `${i}`,
     type: `${type}`,
