@@ -38,30 +38,38 @@ const fakeChart = {
 // each node's data is a key value pair
 
 // QUESTION: how to handle if value is an object?
+// could do this as a function with recursive logic?
+// a function called on each chart?
 
 const chartArray = Object.entries(fakeChart);
 
-for (let i = 0; i < chartArray.length; i++) {
-  let type = 'default';
-  if (i === 0) type = 'input';
-  if (i === chartArray.length - 1) type = 'output';
-  nodes.push({
-    id: `${i}`,
-    type: `${type}`,
-    data: {
-      label: `${chartArray[i].join(' : ')}`,
-    },
-    position: { x: 0, y: 0 },
-  });
-  edges.push({
-    id: `edge${i}`,
-    source: `${i}`,
-    target: `${i + 1}`,
-    animated: true,
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: 'purple',
-    },
-    style: { stroke: '#f6ab6c' },
-  });
+function makeNodes(dataArray) {
+  for (let i = 0; i < dataArray.length; i++) {
+    let type = 'default';
+    if (i === 0) type = 'input';
+    if (i === dataArray.length - 1) type = 'output';
+    let x = 100 * i;
+    let y = 100 * i;
+    nodes.push({
+      id: `${i}`,
+      type: `${type}`,
+      data: {
+        label: `${dataArray[i].join(' : ')}`,
+      },
+      position: { x: x, y: y },
+    });
+    edges.push({
+      id: `edge${i}`,
+      source: `${i}`,
+      target: `${i + 1}`,
+      animated: true,
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: 'purple',
+      },
+      style: { stroke: '#f6ab6c' },
+    });
+  }
 }
+
+makeNodes(chartArray);
