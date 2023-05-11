@@ -4,6 +4,7 @@ import { MarkerType } from 'reactflow';
 import './initial-elements.scss';
 
 // nodes are in an array
+// edges are in an array
 // would we create nodes array based on passed in info?
 // how do we pass props?
 // how do we update state?
@@ -18,10 +19,10 @@ const fakeChart = {
   appVersion: '1.16.0',
   dependencies: {
     condition: 'installToggle.backend',
-    name: 'backend',
+    name: 'backend', // this is pointing to a subchart
     repository: '',
     condition: 'installToggle.web',
-    name: 'web',
+    name: 'web', // this is pointing to a subchart
     repository: '',
   },
   description: 'A Helm chart for Kubernetes',
@@ -29,6 +30,14 @@ const fakeChart = {
   type: 'application',
   version: '0.1.0',
 };
+
+// for loop functionality to create nodes and edges based on a passed in object
+// first turn object into an array of key value pairs
+// key value pairs become a string in the loop
+// creates node and edges based on number of key value pairs coming in
+// each node's data is a key value pair
+
+// QUESTION: how to handle if value is an object?
 
 const chartArray = Object.entries(fakeChart);
 
@@ -46,7 +55,6 @@ for (let i = 0; i < chartArray.length; i++) {
   });
   edges.push({
     id: `edge${i}`,
-    id: 'e5-7',
     source: `${i}`,
     target: `${i + 1}`,
     animated: true,
