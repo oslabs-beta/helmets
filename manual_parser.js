@@ -48,8 +48,8 @@ const parser = (yaml) => {
     if ( trimmedString.startsWith("{{") ) {
       // create key value pair in currentContext, key is stringed, value is EXP
       const keyPair = {[trimmedString]: 'EXP'};
-      // pass data to checkType helper function
-      checkType(currentContext, keyPair)
+      // pass data to insert helper function
+      insert(currentContext, keyPair)
       // increment line++
       i++;
     } else {
@@ -67,49 +67,94 @@ const parser = (yaml) => {
         const nextLine = lines[i + 1].trim();
         // check next line, see 
           // if first char === - 
+
+        // for this functionality, update to:
+          // create new array,
+            // push array to context stack
+
+            // create empty obj inside array
+              // add empty obj to context stack
+              // add key/value pair @ nextLine to obj stack
+              // update currentContext to be latest on stack
+              // increment i+=2
+              // increment lastIndent by 2
+
           if (nextLine[0] === '-') {
             // create a new array
             // update currentContext to be array
 
-            // check if currentContext is Array, if so add differently
-            if (Array.isArray(currentContext)){
-              currentContext.push([]);
-              contextStack.push(currentContext[currentContext.length-1]);
-              currentContext = contextStack[contextStack.length-1];
-              i++;
-              lastIndent += 2;
+            // check if currentContext is Array, if so add differently *************
 
-            } else {
-              currentContext[key] = [];
-              // push the key currentContext onto the stack
-              contextStack.push(currentContext[key]);
-              // update the currentContext
+            if (Array.isArray(currentContext)){
+
+              contextStack.pop();
+              currentContext
               currentContext = contextStack[contextStack.length - 1];
-              i++;
-              lastIndent += 2;
+              // currentContext.push([]);
+              // contextStack.push(currentContext[currentContext.length - 1]);
+              // currentContext = contextStack[contextStack.length - 1];
+              // i++;
+              // lastIndent += 2;
             }
+            // } else { 
+
+              // create new array inside obj
+              currentContext[key] = [];
+              // push array to context stack
+              contextStack.push(currentContext[key]);
+              // create empty obj inside array
+              currentContext[key].push({});
+
+              // add empty obj to context stack
+              contextStack.push(currentContext[key][0]);
+
+              // add key/value pair @ nextLine to obj stack
+              let [nextKey, nextValue] = nextLine.split(':');
+              currentContext[key][0][nextKey] = nextValue.trim();
+
+              // update currentContext to be latest on stack
+              currentContext = contextStack[contextStack.length - 1];
+
+              // increment i+=2
+              i += 2;
+              // increment lastIndent by 4
+              lastIndent = currentLineIndent + 2; // PLEASE WORK
+
+              // OLD functionality
+
+              // currentContext[key] = [];
+              // // push the key currentContext onto the stack
+              // contextStack.push(currentContext[key]);
+              // // update the currentContext
+              // currentContext = contextStack[contextStack.length - 1];
+              // i++;
+              // lastIndent += 2;
+            
+            // } // arrayIsArray *******************
           }
+
+
           // if first char === string
           else if (/^[a-zA-Z]/.test(nextLine[0]) || nextLine.startsWith('{{')) {
             // create new obj,
             // set currentOBj to new obj
             // check if currentContext is Array, if so add differently
-            if (Array.isArray(currentContext)){
-              currentContext.push({[key]: {}});
-              contextStack.push(currentContext[currentContext.length-1]);
-              currentContext = contextStack[contextStack.length-1];
-              i++;
-              lastIndent += 2;
+            // if (Array.isArray(currentContext)){
+            //   currentContext.push({[key]: {}});
+            //   contextStack.push(currentContext[currentContext.length - 1]);
+            //   currentContext = contextStack[contextStack.length - 1];
+            //   i++;
+            //   lastIndent += 2;
 
-            } else {
+            // } else {
               
               currentContext[key] = {};
               contextStack.push(currentContext[key]);
               currentContext = contextStack[contextStack.length - 1];
               // then index = next line
               i++;
-              lastIndent += 2;
-            }
+              lastIndent = currentLineIndent + 2; // PLEASE WORK
+            // }
           }
           // if first characters are {{ }}
           // else if (nextLine.startsWith('{{')) {
@@ -123,9 +168,27 @@ const parser = (yaml) => {
       }
       // key & value
       else if (key !=='' && value !== '') {
-        // INSERT key/value pair
-        checkType(currentContext, {[key]: value});
-        i++;
+        // check if key starts with dash
+        if (key[0] === '-') {
+          // pop current obj off context stack
+          contextStack.pop();
+          const currentArray = contextStack[contextStack.length - 1];
+          // push new obj in current context (array)
+          currentArray.push({});
+          // push new obj to contextStack
+          contextStack.push(currentArray[currentArray.length - 1]);
+          // update currentContext to be last in stack
+          currentContext = contextStack[contextStack.length - 1];
+          // add key and value to currentContext
+          insert(currentContext, {[key]: value});
+          // increment i++
+          i++;
+        }
+        else {
+          // INSERT key/value pair
+          insert(currentContext, {[key]: value});
+          i++;
+        }
       }
     }
   }
@@ -134,7 +197,7 @@ const parser = (yaml) => {
 
 // INSERT = helper function to check the type of the object  
 // current param is the currentContext and keyVal params should be an object
-const checkType = (current, keyVal) => {
+const insert = (current, keyVal) => {
   // if array
     // push item into the current obj
   if (Array.isArray(current)) {
