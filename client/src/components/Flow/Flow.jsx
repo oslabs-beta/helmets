@@ -23,7 +23,7 @@ export default function Flow() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   return (
-    <div className="flow-container">
+    <section className="flow-container">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -53,6 +53,6 @@ export default function Flow() {
         <Background color="#aaa" gap={16} />
         <Panel />
       </ReactFlow>
-    </div>
+    </section>
   );
 }

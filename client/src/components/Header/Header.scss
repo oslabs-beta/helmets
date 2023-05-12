@@ -1,0 +1,22 @@
+header {
+  display: flex;
+  height: 20vh;
+  border: 1px solid black;
+  justify-content: space-around;
+  align-items: center;
+}
+
+ul {
+  height: '6em';
+  overflow-y: 'auto';
+}
+
+.list-display {
+  background-color: aliceblue;
+  height: 100px;
+  overflow: scroll;
+}
+
+button {
+  height: auto;
+}
