@@ -5,7 +5,9 @@ import React, { useState } from "react";
 //the selected folder is then passed to the database
 //the backend will return an object that is then used to populate the <Flow /> component
 const Header = () => {
+  const chartFormData = new FormData();
   const [buttonText, setButtonText] = useState('Select Chart');
+  const [fileCache, setfileCache] = useState({files: undefined})
 
   //helper function to clear the unordered list in the header and reset the input target to nothing
   const resetHeader = (listEl) => {
@@ -16,17 +18,19 @@ const Header = () => {
         listEl.removeChild(listEl.firstChild);
       }
     };
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.style.display = 'none';
+
     return;
   }
-  //declare a let to hold the files selected by user during handleChange()
-  let chartFormData;
 
   /* The handleChange() function to allow user to select a folder. contents are displayed.*/
   /*TO DO >> post contents to database */
   const handleChange = async (event) => {
     
-    const fileCache = event.target.files;
-    chartFormData = new FormData();
+    fileCache.files = event.target.files;
+    
     //manages display of selected data on the front-end
     try{
       //grab the html element of the unordered list
@@ -38,7 +42,7 @@ const Header = () => {
         }
       }
       //iterate over it to populate the unordered list
-      for(const file of fileCache) {
+      for(const file of fileCache.files) {
         const item = document.createElement('li');
         item.textContent = 'File Name: ' + file.name + '\nRelative Path: ' + file.webkitRelativePath;
         fileInfo.appendChild(item);
@@ -48,7 +52,7 @@ const Header = () => {
     }
     //convert the fileList to a new FormData in preparation for uploading to database
     try{
-      for(const file of fileCache) {
+      for(const file of fileCache.files) {
         chartFormData.append('files', file, file.name);
       }
     } catch (error) {
@@ -70,6 +74,15 @@ const Header = () => {
       fetch('http://localhost:3000/chart', options)   // <<< UPDATE POST LOCATION URL & database URI value in dataModel.js
     } catch (error) {
       console.log('error occurred while attempting to upload FormData to database:', error);
+    }
+    //makes the submit button visible
+    try{
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.style.display = 'block';
+
+    } catch (error) {
+      console.log('ERROR: ', error);
     }
   }
  
@@ -97,6 +110,8 @@ const Header = () => {
       <ul style={{height: '6em', overflowY: 'auto'}} title='Relative Path' id='fileInfo'></ul>
       
       <button style={{height: 'auto'}} onClick={() => resetHeader(fileInfo)}>Clear Selection</button>
+
+      <button id='submitBtn' style={{display: 'none'}} onClick={() => submitChart}>Submit Chart</button>
 
       </div>
     </>
