@@ -1,33 +1,27 @@
 // func that takes yaml string (from readfile) as input
 const parser = (yaml) => {
-  // split yaml into lines w/ string.split("\n")
+
   const lines = yaml.split("\n");
 
-  // declare empty obj as output
   const jsonObj = {};
-  // variable to iterate thru lines
   let i = 0;
-
-  // create contextStack = [outputObj]
   const contextStack = [jsonObj];
-	// currentContext = always refer to LAST item in contextStack
 	let currentContext = contextStack[contextStack.length - 1];
-		// will pop off based on indents 
-	// create lastIndent = 0
 	let lastIndent = 0;
-		// increase current indent WHEN?
-			// when we find leading whitespace @ current line
 
-  
-  // iterate line by line 
   while (i < lines.length) {
 		console.log(i);
 
     // check our context 1st
     const matchPattern = lines[i].match(/^\s*/);
-    const currentLineIndent = matchPattern ? matchPattern[0].length : 0;
+    let currentLineIndent = matchPattern ? matchPattern[0].length : 0;
+
+    let trimmedStr = lines[i].trim();
+    if (trimmedStr[0] === '-') {
+      currentLineIndent+=2;
+    }
+
     // compare lastIndent (tracking prev index) against currentLineIndent
-    // if currentIntent > currentLineIndent
     if (currentLineIndent < lastIndent) {
       // pop items off
       let popCount = ((lastIndent - currentLineIndent)/2);
@@ -37,157 +31,142 @@ const parser = (yaml) => {
         --popCount;
         lastIndent -= 2;
       }
+      
       // currentContext = contextStack[length-1]
       currentContext = contextStack[contextStack.length - 1];
+      if (Array.isArray(currentContext)) {
+        contextStack.pop();
+        lastIndent -= 2;
+        currentContext = contextStack[contextStack.length - 1];
+      }
     }
         
+    const trimmedString = lines[i].trim();
 
     // Check for non-value Go Expression
-    const trimmedString = lines[i].trim();
-    
     if ( trimmedString.startsWith("{{") ) {
-      // create key value pair in currentContext, key is stringed, value is EXP
       const keyPair = {[trimmedString]: 'EXP'};
-      // pass data to insert helper function
       insert(currentContext, keyPair)
-      // increment line++
       i++;
+      
     } else {
-      // check for spaces :D
-
-      // split line [key, value] = string.split(':')
       let [key, value] = lines[i].split(':');
       key = key.trim();
-      value = value.trim();
-      // NEW LINE: confirm we have key but no value
-      if (key && (value === '' || value === undefined )) {
 
-        // either creating new obj or concatting next line, depending
-        // declare variable as first index of next line
-        const nextLine = lines[i + 1].trim();
-        // check next line, see 
-          // if first char === - 
+      if (!value) {
+        i++;
+      } else {
+        value = value.trim();
 
-        // for this functionality, update to:
-          // create new array,
-            // push array to context stack
+        // NEW LINE: confirm we have key but no value
+        if (key && (value === '' || value === undefined )) {
 
-            // create empty obj inside array
-              // add empty obj to context stack
-              // add key/value pair @ nextLine to obj stack
-              // update currentContext to be latest on stack
-              // increment i+=2
-              // increment lastIndent by 2
+          const nextLine = lines[i + 1].trim();
+          const nextNextLine = lines[i + 2].trim();
+          let [nextNextKey, nextNextValue] = nextNextLine.split(':');
 
-          if (nextLine[0] === '-') {
-            // create a new array
-            // update currentContext to be array
-
-            // check if currentContext is Array, if so add differently *************
-
-            if (Array.isArray(currentContext)){
-
-              contextStack.pop();
-              currentContext
-              currentContext = contextStack[contextStack.length - 1];
-              // currentContext.push([]);
-              // contextStack.push(currentContext[currentContext.length - 1]);
-              // currentContext = contextStack[contextStack.length - 1];
-              // i++;
-              // lastIndent += 2;
-            }
-            // } else { 
-
-              // create new array inside obj
-              currentContext[key] = [];
-              // push array to context stack
-              contextStack.push(currentContext[key]);
-              // create empty obj inside array
-              currentContext[key].push({});
-
-              // add empty obj to context stack
-              contextStack.push(currentContext[key][0]);
-
-              // add key/value pair @ nextLine to obj stack
-              let [nextKey, nextValue] = nextLine.split(':');
-              currentContext[key][0][nextKey] = nextValue.trim();
-
-              // update currentContext to be latest on stack
-              currentContext = contextStack[contextStack.length - 1];
-
-              // increment i+=2
-              i += 2;
-              // increment lastIndent by 4
-              lastIndent = currentLineIndent + 2; // PLEASE WORK
-
-              // OLD functionality
-
-              // currentContext[key] = [];
-              // // push the key currentContext onto the stack
-              // contextStack.push(currentContext[key]);
-              // // update the currentContext
-              // currentContext = contextStack[contextStack.length - 1];
-              // i++;
-              // lastIndent += 2;
-            
-            // } // arrayIsArray *******************
-          }
-
-
-          // if first char === string
-          else if (/^[a-zA-Z]/.test(nextLine[0]) || nextLine.startsWith('{{')) {
-            // create new obj,
-            // set currentOBj to new obj
-            // check if currentContext is Array, if so add differently
-            // if (Array.isArray(currentContext)){
-            //   currentContext.push({[key]: {}});
-            //   contextStack.push(currentContext[currentContext.length - 1]);
-            //   currentContext = contextStack[contextStack.length - 1];
-            //   i++;
-            //   lastIndent += 2;
-
-            // } else {
+            // check if we have nextLine of {{ }} and next next line of -
+            if (nextLine.startsWith("{{") && nextNextLine.startsWith("-")){ 
               
-              currentContext[key] = {};
-              contextStack.push(currentContext[key]);
-              currentContext = contextStack[contextStack.length - 1];
-              // then index = next line
-              i++;
-              lastIndent = currentLineIndent + 2; // PLEASE WORK
-            // }
-          }
-          // if first characters are {{ }}
-          // else if (nextLine.startsWith('{{')) {
-          //   // set currentObj [key] = nextLine {{ }}
-            
-          //   currentContext[key] = nextLine;
-          //   // increase index by 1
-          //   i++;
-          // }
-            
-      }
-      // key & value
-      else if (key !=='' && value !== '') {
-        // check if key starts with dash
-        if (key[0] === '-') {
-          // pop current obj off context stack
-          contextStack.pop();
-          const currentArray = contextStack[contextStack.length - 1];
-          // push new obj in current context (array)
-          currentArray.push({});
-          // push new obj to contextStack
-          contextStack.push(currentArray[currentArray.length - 1]);
-          // update currentContext to be last in stack
-          currentContext = contextStack[contextStack.length - 1];
-          // add key and value to currentContext
-          insert(currentContext, {[key]: value});
-          // increment i++
-          i++;
+              if (nextNextKey !== '' && (nextNextValue === '' || nextNextValue === undefined )) {
+                currentContext[key] = [];
+                currentContext[key].push({[nextLine]:'EXP'});
+                currentContext[key].push({[nextNextKey]:{}});
+                contextStack.push(currentContext[key]);
+                contextStack.push(currentContext[key][1][nextNextKey]);
+                currentContext = contextStack[contextStack.length - 1];
+                lastIndent = currentLineIndent + 6;
+                i += 3;
+
+              } else {
+                // create new Array
+                currentContext[key] = [];
+                // add obj into array, w/ k/val pair of {{}} : EXP
+                currentContext[key].push({[nextLine]:'EXP'});
+                // add another obj into array, with key of nextNextKey & values of nextNextVal
+                currentContext[key].push({[nextNextKey]:nextNextValue.trim()});
+                // push array to contextStack
+                contextStack.push(currentContext[key]);
+                // push 2nd obj to contextStack
+                contextStack.push(currentContext[key][1]);
+                // update currentContext
+                currentContext = contextStack[contextStack.length - 1];
+                // update lastIndent to be currentIndent + 4
+                lastIndent += 4;
+                // increment i + 3
+                i += 3;
+              }
+            } else if (nextLine[0] === '-') {
+                // create new array inside obj
+                currentContext[key] = [];
+                // push array to context stack
+                contextStack.push(currentContext[key]);
+                // create empty obj inside array
+                currentContext[key].push({});
+
+                // add empty obj to context stack
+                contextStack.push(currentContext[key][0]);
+
+                // currentContext = contextStack[contextStack.length - 1];
+
+                // add key/value pair @ nextLine to obj stack
+                let [nextKey, nextValue] = nextLine.split(':');
+
+                if (nextKey && (nextValue === '' || nextValue === undefined )) {
+                  // is it a newline?
+                    // if yes, copy the below functionality for non-dash new line
+                    currentContext = contextStack[contextStack.length - 1];
+
+                    currentContext[nextKey] = {};
+                    contextStack.push(currentContext[nextKey]);
+                    currentContext = contextStack[contextStack.length - 1];
+                    // then index = i+2 because skipped over the non-value line
+                    i+=2;
+                    lastIndent = currentLineIndent + 6; // +6 because - is +4, and we added a nested obj
+                } else {
+                  // else do below stuff
+                  currentContext[key][0][nextKey] = nextValue.trim();
+
+                  // update currentContext to be latest on stack
+                  currentContext = contextStack[contextStack.length - 1];
+
+                  // increment i+=2
+                  i += 2;
+                  // this should be +4 because we are skipping this w/ i+=2
+                  lastIndent = lastIndent + 4; // PLEASE WORK
+                }
+
+            } else if (/^[a-zA-Z]/.test(nextLine[0]) || nextLine.startsWith('{{')) {
+                currentContext[key] = {};
+                contextStack.push(currentContext[key]);
+                currentContext = contextStack[contextStack.length - 1];
+                i++;
+                lastIndent = lastIndent + 2; // PLEASE WORK
+            }
         }
-        else {
-          // INSERT key/value pair
-          insert(currentContext, {[key]: value});
-          i++;
+        // key & value
+        else if (key !=='' && value !== '') {
+          // check if key starts with dash
+          if (key[0] === '-') {
+            // pop current obj off context stack
+            contextStack.pop();
+            const currentArray = contextStack[contextStack.length - 1];
+            // push new obj in current context (array)
+            currentArray.push({});
+            // push new obj to contextStack
+            contextStack.push(currentArray[currentArray.length - 1]);
+            // update currentContext to be last in stack
+            currentContext = contextStack[contextStack.length - 1];
+            // add key and value to currentContext
+            insert(currentContext, {[key]: value});
+            // increment i++
+            i++;
+          }
+          else {
+            // INSERT key/value pair
+            insert(currentContext, {[key]: value});
+            i++;
+          }
         }
       }
     }
@@ -195,16 +174,10 @@ const parser = (yaml) => {
   return jsonObj;
 }
 
-// INSERT = helper function to check the type of the object  
-// current param is the currentContext and keyVal params should be an object
 const insert = (current, keyVal) => {
-  // if array
-    // push item into the current obj
   if (Array.isArray(current)) {
     current.push(keyVal);
   } else {
-    // if object
-      // add new key/value pair into the current obj
     const keys = Object.keys(keyVal);
     keys.forEach((key) => {
       current[key] = keyVal[key];
@@ -215,7 +188,7 @@ const insert = (current, keyVal) => {
 const fs = require('fs');
 const path = require('path');
 
-const yamlContent = fs.readFileSync(path.join(__dirname, 'input_yaml.yaml'), 'utf8');
+const yamlContent = fs.readFileSync(path.join(__dirname, 'ingress_test.yaml'), 'utf8');
 
 console.log(parser(yamlContent));
 console.log(JSON.stringify(parser(yamlContent), null, 2));
