@@ -11,8 +11,9 @@ const dataController = {};
 //on initial load of chart folder
 dataController.addFiles = async (req, res, next) => {
   try{
-    console.log('datacontroller.addfiles invoked');
-    console.log('request files: ', req.files);
+    const filePath = req.body;
+    console.log('file: ', req.files);
+    console.log('file path: ', req.body.filePath);
   } catch (e) {
     console.log('ERROR: ', e);
   }

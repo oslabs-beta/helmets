@@ -3,6 +3,7 @@ const app = express();
 const PORT = 3000;
 const path = require('path');
 const multer = require('multer');
+const fs = require('fs');
 
 const models = require('./models/dataModel');
 const dataController = require('./controllers/dataController');
@@ -19,9 +20,21 @@ const allowCrossDomain = function (req, res, next) {
 };
 app.use(allowCrossDomain);
 
-const upload = multer({
-  dest: './uploads'
+// const upload = multer({
+//   dest: './uploads'
+// });
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const destination = req.body.filePath;
+
+    cb(null, `./uploads/${destination}`);
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  }
 });
+const upload = multer({ storage: storage });
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/public/index.html'));
@@ -30,8 +43,32 @@ app.get('/', (req, res) => {
 // helmets-specific routes
 // POST to /chart
 // *** NOTE: added the multer middleware that is seen below with upload.fields() and above at line2 22-24. must install multer with 'npm i multer'. Multer adds a body object and a file or files object to the request object.  more multer details here: https://www.npmjs.com/package/multer
-app.post('/chart', upload.fields([{name: 'files'}]), dataController.addFiles, (req, res) => {
+app.post('/chart', upload.fields([{name: 'files'}, {name: 'filePath'}]), dataController.addFiles, (req, res) => {
   res.status(200).json(res.locals.responseData)
+});
+
+app.post('/check-directory', (req, res) => {
+
+  console.log('request body from POST at /check-directory:', req.body);
+  const directoryPath = `./uploads/req.body.filePath`;
+
+  res.status(200).send('POST request received at /check-directory')
+  // Check if the directory exists
+  // fs.stat(directoryPath, (err, stats) => {
+  //   if (err) {
+  //     if (err.code === 'ENOENT') {
+  //       // Directory does not exist
+  //       res.send('Directory does not exist');
+  //     } else {
+  //       // Other error
+  //       console.error(err);
+  //       res.status(500).send('Internal Server Error');
+  //     }
+  //   } else {
+  //     // Directory exists
+  //     res.send('Directory exists');
+  //   }
+  // });
 });
 
 // GET to /chart

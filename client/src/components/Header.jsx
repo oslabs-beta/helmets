@@ -5,7 +5,7 @@ import React, { useState } from "react";
 //the selected folder is then passed to the database
 //the backend will return an object that is then used to populate the <Flow /> component
 const Header = () => {
-  const chartFormData = new FormData();
+
   const [buttonText, setButtonText] = useState('Select Chart');
   const [fileCache, setfileCache] = useState({files: undefined})
 
@@ -25,10 +25,10 @@ const Header = () => {
     return;
   }
 
-  /* The handleChange() function to allow user to select a folder. contents are displayed.*/
-  /*TO DO >> post contents to database */
+  // The handleChange() function to allow user to select a folder. contents are displayed.
   const handleChange = async (event) => {
     
+    //selected folders saved to state
     fileCache.files = event.target.files;
     
     //manages display of selected data on the front-end
@@ -50,41 +50,62 @@ const Header = () => {
     } catch (error) { 
       console.log('error occurred during front-end operations while managing selected chart:', error);
     }
-    //convert the fileList to a new FormData in preparation for uploading to database
-    try{
-      for(const file of fileCache.files) {
-        chartFormData.append('files', file, file.name);
-      }
-    } catch (error) {
-      console.log('error occurred while converting fileList to FormData: ', error);
-    }
-    //upload FormData to database
-    try{
-
-      console.log('req body: ', chartFormData);
-
-      const options = {
-        method: 'POST',
-        body: chartFormData,
-        // headers: {
-        //   'Content-Type': 'multipart/form-data'   // << removing content-type header per warning at https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
-        // }
-      };
-      
-      fetch('http://localhost:3000/chart', options)   // <<< UPDATE POST LOCATION URL & database URI value in dataModel.js
-    } catch (error) {
-      console.log('error occurred while attempting to upload FormData to database:', error);
-    }
     //makes the submit button visible
     try{
-
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.style.display = 'block';
-
     } catch (error) {
       console.log('ERROR: ', error);
     }
   }
+
+  //iterates through selected files and sends them to server one at a time
+  const submitChart = () => {
+    
+    console.log('req body: ', fileCache.files);
+    for(const file of fileCache.files) {
+      const data = new FormData();
+      data.append('files', file, file.name);
+      data.append('filePath', file.webkitRelativePath);
+
+      uploadFile(data);
+    }
+  };
+
+  const uploadFile = async (data) => {
+
+    let index;
+    const fullPath = data.get('filePath');
+    console.log('Original filePath: ', fullPath);
+    for(let i = fullPath.length - 1; i > 0 ; i--) {
+      if(fullPath[i] === `/`) {
+        console.log('index: ', i);
+        index = i;
+        break;
+      }
+    }
+    const filePath = fullPath.substring(0, index + 1);
+    console.log('Trimmed filePath: ', filePath);
+
+    console.log(filePath + ' is of type ' + typeof(filePath));
+
+    const options1 = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain'
+      },    
+      body: filePath
+    };
+    await fetch('http://localhost:3000/check-directory', options1);
+
+
+    const options2 = {
+      method: 'POST',
+      body: data
+    };
+    
+    await fetch('http://localhost:3000/chart', options2);   // <<< UPDATE POST LOCATION URL & database URI value in dataModel.js
+  };
  
   return (
     /* Short-form of React.Fragement*/
@@ -93,12 +114,13 @@ const Header = () => {
 
       <img style={{height: '100px'}}src='https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Kubernetes_logo_without_workmark.svg/617px-Kubernetes_logo_without_workmark.svg.png' />
 
-      <form encType="multipart/form-data">
+      <form encType="multipart/form-data" method="post">
         { /* The handleChange() is triggered when text is entered */}
         <div>
           <input
             id="chartPicker"
             type="file"
+            name="uploaded_file"
             onChange={handleChange}
             directory="" 
             webkitdirectory="" 
@@ -111,7 +133,7 @@ const Header = () => {
       
       <button style={{height: 'auto'}} onClick={() => resetHeader(fileInfo)}>Clear Selection</button>
 
-      <button id='submitBtn' style={{display: 'none'}} onClick={() => submitChart}>Submit Chart</button>
+      <button id='submitBtn' style={{display: 'none'}} onClick={() => submitChart()}>Submit Chart</button>
 
       </div>
     </>
