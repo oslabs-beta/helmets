@@ -1,25 +1,13 @@
+@import './Components/Flow/Flow.scss';
+// what is best practice for imports?
+
 .app {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background-color: aqua;
+
   .flow-container {
     background-color: aquamarine;
   }
-}
-
-.backsplash {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  align-items: center;
-  margin: auto;
-  border: 1px solid brown;
-  background-color: salmon;
-  width: 80vw;
-  height: 98vh;
-}
-
-.test {
-  border: 1px solid burlywood;
-  background-color: blanchedalmond;
-  height: 45%;
-  width: 45%;
 }

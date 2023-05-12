@@ -8,12 +8,12 @@ import ReactFlow, {
   useEdgesState,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import './Flow.scss';
+// import './Flow.scss';
 
 import {
   nodes as initialNodes,
   edges as initialEdges,
-} from '../initial-elements/initial-elements';
+} from '../initial-elements/initial-elements.jsx';
 
 const onInit = (reactFlowInstance) =>
   console.log('flow loaded:', reactFlowInstance);
