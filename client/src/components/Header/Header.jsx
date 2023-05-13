@@ -115,10 +115,14 @@ const Header = () => {
         style={{ height: '100px' }}
         src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Kubernetes_logo_without_workmark.svg/617px-Kubernetes_logo_without_workmark.svg.png"
       />
+      <div className="chart-picker">
+        <form
+          encType="multipart/form-data"
+          method="post"
+          className="input-form"
+        >
+          {/* The handleChange() is triggered when text is entered */}
 
-      <form encType="multipart/form-data" method="post" className="input-form">
-        {/* The handleChange() is triggered when text is entered */}
-        <div>
           <input
             id="chartPicker"
             type="file"
@@ -128,8 +132,8 @@ const Header = () => {
             webkitdirectory=""
             mozdirectory=""
           />
-        </div>
-      </form>
+        </form>
+      </div>
       <div className="file-display">
         <div className="list-display">
           <ul title="Relative Path" id="fileInfo"></ul>

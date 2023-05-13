@@ -5,3 +5,12 @@ $secondaryBlack: #60647b;
 $tertiaryBlack: #8795a1;
 
 $primaryWhite: #fff;
+
+$testPink: rgb(242, 16, 140);
+
+button {
+  height: auto;
+  &:hover {
+    cursor: pointer;
+  }
+}

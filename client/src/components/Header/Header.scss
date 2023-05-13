@@ -1,13 +1,22 @@
+@import '../../variables.scss';
+
 header {
+  box-sizing: border-box;
   display: flex;
   height: 20vh;
-  border: 1px solid black;
+  border: 1px solid $testPink;
   justify-content: space-around;
   align-items: center;
+  padding: 10px;
+}
+
+.chart-picker {
+  background-color: blanchedalmond;
 }
 
 .file-display {
   width: 50vw;
+  overflow: auto;
   .list-display {
     background-color: aliceblue;
     height: 100px;
@@ -18,7 +27,7 @@ header {
     ul {
       margin: 0;
       padding-left: 20px;
-      background-color: bisque;
+
       li {
         margin-top: 5px;
         height: '6em';
@@ -30,11 +39,8 @@ header {
   // add some conditional logic for hover only if form has content
   // make variables for button design
   button {
-    height: auto;
-    // display: inline-block;
     float: right;
-    &:hover {
-      cursor: pointer;
-    }
+    margin-top: 5px;
+    margin-right: 10px;
   }
 }
