@@ -19,13 +19,9 @@ module.exports = {
           },
         },
       },
-      // {
-      //   test: /.css$/i,
-      //   use: ['style-loader', 'css-loader'],
-      // },
       {
-        test: /\.(png|svg|jpg|jpeg|gif|ogg|mp3|wav)$/i,
-        type: 'asset/resource',
+        test: /\.(png|jpe?g|gif)$/i,
+        use: ['file-loader'],
       },
       {
         test: /\.(sa|sc|c)ss$/,

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Header.scss';
+import logo from '../../assets/Helmets.png';
 
 //the header provides a space for the Helmets logo and an input field that allows the user to select a chart folder to upload
 //the selected folder is then passed to the database
@@ -111,10 +112,7 @@ const Header = () => {
   return (
     /* react fragment now semantic header*/
     <header>
-      <img
-        style={{ height: '100px' }}
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Kubernetes_logo_without_workmark.svg/617px-Kubernetes_logo_without_workmark.svg.png"
-      />
+      <img style={{ height: '100%' }} src={logo} />
       <div className="chart-picker">
         <form
           encType="multipart/form-data"
