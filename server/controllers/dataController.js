@@ -13,7 +13,7 @@ dataController.addFiles = async (req, res, next) => {
   try{
     const filePath = req.body;
     console.log('file: ', req.files);
-    console.log('file path: ', req.body.filePath);
+    console.log('file path: ', filePath.filePath);
   } catch (e) {
     console.log('ERROR: ', e);
   }

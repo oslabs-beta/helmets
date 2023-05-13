@@ -61,12 +61,24 @@ const Header = () => {
 
   //iterates through selected files and sends them to server one at a time
   const submitChart = () => {
-    
-    console.log('req body: ', fileCache.files);
+
     for(const file of fileCache.files) {
+
+      //remove the filename from the relative path
+      let index;
+      const fullPath = file.webkitRelativePath;
+      for(let i = fullPath.length - 1; i > 0 ; i--) {
+        if(fullPath[i] === `/`) {
+          index = i;
+          break;
+        }
+      }
+      const filePath = fullPath.substring(0, index + 1);
+
+      //append form data with files and paths
       const data = new FormData();
       data.append('files', file, file.name);
-      data.append('filePath', file.webkitRelativePath);
+      data.append('filePath', filePath);
 
       uploadFile(data);
     }
@@ -74,31 +86,19 @@ const Header = () => {
 
   const uploadFile = async (data) => {
 
-    let index;
-    const fullPath = data.get('filePath');
-    console.log('Original filePath: ', fullPath);
-    for(let i = fullPath.length - 1; i > 0 ; i--) {
-      if(fullPath[i] === `/`) {
-        console.log('index: ', i);
-        index = i;
-        break;
-      }
-    }
-    const filePath = fullPath.substring(0, index + 1);
-    console.log('Trimmed filePath: ', filePath);
-
-    console.log(filePath + ' is of type ' + typeof(filePath));
+    const filePath = data.get('filePath');
 
     const options1 = {
       method: 'POST',
       headers: {
-        'Content-Type': 'text/plain'
+        'Content-Type': 'application/json'
       },    
-      body: filePath
+      body: JSON.stringify({filePath})
     };
     await fetch('http://localhost:3000/check-directory', options1);
 
 
+    console.log('data just before uploading: ',data);
     const options2 = {
       method: 'POST',
       body: data

@@ -47,28 +47,35 @@ app.post('/chart', upload.fields([{name: 'files'}, {name: 'filePath'}]), dataCon
   res.status(200).json(res.locals.responseData)
 });
 
+//checks if the target upload directory exists and creates it if not
 app.post('/check-directory', (req, res) => {
 
-  console.log('request body from POST at /check-directory:', req.body);
-  const directoryPath = `./uploads/req.body.filePath`;
+  const { filePath } = req.body;
+  const directoryPath = path.join(__dirname, 'uploads', filePath);
 
-  res.status(200).send('POST request received at /check-directory')
-  // Check if the directory exists
-  // fs.stat(directoryPath, (err, stats) => {
-  //   if (err) {
-  //     if (err.code === 'ENOENT') {
-  //       // Directory does not exist
-  //       res.send('Directory does not exist');
-  //     } else {
-  //       // Other error
-  //       console.error(err);
-  //       res.status(500).send('Internal Server Error');
-  //     }
-  //   } else {
-  //     // Directory exists
-  //     res.send('Directory exists');
-  //   }
-  // });
+  // Check if the directory exists. if it does not, create it.
+  fs.stat(directoryPath, (err, stats) => {
+    if (err) {
+      if (err.code === 'ENOENT') {
+        fs.mkdir(directoryPath, { recursive: true }, (err) => {
+          if (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error @ fs.mkdir : ', err);
+          } else {
+            console.log(`Created directory: ${directoryPath}`);
+            res.send('Directory created successfully');
+          }
+        });
+      } else {
+        // Other error
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+      }
+    } else {
+      // Directory exists
+      res.send('Directory exists');
+    }
+  });
 });
 
 // GET to /chart
