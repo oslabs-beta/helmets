@@ -6,17 +6,35 @@ header {
   align-items: center;
 }
 
-ul {
-  height: '6em';
-  overflow-y: 'auto';
-}
+.file-display {
+  width: 50vw;
+  .list-display {
+    background-color: aliceblue;
+    height: 100px;
+    overflow: scroll;
+    width: 100%;
+    padding: 10px;
 
-.list-display {
-  background-color: aliceblue;
-  height: 100px;
-  overflow: scroll;
-}
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      background-color: bisque;
+      li {
+        margin-top: 5px;
+        height: '6em';
+        overflow-y: 'auto';
+      }
+    }
+  }
 
-button {
-  height: auto;
+  // add some conditional logic for hover only if form has content
+  // make variables for button design
+  button {
+    height: auto;
+    // display: inline-block;
+    float: right;
+    &:hover {
+      cursor: pointer;
+    }
+  }
 }

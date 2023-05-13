@@ -6,6 +6,7 @@ import './Header.scss';
 //the backend will return an object that is then used to populate the <Flow /> component
 const Header = () => {
   const [buttonText, setButtonText] = useState('Select Chart');
+  const [fileCache, setfileCache] = useState({ files: undefined });
 
   //helper function to clear the unordered list in the header and reset the input target to nothing
   const resetHeader = (listEl) => {
@@ -16,21 +17,20 @@ const Header = () => {
         listEl.removeChild(listEl.firstChild);
       }
     }
+
+    // const submitBtn = document.getElementById('submitBtn');
+    // submitBtn.style.display = 'none';
+
     return;
   };
-  //declare a let to hold the files selected by user during handleChange()
-  let selectedFiles;
 
-  /* The handleChange() function to allow user to select a folder. contents are displayed.*/
-  /*TO DO >> post contents to database */
+  // The handleChange() function to allow user to select a folder. contents are displayed.
   const handleChange = async (event) => {
-    let chartFormData;
-    const fileCache = event.target.files;
-    chartFormData = new FormData();
+    //selected folders saved to state
+    fileCache.files = event.target.files;
+
     //manages display of selected data on the front-end
     try {
-      //update selectedFiles with the event data for use outside of handleChange()
-      selectedFiles = event.target;
       //grab the html element of the unordered list
       const fileInfo = document.getElementById('fileInfo');
       //if there is already content in the unordered list, clear it out
@@ -40,9 +40,8 @@ const Header = () => {
         }
       }
       //iterate over it to populate the unordered list
-      for (const file of fileCache) {
+      for (const file of fileCache.files) {
         const item = document.createElement('li');
-
         item.textContent =
           'File Name: ' +
           file.name +
@@ -56,65 +55,96 @@ const Header = () => {
         error
       );
     }
-    //convert the fileList to a new FormData in preparation for uploading to database
+    //makes the submit button visible
     try {
-      for (const file of fileCache) {
-        chartFormData.append('files', file, file.name);
-      }
-      for (var pair of chartFormData.entries()) {
-        console.log(
-          pair[0] +
-            ', ' +
-            pair[1].name +
-            ' Path = ' +
-            pair[1].webkitRelativePath
-        );
-      }
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.style.display = 'block';
     } catch (error) {
-      console.log(
-        'error occurred while converting fileList to FormData: ',
-        error
-      );
+      console.log('ERROR: ', error);
     }
-    //upload FormData to database
-    // try{
-    //   const options = {
-    //     method: 'POST',
-    //     body: formData,
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data'
-    //     }
-    //   };
+  };
 
-    //   fetch('/upload', options)   // <<< UPDATE POST LOCATION URL
-    // } catch (error) {
-    //   console.log('error occurred while attempting to upload FormData to database:', error);
-    // }
+  //iterates through selected files and sends them to server one at a time
+  const submitChart = () => {
+    for (const file of fileCache.files) {
+      //remove the filename from the relative path
+      let index;
+      const fullPath = file.webkitRelativePath;
+      for (let i = fullPath.length - 1; i > 0; i--) {
+        if (fullPath[i] === `/`) {
+          index = i;
+          break;
+        }
+      }
+      const filePath = fullPath.substring(0, index + 1);
+
+      //append form data with files and paths
+      const data = new FormData();
+      data.append('files', file, file.name);
+      data.append('filePath', filePath);
+
+      uploadFile(data);
+    }
+  };
+
+  const uploadFile = async (data) => {
+    const filePath = data.get('filePath');
+
+    const options1 = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ filePath }),
+    };
+    await fetch('http://localhost:3000/check-directory', options1);
+
+    console.log('data just before uploading: ', data);
+    const options2 = {
+      method: 'POST',
+      body: data,
+    };
+
+    await fetch('http://localhost:3000/chart', options2); // <<< UPDATE POST LOCATION URL & database URI value in dataModel.js
   };
 
   return (
-    /* Changed React component to semantic header*/
+    /* react fragment now semantic header*/
     <header>
       <img
         style={{ height: '100px' }}
         src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Kubernetes_logo_without_workmark.svg/617px-Kubernetes_logo_without_workmark.svg.png"
       />
 
-      <form className="input-form">
+      <form encType="multipart/form-data" method="post" className="input-form">
         {/* The handleChange() is triggered when text is entered */}
-        <input
-          id="chartPicker"
-          type="file"
-          onChange={handleChange}
-          directory=""
-          webkitdirectory=""
-          mozdirectory=""
-        />
+        <div>
+          <input
+            id="chartPicker"
+            type="file"
+            name="uploaded_file"
+            onChange={handleChange}
+            directory=""
+            webkitdirectory=""
+            mozdirectory=""
+          />
+        </div>
+      </form>
+      <div className="file-display">
         <div className="list-display">
           <ul title="Relative Path" id="fileInfo"></ul>
         </div>
-        <button onClick={() => resetHeader(fileInfo)}>Clear Selection</button>
-      </form>
+        <button
+          style={{ height: 'auto' }}
+          onClick={() => resetHeader(fileInfo)}
+        >
+          Clear Selection
+        </button>
+
+        <button id="submitBtn" onClick={() => submitChart()}>
+          Submit Chart
+        </button>
+      </div>
     </header>
   );
 };
