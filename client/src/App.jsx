@@ -6,9 +6,9 @@ import './App.scss';
 
 export default function App() {
   return (
-    <section className="app">
+    <div className="app">
       <Header />
       <Flow />
-    </section>
+    </div>
   );
 }

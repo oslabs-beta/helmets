@@ -1,3 +1,4 @@
+@import 'variables';
 @import './Components/Flow/Flow.scss';
 // what is best practice for imports?
 
@@ -8,6 +9,6 @@
   background-color: aqua;
 
   .flow-container {
-    background-color: aquamarine;
+    background-color: $primaryWhite;
   }
 }

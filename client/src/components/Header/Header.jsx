@@ -110,9 +110,9 @@ const Header = () => {
           webkitdirectory=""
           mozdirectory=""
         />
-        <section className="list-display">
+        <div className="list-display">
           <ul title="Relative Path" id="fileInfo"></ul>
-        </section>
+        </div>
         <button onClick={() => resetHeader(fileInfo)}>Clear Selection</button>
       </form>
     </header>
