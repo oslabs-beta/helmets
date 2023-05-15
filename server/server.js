@@ -6,6 +6,8 @@ const path = require('path');
 const models = require('./models/dataModel');
 const dataController = require('./controllers/dataController');
 
+const sample_path_payload = require('./sample_data/sample_path_payload');
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/public/index.html'));
 });
@@ -23,7 +25,7 @@ app.get('/chart', dataController.getTemplate, (req, res) => {
 
 // GET to /path
 app.get('/path', dataController.getPath, (req, res) => {
-  res.status(200).json(res.locals.responseData)
+  res.status(200).json(sample_path_payload);
 });
 
 // unknown route handler 

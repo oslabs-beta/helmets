@@ -26,8 +26,8 @@ dataController.getTemplate = () => {
 }
 
 //when selecting value on manifest or template
-dataController.getPath = () => {
-
+dataController.getPath = (req, res, next) => {
+  next();
 }
 
 module.exports = dataController;
