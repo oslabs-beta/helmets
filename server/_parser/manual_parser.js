@@ -1,3 +1,5 @@
+const INPUT_PATH = 'values.yaml';
+
 // func that takes yaml string (from readfile) as input
 const parser = (yaml) => {
 
@@ -21,7 +23,15 @@ const parser = (yaml) => {
       currentLineIndent+=2;
     }
 
-    // console.log("last indent: ", lastIndent, "| current: ", currentLineIndent);
+    const trimmedString = lines[i].trim();
+
+    if (trimmedString==="") {
+      console.log('blank line!');
+      i++;
+      continue;
+    }
+
+    console.log("last indent: ", lastIndent, "| current: ", currentLineIndent);
     // compare lastIndent (tracking prev index) against currentLineIndent
     if (currentLineIndent < lastIndent) {
       // pop items off
@@ -42,10 +52,10 @@ const parser = (yaml) => {
       }
     }
         
-    const trimmedString = lines[i].trim();
 
     // Check for non-value Go Expression
     if ( trimmedString.startsWith("{{") ) {
+      console.log('current context is ', currentContext);
       const keyPair = {[trimmedString]: 'EXP'};
       insert(currentContext, keyPair)
       i++;
@@ -53,22 +63,30 @@ const parser = (yaml) => {
     } else {
       let [key, value] = lines[i].split(':');
       key = key.trim();
-
+      console.log('current key is ', key);
+      console.log('current val is ', value);
+      // console.log('current context is ', currentContext);
+      // console.log('contextStack is ', contextStack);
+      // if empty line, skip it
       if (!key) {
         i++;
       } else {
-        value = value.trim();
-
+        value = value ? value.trim() : undefined;
+        
         // NEW LINE: confirm we have key but no value
         if (key && (value === '' || value === undefined )) {
 
           const nextLine = lines[i + 1].trim();
-          const nextNextLine = lines[i + 2].trim();
+          const nextNextLine = lines[i + 2] ? lines[i + 2].trim() : undefined;
+          if (nextNextLine===undefined && lines[i+3]===undefined) {
+            break;
+          }
           let [nextNextKey, nextNextValue] = nextNextLine.split(':');
+          nextNextValue = nextNextValue ? nextNextValue.trim() : undefined;
 
-          // console.log('currentLine: ', lines[i].trim(), ' | next: ', nextLine);
+          console.log('currentLine: ', lines[i].trim(), ' | next: ', nextLine);
 
-            // check if we have nextLine of {{ }} and next next line of -
+            // BRACKET DASH check if we have nextLine of {{ }} and next next line of -
             if (nextLine.startsWith("{{") && nextNextLine.startsWith("-")){ 
               
               if (nextNextKey !== '' && (nextNextValue === '' || nextNextValue === undefined )) {
@@ -78,7 +96,7 @@ const parser = (yaml) => {
                 contextStack.push(currentContext[key]);
                 contextStack.push(currentContext[key][1][nextNextKey]);
                 currentContext = contextStack[contextStack.length - 1];
-                lastIndent = currentLineIndent + 6;
+                lastIndent = currentLineIndent + 4;
                 i += 3;
 
               } else {
@@ -140,8 +158,8 @@ const parser = (yaml) => {
                   lastIndent = lastIndent + 4; // PLEASE WORK
                 }
 
-            } else if (/^[a-zA-Z]/.test(nextLine[0]) || nextLine.startsWith('{{')) {
-              // console.log('non-dash new line detected:');
+            } else if (/^[a-zA-Z]/.test(nextLine[0]) || nextLine.startsWith('"') || nextLine.startsWith('{{') || nextLine.startsWith('#')) {
+              console.log('non-dash new line detected:');
               currentContext[key] = {};
               contextStack.push(currentContext[key]);
               currentContext = contextStack[contextStack.length - 1];
@@ -168,8 +186,10 @@ const parser = (yaml) => {
             insert(currentContext, {[key]: value});
             // increment i++
             i++;
-          }
-          else {
+          } else if (typeof value === Object) {
+            insert(currentContext, {[key]: value});
+            i++;
+          } else {
             // INSERT key/value pair
             insert(currentContext, {[key]: value});
             i++;
@@ -195,7 +215,7 @@ const insert = (current, keyVal) => {
 const fs = require('fs');
 const path = require('path');
 
-const yamlContent = fs.readFileSync(path.join(__dirname, 'input_yaml.yaml'), 'utf8');
+const yamlContent = fs.readFileSync(path.join(__dirname, INPUT_PATH), 'utf8');
 
 // console.log(parser(yamlContent));
 console.log(JSON.stringify(parser(yamlContent), null, 2));
