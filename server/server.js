@@ -20,15 +20,10 @@ const allowCrossDomain = function (req, res, next) {
 };
 app.use(allowCrossDomain);
 
-// const upload = multer({
-//   dest: './uploads'
-// });
-
+// set up multer to assign save location for uploaded file and file name
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const destination = req.body.filePath;
-
-    cb(null, `./uploads/${destination}`);
+    cb(null, path.join(__dirname, `./uploads`));
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
@@ -40,16 +35,16 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/public/index.html'));
 });
 
-// helmets-specific routes
-// POST to /chart
-// *** NOTE: added the multer middleware that is seen below with upload.fields() and above at line2 22-24. must install multer with 'npm i multer'. Multer adds a body object and a file or files object to the request object.  more multer details here: https://www.npmjs.com/package/multer
-app.post('/chart', upload.fields([{name: 'files'}, {name: 'filePath'}]), dataController.addFiles, (req, res) => {
-  res.status(200).json(res.locals.responseData)
-});
+// stashed copy of checkDirectory MiddleWare as a route
 
-//checks if the target upload directory exists and creates it if not
+app.post('/upload', 
+  upload.fields([{name: 'files'}, {name: 'filePath'}]), 
+  (req, res) => {res.status(201).send('file uploaded')}
+);
+
+// //checks if the target directory exists and creates it if not
 app.post('/check-directory', (req, res) => {
-
+  
   const { filePath } = req.body;
   const directoryPath = path.join(__dirname, 'uploads', filePath);
 
@@ -63,20 +58,26 @@ app.post('/check-directory', (req, res) => {
             res.status(500).send('Internal Server Error @ fs.mkdir : ', err);
           } else {
             console.log(`Created directory: ${directoryPath}`);
-            res.send('Directory created successfully');
+            res.status(201).send('Directory created');
           }
         });
       } else {
         // Other error
-        console.error(err);
+        console.error('Error encountered when checking if directory exists @server.js 57', err);
         res.status(500).send('Internal Server Error');
       }
     } else {
       // Directory exists
-      res.send('Directory exists');
+      res.status(200).send('Directory exists');
     }
   });
 });
+
+//handles file upload
+app.post('/chart',
+  (req, res) => {
+  res.status(200).json(res.locals.responseData)
+  });
 
 // GET to /chart
 app.get('/chart', dataController.getTemplate, (req, res) => {

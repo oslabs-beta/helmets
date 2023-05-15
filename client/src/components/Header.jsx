@@ -41,7 +41,7 @@ const Header = () => {
           fileInfo.removeChild(fileInfo.firstChild);
         }
       }
-      //iterate over it to populate the unordered list
+      //iterate over the fileCache to populate the unordered list
       for(const file of fileCache.files) {
         const item = document.createElement('li');
         item.textContent = 'File Name: ' + file.name + '\nRelative Path: ' + file.webkitRelativePath;
@@ -59,9 +59,10 @@ const Header = () => {
     }
   }
 
-  //iterates through selected files and sends them to server one at a time
+  //sends files to server one at a time to checkServerFolderStructure then uploadFile (called on button click)
   const submitChart = () => {
 
+    //iterates over fileCache
     for(const file of fileCache.files) {
 
       //remove the filename from the relative path
@@ -80,11 +81,14 @@ const Header = () => {
       data.append('files', file, file.name);
       data.append('filePath', filePath);
 
+      checkServerFolderStructure(data);
       uploadFile(data);
     }
   };
 
-  const uploadFile = async (data) => {
+  //checks if server has the folder structure matching source and creates a folder if not
+  //POST to /check-directory
+  const checkServerFolderStructure = async (data) => {
 
     const filePath = data.get('filePath');
 
@@ -96,15 +100,17 @@ const Header = () => {
       body: JSON.stringify({filePath})
     };
     await fetch('http://localhost:3000/check-directory', options1);
+  }
 
-
-    console.log('data just before uploading: ',data);
-    const options2 = {
+  //uploads the file
+  //POST to /chart
+  const uploadFile = async (data) => {
+    const options = {
       method: 'POST',
       body: data
     };
     
-    await fetch('http://localhost:3000/chart', options2);   // <<< UPDATE POST LOCATION URL & database URI value in dataModel.js
+    await fetch('http://localhost:3000/upload', options);   // <<< UPDATE POST LOCATION URL & database URI value in dataModel.js
   };
  
   return (
