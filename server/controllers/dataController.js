@@ -27,7 +27,9 @@ dataController.addFiles = async (req, res, next) => {
   
   // helper function to actually add the file
   const saveFile = async (filePath, sourceFile, valuesFile) => {
-    const relative_path = path.join(__dirname, `../uploads/${filePath}`);
+    console.log('filePath in SaveFile is ', filePath);
+    // const relative_path = path.join(__dirname, `../uploads/${filePath}`);
+    const relative_path = filePath;
     try {
       const file = {};
       // fs.readFileSync() and pass output to parser
@@ -47,8 +49,10 @@ dataController.addFiles = async (req, res, next) => {
       // values
       file.values = valuesFile;
       // add doc to db
+      // console.log('file to convert to doc is: ', file);
       let doc = await models.DataModel.create(file);
-      doc = doc.toJson();
+      // console.log('doc pre-json is ', doc);
+      doc = doc.toJSON();
       console.log("DOC ADDED TO DB:", doc)
       return doc._id;
     } catch (err) {
@@ -63,7 +67,8 @@ dataController.addFiles = async (req, res, next) => {
   // check if thing is a file or a folder
   const checkType = async (file_path, sourceFile = null, valuesFile = null) => {
     try {
-      const relative_path = path.join(__dirname, `../uploads/${file_path}`);
+      console.log('file we are trying to read: ', file_path);
+      const relative_path = file_path;
       console.log("path: ", relative_path);
       const stats = await fs.promises.stat(relative_path);
       // console.log('stats is: ', stats);
@@ -73,33 +78,36 @@ dataController.addFiles = async (req, res, next) => {
         let sourceDoc;
         let valuesDoc;
 
-        files.forEach(async file => { 
-          const fullFilePath = `${file_path}/${file}`;
+        for (const file of files) { 
+          console.log('file is ', file);
+          const innerFilePath = `${relative_path}/${file}`;
+          console.log('innerFilePath is ', innerFilePath);
           if (/[Cc]hart\.yaml$/.test(file)) {
-            sourceDoc = await saveFile(fullFilePath, sourceFile, valuesFile);            
+            sourceDoc = await saveFile(innerFilePath, sourceFile, valuesFile);            
           } else if (/[Vv]alues\.yaml$/.test(file)) {
-            valuesDoc = await saveFile(fullFilePath, sourceFile, valuesFile);        
+            valuesDoc = await saveFile(innerFilePath, sourceFile, valuesFile);        
           }
-        });
+        };
 
         sourceFile = sourceDoc;
         valuesFile = valuesDoc;
-        
-        files.forEach(async file => {
-          const fullFilePath = `${file_path}/${file}`;
-          
+
+        for (const file of files) {
+          const innerFilePath = `${relative_path}/${file}`;
           if (!/[Cc]hart\.yaml$/.test(file) && !/[Vv]alues\.yaml$/.test(file) &&  /\.yaml$/i.test(file)) {
-            await checkType(fullFilePath, sourceFile, valuesFile);
+          await checkType(innerFilePath, sourceFile, valuesFile);
           }
-        });
+        };
         
-        files.forEach(async file => {
-          const fullFilePath = `${file_path}/${file}`;
-          const fileStats = await fs.promises.stat(fullFilePath);
+        for (const file of files) {
+          const innerFilePath = `${relative_path}/${file}`;
+          console.log('inner file we are trying to read: ', file);
+          if (file.startsWith('.')) continue;
+          const fileStats = await fs.promises.stat(innerFilePath);
           if (fileStats.isDirectory()) {
-            checkType(fullFilePath);
+            await checkType(innerFilePath);
           }
-        })
+        }
         
       } else {
         console.log(file_path, 'is a file, so adding it');
@@ -122,12 +130,12 @@ dataController.addFiles = async (req, res, next) => {
   try {
     const files = await fs.promises.readdir(path.join(__dirname,'../uploads'));
     console.log("FILES ARRAY: ", files)
-    files.forEach(dir => {
+    for (const dir of files) {
       console.log('dir ', dir)
-      checkType(dir);
-    })
+      const dirPath = path.join(__dirname,'../uploads', dir);
+      await checkType(dirPath);
+    }
     return next();
-    
   } catch (err) {
     return next({
       log: `Error in dataController.addFiles: ${err}`,
