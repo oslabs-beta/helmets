@@ -8,10 +8,13 @@ $primaryWhite: #fff;
 
 $testPink: rgb(242, 16, 140);
 
-button {
-  height: auto;
-
+@mixin button($bg-color, $text-color) {
+  background-color: $bg-color;
+  color: $text-color;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
   &:hover {
-    cursor: pointer;
+    background-color: adjust-hue($bg-color, 90);
   }
 }

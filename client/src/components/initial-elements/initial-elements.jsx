@@ -1,7 +1,11 @@
 import React from 'react';
 import { MarkerType } from 'reactflow';
+// import fake data to be used until fetch happens
+import path from '../../../../server/sample_data/sample_path_payload.js';
 
 import './initial-elements.scss';
+
+console.log('path: ', path);
 
 // nodes are in an array
 // edges are in an array
