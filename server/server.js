@@ -35,35 +35,32 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/public/index.html'));
 });
 
-// stashed copy of checkDirectory MiddleWare as a route
-
-app.post('/upload', 
-  upload.fields([{name: 'files'}, {name: 'filePath'}]), 
-  (req, res) => {res.status(201).send('file uploaded')}
-);
-
-// //checks if the target directory exists and creates it if not
+//CREATE DIRECTORY
 app.post('/check-directory', (req, res) => {
   
   const { filePath } = req.body;
   const directoryPath = path.join(__dirname, 'uploads', filePath);
+  console.log('*** POST received at /check-directory ', directoryPath);
 
   // Check if the directory exists. if it does not, create it.
   fs.stat(directoryPath, (err, stats) => {
     if (err) {
       if (err.code === 'ENOENT') {
-        fs.mkdir(directoryPath, { recursive: true }, (err) => {
-          if (err) {
-            console.error(err);
-            res.status(500).send('Internal Server Error @ fs.mkdir : ', err);
-          } else {
-            console.log(`Created directory: ${directoryPath}`);
-            res.status(201).send('Directory created');
+        fs.mkdir(directoryPath, { recursive: true }, 
+          (err) => {
+            if (err) {
+              console.log('error encountered while making directory');
+              console.error(err);
+              res.status(500).send('Internal Server Error @ fs.mkdir : ', err);
+            } else {
+              console.log(`*** Directory created: ${directoryPath}`);
+              res.status(201).send('Directory created');
+            }
           }
-        });
+        );
       } else {
         // Other error
-        console.error('Error encountered when checking if directory exists @server.js 57', err);
+        console.error('Error encountered when checking if directory exists', err);
         res.status(500).send('Internal Server Error');
       }
     } else {
@@ -73,7 +70,33 @@ app.post('/check-directory', (req, res) => {
   });
 });
 
-//handles file upload
+//SAVE UPLOADED FILE TO ./UPLOADS
+app.post('/upload', 
+  upload.fields([{name: 'files'}, {name: 'filePath'}]), 
+  (req, res) => {res.status(201).send('file uploaded')}
+);
+
+//MOVE FILE
+app.post('/move-file', (req, res) => {
+  console.log('*** Move File');
+  const { filePath, fileName } = req.body;
+  console.log('*** Move file ', fileName, ' to ', filePath);
+
+  const source = path.join(__dirname, `/uploads/${fileName}`);
+  const dest = path.join(__dirname, `${filePath}${fileName}`);
+  console.log('')
+  fs.copyFile(
+    source, 
+    dest, 
+    (err) => {
+      if(err) {console.log('err encountered while copying file: ', err)}
+      res.status(500);
+    });
+
+  res.status(201);
+});
+
+// POST to /chart
 app.post('/chart',
   (req, res) => {
   res.status(200).json(res.locals.responseData)
