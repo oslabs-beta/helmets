@@ -46,7 +46,7 @@ app.post('/check-directory', (req, res) => {
   try {
     const stats = fs.statSync(directoryPath);
     if (stats.isDirectory()) {
-      console.log('DIRECTORY EXISTS: ', filePath );
+      console.log('*** Directory already exists: ', filePath );
     }
   } 
   //FOLDER CHECK FAILED SO MAKE A FOLDER
@@ -96,7 +96,7 @@ app.post('/move-file', (req, res) => {
 
   const source = path.join(__dirname, `uploads/${fileName}`);
   const dest = path.join(__dirname, `uploads/${filePath}${fileName}`);
-  console.log('*** Move from ', source, ' to ', dest);
+  console.log('*** Move from ', source, '\nto ', dest);
 
   //COPY FILE
   try {
@@ -127,7 +127,6 @@ app.post('/move-file', (req, res) => {
 // DELETE FILE SYNCHRONOUS
 app.post('/delete-file', (req, res) => {
 
-  console.log('*** Delete File');
   const { fileName } = req.body;
   console.log('*** Delete file ', fileName);
 
@@ -141,8 +140,25 @@ app.post('/delete-file', (req, res) => {
     console.log('error encountered while deleting file:', err);
     res.status(500).send('deletion error');
     }
-  };
+  }
+  //VERIFY FILE DELETION
+  try {
+    console.log('*** Verifying file deletion');
+    const stats = fs.statSync(source);
+    console.log(`*** ${fileName} still exists: `, stats.isFile);
+  }
+  catch {(err) => {
+    if(err) {
+      console.log('*** DELETION VERIFICATION ERROR');
+      console.log('error.code: ', err.code);
+      console.log('*** File deletion verified');
+    }
+    console.log('error encountered during file deletion verification: ', err);
+    return res.status(500).send('error encountered during file deletion verification');
+  }    
+  }
   
+  console.log(`*** ${fileName} deleted`);
   return res.status(200).send(`${fileName} deleted`);
 })
 
