@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: 1.16.0
+dependencies:
+- condition: installToggle.backend
+  name: backend
+  repository: ""
+- condition: installToggle.web
+  name: web
+  repository: ""
+description: A Helm chart for Kubernetes
+name: helm-chart-sample
+type: application
+version: 0.1.0

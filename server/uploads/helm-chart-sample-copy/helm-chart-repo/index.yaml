@@ -1,0 +1,21 @@
+apiVersion: v1
+entries:
+  helm-chart-sample:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2021-08-12T13:35:23.3053731+08:00"
+    dependencies:
+    - condition: installToggle.backend
+      name: backend
+      repository: ""
+    - condition: installToggle.web
+      name: web
+      repository: ""
+    description: A Helm chart for Kubernetes
+    digest: 4f4a02103afa6924d75db78bbc5b7cb38e101b57446d02320b797597c27452b5
+    name: helm-chart-sample
+    type: application
+    urls:
+    - helm-chart-sample-0.1.0.tgz
+    version: 0.1.0
+generated: "2021-08-12T13:35:23.3027615+08:00"

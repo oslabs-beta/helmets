@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 require("dotenv").config();
 
-const MONGO_URI = process.env.MONGO_URI;
+// const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = 'mongodb+srv://meganchoi732:LsQIOK8zRhTbOxBG@helmets.ulcyije.mongodb.net/?retryWrites=true&w=majority'
 mongoose.connect(MONGO_URI, {
   // options for the connect method to parse the URI
   useNewUrlParser: true,
@@ -18,13 +19,18 @@ const Schema = mongoose.Schema;
 const dataModelSchema = new Schema({
   name: {type: String, required: true},
   type: {type: String, required: true},
-  source: {type: String, required: true},
+  source: {
+    type: Schema.Types.ObjectId, 
+    ref: 'DataModel',
+    default: null
+  },
   values: {
     type: Schema.Types.ObjectId, 
     ref: 'DataModel',
     default: null
   },
-  fileContent: {type: Object, required:true}
+  fileContent: {type: Object, required:true},
+  timeRun: {type: Date, default: () => Date.now()}
 });
 
 const DataModel = mongoose.model('DataModel', dataModelSchema);
