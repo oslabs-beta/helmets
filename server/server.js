@@ -14,8 +14,9 @@ app.get('/', (req, res) => {
 
 // helmets-specific routes
 // POST to /chart
-app.post('/chart', dataController.addFiles, (req, res) => {
-  res.status(200).send('posted chart to DB!')
+app.post('/chart', dataController.deleteData, dataController.addFiles, (req, res) => {
+  // console.log('res locals: ', res.locals.topChart);
+  res.status(200).json(res.locals);
 });
 
 // GET to /chart

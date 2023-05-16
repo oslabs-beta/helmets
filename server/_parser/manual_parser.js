@@ -12,7 +12,8 @@ const parser = (yaml) => {
 	let lastIndent = 0;
 
   while (i < lines.length) {
-		// console.log(i);
+		let prevI = i;
+    // console.log(i);
 
     // check our context 1st
     const matchPattern = lines[i].match(/^\s*/);
@@ -204,6 +205,9 @@ const parser = (yaml) => {
           }
         }
       }
+    }
+    if (prevI === i) {
+      i++;
     }
   }
   return jsonObj;

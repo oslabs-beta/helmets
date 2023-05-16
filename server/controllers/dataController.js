@@ -10,12 +10,12 @@ const sampleChartPath = '../../helm-chart-sample/charts/backend/templates/config
 const dataController = {};
 
 // once new file is loaded, clear mongoDB
-dataController.deleteData = async () => {
+dataController.deleteData = async (req, res, next) => {
   try {
     await models.DataModel.deleteMany({});
-    return next();
+    next();
   } catch (err) {
-    return next({
+    next({
       log: `Error in dataController.deleteData: ${err}`,
       message: { err: 'Error deleting all data from MongoDB' }
     })
@@ -54,7 +54,7 @@ dataController.addFiles = async (req, res, next) => {
       // console.log('doc pre-json is ', doc);
       doc = doc.toJSON();
       console.log("DOC ADDED TO DB:", doc)
-      return doc._id;
+      return doc;
     } catch (err) {
       return next({
         log: `Error in dataController.addFiles.saveFile: ${err}`,
@@ -73,39 +73,45 @@ dataController.addFiles = async (req, res, next) => {
       const stats = await fs.promises.stat(relative_path);
       // console.log('stats is: ', stats);
       if (stats.isDirectory()) {
-        const files = await fs.promises.readdir(relative_path);
-        // check for Chart.yaml and Values.yaml to add to db first
-        let sourceDoc;
-        let valuesDoc;
+        const filesArr = await fs.promises.readdir(relative_path);
+        
+        const files = new Set(filesArr);
 
+        // check for Chart.yaml and Values.yaml to add to db first
         for (const file of files) { 
           console.log('file is ', file);
           const innerFilePath = `${relative_path}/${file}`;
           console.log('innerFilePath is ', innerFilePath);
           if (/[Cc]hart\.yaml$/.test(file)) {
-            sourceDoc = await saveFile(innerFilePath, sourceFile, valuesFile);            
+            sourceFile = await saveFile(innerFilePath, sourceFile, valuesFile);    
+            if (!res.locals.topChart) res.locals.topChart = sourceFile;
+            files.delete(file);     
           } else if (/[Vv]alues\.yaml$/.test(file)) {
-            valuesDoc = await saveFile(innerFilePath, sourceFile, valuesFile);        
-          }
-        };
-
-        sourceFile = sourceDoc;
-        valuesFile = valuesDoc;
-
-        for (const file of files) {
-          const innerFilePath = `${relative_path}/${file}`;
-          if (!/[Cc]hart\.yaml$/.test(file) && !/[Vv]alues\.yaml$/.test(file) &&  /\.yaml$/i.test(file)) {
-          await checkType(innerFilePath, sourceFile, valuesFile);
+            valuesFile = await saveFile(innerFilePath, sourceFile, valuesFile);
+            if (!res.locals.topValue) res.locals.topValue = valuesFile;
+            files.delete(file);        
           }
         };
         
+        // save other .yaml files on same level 
+        for (const file of files) {
+          const innerFilePath = `${relative_path}/${file}`;
+          console.log('check 2, file is: ', file);
+          if (!/[Cc]hart\.yaml$/.test(file) && !/[Vv]alues\.yaml$/.test(file) && /\.yaml$/i.test(file)) {
+            console.log('it\'s a yaml, calling saveFile');
+            await saveFile(innerFilePath, sourceFile, valuesFile);
+            files.delete(file);
+          }
+        };
+        // recurse through directories
         for (const file of files) {
           const innerFilePath = `${relative_path}/${file}`;
           console.log('inner file we are trying to read: ', file);
           if (file.startsWith('.')) continue;
-          const fileStats = await fs.promises.stat(innerFilePath);
+          const fileStats = await fs.promises.stat(innerFilePath); 
           if (fileStats.isDirectory()) {
-            await checkType(innerFilePath);
+            await checkType(innerFilePath, sourceFile, valuesFile);
+            files.delete(file);
           }
         }
         
@@ -113,7 +119,8 @@ dataController.addFiles = async (req, res, next) => {
         console.log(file_path, 'is a file, so adding it');
         const fileName = path.basename(file_path);
         if (!(/[Cc]hart\.yaml$/.test(fileName)) && !(/[Vv]alues\.yaml$/.test(fileName)) && /\.yaml$/i.test(fileName)) {
-          await saveFile(file_path);
+          await saveFile(file_path, sourceFile, valuesFile);
+          files.delete(file);
         }
       }
 
@@ -158,22 +165,6 @@ dataController.getTemplate = async () => {
     return next({
       log: `Error in dataController.getTemplate: ${err}`,
       message: { err: 'Error getting template from database' }
-    });
-  }
-}
-
-// on chart upload send top level chart and values files to client
-dataController.getTopLevelFiles = async () => {
-  const { chartName, valuesName } = req.body;
-  try {
-    const chart = await models.DataModel.findOne({name: chartName});
-    const values = await models.DataModel.findOne({name: valuesName});
-    res.locals.topLevelFiles = [chart, values];
-    return next();
-  } catch (err) {
-    return next({
-      log: `Error in dataController.getTopLevelFiles: ${err}`,
-      message: { err: 'Error retrieving top level chart and values files'}
     });
   }
 }
