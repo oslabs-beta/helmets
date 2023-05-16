@@ -35,66 +35,116 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/public/index.html'));
 });
 
-//CREATE DIRECTORY
+//CREATE DIRECTORY SYNC
 app.post('/check-directory', (req, res) => {
-  
+
   const { filePath } = req.body;
   const directoryPath = path.join(__dirname, 'uploads', filePath);
-  console.log('*** POST received at /check-directory ', directoryPath);
-
-  // Check if the directory exists. if it does not, create it.
-  fs.stat(directoryPath, (err, stats) => {
-    if (err) {
-      if (err.code === 'ENOENT') {
-        fs.mkdir(directoryPath, { recursive: true }, 
-          (err) => {
-            if (err) {
-              console.log('error encountered while making directory');
-              console.error(err);
-              res.status(500).send('Internal Server Error @ fs.mkdir : ', err);
-            } else {
-              console.log(`*** Directory created: ${directoryPath}`);
-              res.status(201).send('Directory created');
-            }
-          }
-        );
-      } else {
-        // Other error
-        console.error('Error encountered when checking if directory exists', err);
-        res.status(500).send('Internal Server Error');
-      }
-    } else {
-      // Directory exists
-      res.status(200).send('Directory exists');
+  console.log(`*** Check-Directory: ${filePath}`);
+  
+  //CHECK IF FOLDER ALREADY EXISTS
+  try {
+    const stats = fs.statSync(directoryPath);
+    if (stats.isDirectory()) {
+      console.log('DIRECTORY EXISTS: ', filePath );
     }
-  });
+  } 
+  //FOLDER CHECK FAILED SO MAKE A FOLDER
+  catch (err) {
+    if (err.code === 'ENOENT') {
+      //CREATE DIRECTORY
+      try {
+        fs.mkdirSync(directoryPath, { recursive: true });
+        console.log(`*** Directory created: ${directoryPath}`);
+      } 
+      catch (err) {
+        console.error('Error encountered while making directory');
+        console.error(err);
+        return res.status(500).send('Internal Server Error @ fs.mkdirSync');
+      }
+      //VERIFY DIRECTORY
+      try {
+        const stats2 = fs.statSync(directoryPath);
+        if (stats2.isDirectory()) {
+          console.log(`*** Verified ${directoryPath} has been successfully created`)
+        }
+      } catch (err) {
+        console.log(`${directoryPath} not found. *** DO SOMETHING HERE ***`)
+        return res.status(500).send('folder verify failed');
+      }
+    } 
+    else {
+      // Other error
+      console.error('Error encountered when checking if directory exists', err);
+      res.status(500).send('Internal Server Error');
+    }
+  }
+
+  return res.status(200).send('server folder structure ready');
+
 });
 
 //SAVE UPLOADED FILE TO ./UPLOADS
 app.post('/upload', 
   upload.fields([{name: 'files'}, {name: 'filePath'}]), 
-  (req, res) => {res.status(201).send('file uploaded')}
+  (req, res) => { return res.status(201).send('file uploaded'); }
 );
 
-//MOVE FILE
+//MOVE FILE SYNCHRONOUS
 app.post('/move-file', (req, res) => {
-  console.log('*** Move File');
   const { filePath, fileName } = req.body;
-  console.log('*** Move file ', fileName, ' to ', filePath);
 
-  const source = path.join(__dirname, `/uploads/${fileName}`);
-  const dest = path.join(__dirname, `${filePath}${fileName}`);
-  console.log('')
-  fs.copyFile(
-    source, 
-    dest, 
-    (err) => {
-      if(err) {console.log('err encountered while copying file: ', err)}
-      res.status(500);
-    });
+  const source = path.join(__dirname, `uploads/${fileName}`);
+  const dest = path.join(__dirname, `uploads/${filePath}${fileName}`);
+  console.log('*** Move from ', source, ' to ', dest);
 
-  res.status(201);
+  //COPY FILE
+  try {
+
+    //copy file from uploads folder to proper destination
+    fs.copyFileSync(source, dest);
+  }
+  catch {(err) => {
+    console.log('error encountered while moving file: ', err);
+    return res.status(500).send('move error');
+  }}
+  //VERIFY COPIED FILE IS IN PLACE
+  try {
+    console.log(`*** ${fileName} copied`)
+    const stats = fs.statSync(dest);
+    if (stats.isFile()) {
+      console.log('*** Verified file exists: ', dest );
+    }
+  }
+  catch { (err) => {
+    console.log('*** FILE VERIFICATION FAILED --> DO SOMETHING HERE');
+    res.status(500).send('copy fail');
+  }}
+
+  return res.status(200).send(`${fileName} copied`);
 });
+
+// DELETE FILE SYNCHRONOUS
+app.post('/delete-file', (req, res) => {
+
+  console.log('*** Delete File');
+  const { fileName } = req.body;
+  console.log('*** Delete file ', fileName);
+
+  const source = path.join(__dirname, `./uploads/${fileName}`);
+
+  //DELETE FILE FROM UPLOADS
+  try{
+  fs.unlinkSync(source);
+  }
+  catch{ (err) => {
+    console.log('error encountered while deleting file:', err);
+    res.status(500).send('deletion error');
+    }
+  };
+  
+  return res.status(200).send(`${fileName} deleted`);
+})
 
 // POST to /chart
 app.post('/chart',
@@ -130,3 +180,80 @@ app.use((err, req, res) => {
 });
 
 app.listen(PORT, () => console.log('listening on', PORT));
+
+// //CREATE DIRECTORY
+// app.post('/check-directory', (req, res) => { 
+//   const { filePath } = req.body;
+//   const directoryPath = path.join(__dirname, 'uploads', filePath);
+//   console.log('*** POST received at /check-directory ', directoryPath);
+//   // Check if the directory exists. if it does not, create it.
+//   fs.stat(directoryPath, (err, stats) => {
+//     if (err) {
+//       if (err.code === 'ENOENT') {
+//         fs.mkdir(directoryPath, { recursive: true }, 
+//           (err) => {
+//             if (err) {
+//               console.log('error encountered while making directory');
+//               console.error(err);
+//               res.status(500).send('Internal Server Error @ fs.mkdir : ', err);
+//             } else {
+//               console.log(`*** Directory created: ${directoryPath}`);
+//               res.status(201).send('Directory created');
+//             }
+//           }
+//         );
+//       } else {
+//         // Other error
+//         console.error('Error encountered when checking if directory exists', err);
+//         res.status(500).send('Internal Server Error');
+//       }
+//     } else {
+//       // Directory exists
+//       res.status(200).send('Directory exists');
+//     }
+//   });
+// });
+
+
+// //MOVE FILE
+// app.post('/move-file', (req, res) => {
+//   console.log('*** Move File');
+//   const { filePath, fileName } = req.body;
+//   console.log('*** Move file ', fileName, ' to ', filePath);
+//   const source = path.join(__dirname, `uploads/${fileName}`);
+//   const dest = path.join(__dirname, `uploads/${filePath}${fileName}`);
+//   //copy file from uploads folder to proper destination
+//   fs.copyFileSync(
+//     source, 
+//     dest, 
+//     (err) => {
+//       console.log(`*** copying file from ${source} to ${dest}`);
+//       if(err) {
+//         console.log('err encountered while copying file: ', err)
+//         res.status(500).send('file copy error');
+//       }
+//       else {
+//         console.log(`${fileName} copied successfully`);
+//         res.status(200).send('file copied successfully');
+//       }
+//     }
+//   );
+// });
+
+//DELETE FILE
+// app.post('/delete-file', (req, res) => {
+//   console.log('*** Delete File');
+//   const { fileName } = req.body;
+//   console.log('*** Delete file ', fileName);
+//   const source = path.join(__dirname, `./uploads/${fileName}`);
+//   //Delete original file
+//   fs.unlink(
+//     source, 
+//     (err) => {
+//       if(err) {
+//         console.log('error encountered while deleting file: ', err);
+//         res.status(500).send('deletion failed')
+//       }
+//     }
+//   );
+// })
