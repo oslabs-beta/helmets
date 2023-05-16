@@ -8,6 +8,7 @@ import ReactFlow, {
   useEdgesState,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import ObjectNode from '../object-node/object-node.jsx';
 // import './Flow.scss';
 
 import {
@@ -18,13 +19,20 @@ import {
 const onInit = (reactFlowInstance) =>
   console.log('flow loaded:', reactFlowInstance);
 
+// adding to nodeTypes prop - unsure if necessary
+const nodeTypes = { object: ObjectNode };
+
+// pass in nodes/ edges to add a new nodeType
 export default function Flow() {
+  // const nodeTypes = useMemo(() => ({ special: ObjectNode }), []);
+
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   return (
     <section className="flow-container">
       <ReactFlow
+        nodeTypes={nodeTypes}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
@@ -33,6 +41,7 @@ export default function Flow() {
         fitView
         attributionPosition="top-right"
       >
+        <ObjectNode draggable="true" />
         <MiniMap
           nodeStrokeColor={(n) => {
             if (n.style?.background) return n.style.background;
