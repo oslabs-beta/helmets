@@ -86,14 +86,25 @@ const Header = () => {
       data.append('filePath', filePath);
 
       console.log('current file: ', filePath, file.name);
-      await checkServerFolderStructure(data); //POST to /check-directory
-      await uploadFile(data); //POST to /upload
-      await moveFile(data); //POST to /move-file
-      await deleteFile(data); //POST to /delete-file
+      await checkServerFolderStructure(data);     //POST to /check-directory  << creates folder structure on server
+      await uploadFile(data);                     //POST to /upload           << uploads current file to server/uploads
+      await moveFile(data);                       //POST to /move-file        << copies file from server/uploads to server/ <recreated file structure>    
+      await deleteFile(data);                     //POST to /delete-file      << deletes file from server/uploads
 
       data.delete('files');
       data.delete('filePath');
     }
+
+    // POST to /chart to populate db
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const response = await fetch('http://localhost:3000/chart', options);
+    const topLevelFiles = await response.json();
+    console.log('CHART AND VALUES: ', topLevelFiles);
   };
 
   //recreates folder structure on server
