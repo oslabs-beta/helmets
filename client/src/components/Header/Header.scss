@@ -1,0 +1,71 @@
+@import '../../variables.scss';
+
+header {
+  box-sizing: border-box;
+  display: flex;
+  height: 20vh;
+  border: 1px solid $testPink;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px;
+}
+
+.chart-picker {
+  background-color: blanchedalmond;
+  width: 20vw;
+}
+
+.file-display {
+  width: 50vw;
+
+  .list-display {
+    background-color: aliceblue;
+    height: 10vh;
+    overflow-y: scroll;
+    width: 100%;
+    padding: 10px;
+    margin: 10px;
+    scrollbar-color: $testPink;
+
+    ul {
+      margin: 10px;
+      padding-left: 20px;
+
+      li {
+        margin-top: 5px;
+        height: '6em';
+        overflow-y: 'auto';
+      }
+    }
+  }
+
+  // add some conditional logic for hover only if form has content
+  // make variables for button design
+  button {
+    float: right;
+    margin-right: 10px;
+    @include button($testPink, $primaryBlack);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  overflow: visible;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #bdbdbd;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #757575;
+}
+
+/* For Firefox */
+// scrollbar-color: #bdbdbd transparent;
+// scrollbar-width: thin;

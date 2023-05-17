@@ -1,0 +1,20 @@
+@use 'sass:color';
+
+$primaryBlack: #22292f;
+$secondaryBlack: #60647b;
+$tertiaryBlack: #8795a1;
+
+$primaryWhite: #fff;
+
+$testPink: rgb(242, 16, 140);
+
+@mixin button($bg-color, $text-color) {
+  background-color: $bg-color;
+  color: $text-color;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  &:hover {
+    background-color: adjust-hue($bg-color, 90);
+  }
+}

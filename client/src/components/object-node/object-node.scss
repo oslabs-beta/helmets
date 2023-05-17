@@ -1,0 +1,12 @@
+@import '../../variables.scss';
+
+.object-node {
+  height: 50px;
+  border: 1px solid $testPink;
+  padding: 5px;
+  border-radius: 5px;
+  background: white;
+  display: inline-block;
+  width: fit-content;
+  height: fit-content;
+}
