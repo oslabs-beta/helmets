@@ -14,8 +14,9 @@ app.get('/', (req, res) => {
 
 // helmets-specific routes
 // POST to /chart
-app.post('/chart', dataController.addFiles, (req, res) => {
-  res.status(200).json(res.locals.responseData)
+app.post('/chart', dataController.deleteData, dataController.addFiles, (req, res) => {
+  // console.log('res locals: ', res.locals.topChart);
+  res.status(200).json(res.locals);
 });
 
 // GET to /chart
@@ -34,7 +35,7 @@ app.use((req, res)=> {
 });
 
 // global error handler
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   const defaultError = {
     log: 'Express error handler caught unknown middleware error',
     status: 500,
