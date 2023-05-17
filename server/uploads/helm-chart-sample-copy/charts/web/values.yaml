@@ -1,2 +1,0 @@
-fullnameOverride: "demo-k8s-web-override" 
-replicaCount: 10

@@ -1,5 +1,0 @@
-dependencies:
-  - name: backend
-    condition: installToggle.backend
-  - name: web
-    condition: installToggle.web

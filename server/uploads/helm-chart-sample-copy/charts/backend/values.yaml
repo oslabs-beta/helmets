@@ -1,2 +1,0 @@
-fullnameOverride: "demo-k8s-backend-override" 
-replicaCount: 5
