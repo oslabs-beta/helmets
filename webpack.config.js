@@ -27,6 +27,11 @@ module.exports = {
         test: /\.(sa|sc|c)ss$/,
         use: ['style-loader', 'css-loader', 'sass-loader'],
       },
+      {
+        test: /\.ttf$/i,
+        // use: ['file-loader'],
+        type: 'asset/resource',
+      },
     ],
   },
   plugins: [
