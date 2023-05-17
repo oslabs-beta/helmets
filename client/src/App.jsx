@@ -1,6 +1,6 @@
 import React from 'react';
 import Flow from './components/Flow/Flow.jsx';
-import Header from './components/Header/Header.jsx';
+import Header from './components/Header/Header/Header.jsx';
 
 import './App.scss';
 
