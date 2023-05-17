@@ -1,12 +1,15 @@
 @use 'sass:color';
 
+$darkBlue: #011526;
+$mediumBlue: #023059;
+$mainBlue: #035aa6;
+$lightBlue: #91bbf2;
+
 $primaryBlack: #22292f;
 $secondaryBlack: #60647b;
 $tertiaryBlack: #8795a1;
 
 $primaryWhite: #fff;
-
-$testPink: rgb(242, 16, 140);
 
 @mixin button($bg-color, $text-color) {
   background-color: $bg-color;
