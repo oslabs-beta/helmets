@@ -24,7 +24,8 @@ dataController.deleteData = async (req, res, next) => {
 
 //on initial load of chart folder
 dataController.addFiles = async (req, res, next) => {
-  
+  res.locals.filePathsArray = [];
+
   // helper function to actually add the file
   const saveFile = async (filePath, sourceFile, valuesFile) => {
     console.log('filePath in SaveFile is ', filePath);
@@ -48,6 +49,15 @@ dataController.addFiles = async (req, res, next) => {
       file.source = sourceFile;
       // values
       file.values = valuesFile;
+
+      // add file path
+      const regex = /\/uploads\/(.*)/;
+      const match = regex.exec(relative_path);
+      // console.log('MATCH: ',match);
+      const pathAfterUploads = match[1];
+      file.filePath = pathAfterUploads;
+      // save on locals so front-end can retrieve it
+      res.locals.filePathsArray.push(pathAfterUploads);
       // add doc to db
       // console.log('file to convert to doc is: ', file);
       let doc = await models.DataModel.create(file);
@@ -154,11 +164,12 @@ dataController.addFiles = async (req, res, next) => {
     // if file -> create data model and add to db
 
 //when selecting from dropdown
-dataController.getTemplate = async () => {
+dataController.getTemplate = async (req, res, next) => {
   // retrieve specified file from DB 
-  const fileName = req.body.fileName;
+  const { filePath } = req.body;
+  console.log("request to getTemplate, filePath is:", filePath);
   try {
-    const data = await models.DataModel.findOne({name: fileName});
+    const data = await models.DataModel.findOne({filePath: filePath});
     res.locals.responseData = data;
     return next();
   } catch (err) {
@@ -170,7 +181,61 @@ dataController.getTemplate = async () => {
 }
 
 //when selecting value on manifest or template
-dataController.getPath = (req, res, next) => {
+dataController.getPath = async (req, res, next) => {
+  res.locals.pathArray = [];
+
+  // from front end, receive:
+    // target value
+    // target manifest/template
+  const { targetValue, targetPath } = req.body;
+  const doc = await models.DataModel.findOne({filePath: targetPath});
+  res.locals.pathArray.push(doc);
+
+  const checkValues = (valObj, targetVal) => {
+    // check if its arr or obj 1st
+    if (Array.isArray(valObj)){
+      for (const el of valObj) {
+        if (Array.isArray(el) || typeof el === "object") {
+          // recurse again, passing in el & target
+          if (checkValues(el, targetVal)) {
+            return true;
+          }
+        } else if (el === targetVal) {
+          return true;
+        }
+      }
+    } else {
+      for (const key in valObj) {
+        if (Array.isArray(valObj[key]) || typeof valObj[key] === "object") {
+          // recurse again, passing in el & target
+          if (checkValues(valObj[key], targetVal)) {
+            return true;
+          }
+        } else if ( valObj[key] === targetVal ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+
+  const navigateFile = async (currentFile) => {
+    // if source and values are null, we are at top level
+    // reverse pathArray so that 0 is the source values file, and n is the target template/etc
+    if (!currentFile.source && !currentFile.values) return res.locals.pathArray.reverse();
+    // check target file values file, see if it contains target value
+    const valDoc = await models.DataModel.findOne({_id: currentFile.values})
+    if (checkValues(valDoc.fileContent, targetValue)) {
+      // if yes, add to pathArray
+      res.locals.pathArray.push(valDoc);
+    }  
+    // recurse into source file values, if it exists
+    const sourceDoc = await models.DataModel.findOne({_id: currentFile.source});
+    navigateFile(sourceDoc);
+  }
+
+  navigateFile(doc);
   next();
 }
 
