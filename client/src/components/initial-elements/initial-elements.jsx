@@ -58,7 +58,7 @@ function makeNodes(dataArray) {
       id: `${i}`,
       type: `${type}`,
       data: {
-        label: `${dataArray[i].join(' : ')}`,
+        label: `${JSON.stringify(dataArray[i])}`,
       },
       position: { x: x, y: y },
     });
@@ -76,4 +76,4 @@ function makeNodes(dataArray) {
   }
 }
 
-makeNodes(chartArray);
+makeNodes(path);
