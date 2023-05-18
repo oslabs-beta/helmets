@@ -18,7 +18,7 @@ $borderRadius: 5px;
 
 @mixin button($bg-color, $text-color) {
   background-color: $bg-color;
-  color: $primaryWhite;
+  color: $text-color;
   font-family: $fontRegular;
   font-weight: 600;
   padding: 5px 20px;
@@ -26,7 +26,7 @@ $borderRadius: 5px;
   border-radius: $borderRadius;
   cursor: pointer;
   &:hover {
-    background-color: $primaryWhite;
+    background-color: $text-color;
     border: 2px $bg-color;
     color: $bg-color;
   }

@@ -44,7 +44,7 @@ header {
   button {
     float: right;
     margin-right: 10px;
-    @include button($mainBlue, $primaryBlack);
+    @include button($mainBlue, $primaryWhite);
   }
 }
 
