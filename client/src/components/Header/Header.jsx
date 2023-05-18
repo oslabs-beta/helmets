@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Header.scss';
-import logo from '../../assets/Helmets.png';
+import logo from '../../assets/Helmets_logo_white.png';
 
 const Header = ({ handleChange, submitChart }) => {
   //helper function to clear the unordered list in the header and reset the input target to nothing
@@ -15,39 +15,41 @@ const Header = ({ handleChange, submitChart }) => {
     }
     return;
   };
-  
+
   return (
     /* react fragment now semantic header*/
     <header>
-      <img style={{ height: '100%' }} src={logo} />
-      <div className="chart-picker">
-        <form
-          encType="multipart/form-data"
-          method="post"
-          className="input-form"
-        >
-          <input
-            id="chartPicker"
-            type="file"
-            name="uploaded_file"
-            onChange={handleChange}
-            directory=""
-            webkitdirectory=""
-            mozdirectory=""
-          />
-        </form>
-      </div>
-      <div className="file-display">
-        <div className="list-display">
-          <ul title="Relative Path" id="fileInfo"></ul>
+      <img style={{ height: '110%' }} src={logo} />
+      <div className="input-container">
+        <div className="chart-picker">
+          <form
+            encType="multipart/form-data"
+            method="post"
+            className="input-form"
+          >
+            <input
+              id="chartPicker"
+              type="file"
+              name="uploaded_file"
+              onChange={handleChange}
+              directory=""
+              webkitdirectory=""
+              mozdirectory=""
+            />
+          </form>
         </div>
-        <button style={{ height: 'auto' }} onClick={() => resetHeader()}>
-          Clear Selection
-        </button>
+        <div className="file-display">
+          <div className="list-display">
+            <ul title="Relative Path" id="fileInfo"></ul>
+          </div>
+          <button style={{ height: 'auto' }} onClick={() => resetHeader()}>
+            Clear Selection
+          </button>
 
-        <button id="submitBtn" onClick={() => submitChart()}>
-          Submit Chart
-        </button>
+          <button id="submitBtn" onClick={() => submitChart()}>
+            Submit Chart
+          </button>
+        </div>
       </div>
     </header>
   );

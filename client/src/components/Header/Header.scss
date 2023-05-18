@@ -3,8 +3,7 @@
 header {
   box-sizing: border-box;
   display: flex;
-  height: 20vh;
-  border: 1px solid $mainBlue;
+  height: 25vh;
   justify-content: space-around;
   align-items: center;
   padding: 10px;
@@ -19,13 +18,14 @@ header {
   width: 50vw;
 
   .list-display {
-    background-color: aliceblue;
+    background-color: $primaryWhite;
     height: 10vh;
     overflow-y: scroll;
     width: 100%;
     padding: 10px;
     margin: 10px;
     scrollbar-color: $mainBlue;
+    border-radius: $borderRadius;
 
     ul {
       margin: 10px;
@@ -67,5 +67,5 @@ header {
 }
 
 /* For Firefox */
-// scrollbar-color: #bdbdbd transparent;
-// scrollbar-width: thin;
+// ::scrollbar-color: #bdbdbd transparent;
+// ::scrollbar-width: thin;

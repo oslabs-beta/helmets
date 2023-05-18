@@ -1,4 +1,7 @@
 @use 'sass:color';
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600&display=swap');
+
+$fontRegular: 'Source Sans Pro', sans-serif;
 
 $darkBlue: #011526;
 $mediumBlue: #023059;
@@ -7,17 +10,24 @@ $lightBlue: #91bbf2;
 
 $primaryBlack: #22292f;
 $secondaryBlack: #60647b;
-$tertiaryBlack: #8795a1;
+$tertiaryBlack: #bdbdbd;
 
-$primaryWhite: #fff;
+$primaryWhite: #fefefe;
+
+$borderRadius: 5px;
 
 @mixin button($bg-color, $text-color) {
   background-color: $bg-color;
-  color: $text-color;
-  padding: 10px 20px;
-  border: none;
+  color: $primaryWhite;
+  font-family: $fontRegular;
+  font-weight: 600;
+  padding: 5px 20px;
+  border: 2px;
+  border-radius: $borderRadius;
   cursor: pointer;
   &:hover {
-    background-color: adjust-hue($bg-color, 90);
+    background-color: $primaryWhite;
+    border: 2px $bg-color;
+    color: $bg-color;
   }
 }
