@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -23,11 +23,43 @@ const onInit = (reactFlowInstance) =>
 const nodeTypes = { object: ObjectNode };
 
 // pass in nodes/ edges to add a new nodeType
-export default function Flow({ topLevelChart, topLevelValues }) {
+export default function Flow({ topLevelChart, topLevelValues, filePathsArray }) {
   // const nodeTypes = useMemo(() => ({ special: ObjectNode }), []);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [selectedTemplate, setSelectedTemplate] = useState();
+
+  const dropdownItems = filePathsArray.map((option, index) => 
+    (
+    <option key={index} value={option}>
+      {option}
+    </option>
+    )
+  )
+
+  const handleDropdown = async (e) => {
+    //try fetch request PUT @ /chart
+    try {
+      console.log('Attempting to PUT to get template data');
+      const options = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({filePath: e.target.value})
+      }
+      const response = await fetch('http://www.localhost:3000/chart', options);
+      const docModel = await response.json();
+      console.log('docModel returned from DB:', docModel);
+
+      setSelectedTemplate(docModel); //test
+    }
+    catch (err) { 
+      console.log('Error in request to get selected chart!');
+    }
+
+  }
 
   return (
     <div id="tempContainer">
@@ -42,6 +74,14 @@ export default function Flow({ topLevelChart, topLevelValues }) {
         </div>
       </div>
       <section className="flow-container">
+        <select
+          value={selectedTemplate}
+          onChange={e => handleDropdown(e)}
+        >
+          {dropdownItems}
+        </select>
+
+        <pre>Selected Template: {JSON.stringify(selectedTemplate, null, 2)}</pre>
         <ReactFlow
           // nodeTypes={nodeTypes}
           nodes={nodes}
