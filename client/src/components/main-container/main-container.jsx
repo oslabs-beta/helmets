@@ -5,8 +5,16 @@ import Flow from '../Flow/Flow.jsx';
 const MainContainer = () => {
   const [buttonText, setButtonText] = useState('Select Chart');
   const [fileCache, setfileCache] = useState({ files: undefined });
+  const [topLevelChart, setTopLevelChart] = useState('No Chart Selected');
+  const [topLevelValues, setTopLevelValues] = useState('No Values Selected');
 
-  //helper function to clear the unordered list in the header and reset the input target to nothing
+  const setChartValues = (topLevelChart, topLevelValues) => {
+    setTopLevelChart(topLevelChart);
+    setTopLevelValues(topLevelValues);
+    return;
+  };
+
+  //helperr function to clear the unordered list in the header and reset the input target to nothing
   const resetHeader = (listEl) => {
     const inputTarget = document.getElementById('chartPicker');
     if (listEl.childElementCount > 0) {
@@ -103,7 +111,8 @@ const MainContainer = () => {
       };
       const response = await fetch('http://localhost:3000/chart', options);
       const topLevelFiles = await response.json();
-      console.log('CHART AND VALUES: ', topLevelFiles);
+      console.log('CHART AND VALUES: ', topLevelFiles); // << contains topChart && topValues
+      setChartValues(topLevelFiles.topChart, topLevelFiles.topValues);
     }
   };
 
@@ -170,7 +179,7 @@ const MainContainer = () => {
   return (
     <div>
       <Header handleChange={handleChange} submitChart={submitChart} />
-      <Flow />
+      <Flow topLevelChart={topLevelChart} topLevelValues={topLevelValues} />
     </div>
   );
 };

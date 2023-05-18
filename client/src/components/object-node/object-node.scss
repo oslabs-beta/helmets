@@ -5,8 +5,8 @@
   border: 1px solid $mainBlue;
   padding: 5px;
   border-radius: 5px;
-  background: white;
   display: inline-block;
   width: fit-content;
-  height: fit-content;
+  height: 50%;
+  overflow: scroll;
 }
