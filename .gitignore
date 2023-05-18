@@ -5,3 +5,4 @@ package-lock.json
 helm-chart-sample
 .env
 yaml_testing
+uploads

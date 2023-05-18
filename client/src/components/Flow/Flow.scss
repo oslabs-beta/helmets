@@ -5,3 +5,14 @@
   height: 75vh;
   border: 1px solid #000;
 }
+
+#tempContainer {
+  display: flex;
+}
+
+#chart {
+  height: 50%;
+  width: 200px;
+  background-color: blanchedalmond;
+  display: block;
+}

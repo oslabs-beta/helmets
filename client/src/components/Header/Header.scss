@@ -4,7 +4,7 @@ header {
   box-sizing: border-box;
   display: flex;
   height: 20vh;
-  border: 1px solid $testPink;
+  border: 1px solid $mainBlue;
   justify-content: space-around;
   align-items: center;
   padding: 10px;
@@ -25,7 +25,7 @@ header {
     width: 100%;
     padding: 10px;
     margin: 10px;
-    scrollbar-color: $testPink;
+    scrollbar-color: $mainBlue;
 
     ul {
       margin: 10px;
@@ -44,7 +44,7 @@ header {
   button {
     float: right;
     margin-right: 10px;
-    @include button($testPink, $primaryBlack);
+    @include button($mainBlue, $primaryBlack);
   }
 }
 
