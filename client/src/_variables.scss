@@ -31,3 +31,28 @@ $borderRadius: 5px;
     color: $bg-color;
   }
 }
+
+@mixin sideChart($bg-color, $text-color) {
+  font-family: $fontRegular;
+  width: 400px;
+  padding: 10px;
+  color: $text-color;
+  background-color: $bg-color;
+  border-radius: $borderRadius;
+  margin: 10px;
+
+  h3 {
+    font-family: $fontRegular;
+    font-weight: 600;
+    text-align: center;
+    color: $mainBlue;
+    margin: 0;
+    // padding: 10px;
+    border-radius: $borderRadius;
+  }
+  pre {
+    height: 80%;
+    overflow: scroll;
+    margin-top: 10px;
+  }
+}

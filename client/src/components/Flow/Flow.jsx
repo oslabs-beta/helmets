@@ -34,11 +34,11 @@ export default function Flow({ topLevelChart, topLevelValues }) {
       <div id="dataContainer">
         <div id="chart">
           <h3>{topLevelChart.name}</h3>
-          {JSON.stringify(topLevelChart.fileContent)}
+          <pre>{JSON.stringify(topLevelChart.fileContent, null, 2)}</pre>
         </div>
         <div id="values">
           <h3>{topLevelValues.name}</h3>
-          {JSON.stringify(topLevelValues.fileContent)}
+          <pre>{JSON.stringify(topLevelValues.fileContent, null, 2)}</pre>
         </div>
       </div>
       <section className="flow-container">
@@ -55,8 +55,8 @@ export default function Flow({ topLevelChart, topLevelValues }) {
           <MiniMap
             nodeStrokeColor={(n) => {
               if (n.style?.background) return n.style.background;
-              if (n.type === 'input') return '#0041d0';
-              if (n.type === 'output') return '#ff0072';
+              if (n.type === 'input') return '#035aa6';
+              if (n.type === 'output') return '#91bbf2';
               if (n.type === 'default') return '#1a192b';
 
               return '#eee';

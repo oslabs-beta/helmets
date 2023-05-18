@@ -19,7 +19,7 @@ header {
 
   .list-display {
     background-color: $primaryWhite;
-    height: 10vh;
+    height: 8vh;
     overflow-y: scroll;
     width: 100%;
     padding: 10px;
@@ -30,6 +30,8 @@ header {
     ul {
       margin: 10px;
       padding-left: 20px;
+      font-family: $fontRegular;
+      color: $primaryBlack;
 
       li {
         margin-top: 5px;
