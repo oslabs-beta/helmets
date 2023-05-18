@@ -30,6 +30,7 @@ const dataModelSchema = new Schema({
     default: null
   },
   fileContent: {type: Object, required:true},
+  filePath:{ type: String, required: true},
   timeRun: {type: Date, default: () => Date.now()}
 });
 
