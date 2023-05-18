@@ -15,7 +15,7 @@ const Header = ({ handleChange, submitChart }) => {
     }
     return;
   };
-
+  
   return (
     /* react fragment now semantic header*/
     <header>
