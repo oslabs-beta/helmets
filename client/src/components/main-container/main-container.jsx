@@ -15,7 +15,6 @@ const MainContainer = () => {
         listEl.removeChild(listEl.firstChild);
       }
     }
-
     // const submitBtn = document.getElementById('submitBtn');
     // submitBtn.style.display = 'none';
 
@@ -95,6 +94,16 @@ const MainContainer = () => {
         data.delete('files');
         data.delete('filePath');
       }
+      // POST to /chart to populate db, return necessary files
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+      const response = await fetch('http://localhost:3000/chart', options);
+      const topLevelFiles = await response.json();
+      console.log('CHART AND VALUES: ', topLevelFiles);
     }
   };
 
