@@ -7,10 +7,12 @@ const MainContainer = () => {
   const [fileCache, setfileCache] = useState({ files: undefined });
   const [topLevelChart, setTopLevelChart] = useState('No Chart Selected');
   const [topLevelValues, setTopLevelValues] = useState('No Values Selected');
+  const [filePathsArray, setFilePathsArray] = useState( [] );
 
-  const setChartValues = (topLevelChart, topLevelValues) => {
+  const setChartValues = (topLevelChart, topLevelValues, filePathsArray) => {
     setTopLevelChart(topLevelChart);
     setTopLevelValues(topLevelValues);
+    setFilePathsArray(filePathsArray)
     return;
   };
 
@@ -112,7 +114,7 @@ const MainContainer = () => {
       const response = await fetch('http://localhost:3000/chart', options);
       const topLevelFiles = await response.json();
       console.log('CHART AND VALUES: ', topLevelFiles); // << contains topChart && topValues
-      setChartValues(topLevelFiles.topChart, topLevelFiles.topValues);
+      setChartValues(topLevelFiles.topChart, topLevelFiles.topValues, topLevelFiles.filePathsArray);
     }
   };
 
@@ -179,7 +181,7 @@ const MainContainer = () => {
   return (
     <div>
       <Header handleChange={handleChange} submitChart={submitChart} />
-      <Flow topLevelChart={topLevelChart} topLevelValues={topLevelValues} />
+      <Flow topLevelChart={topLevelChart} topLevelValues={topLevelValues} filePathsArray={filePathsArray} />
     </div>
   );
 };
