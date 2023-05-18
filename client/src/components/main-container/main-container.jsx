@@ -5,9 +5,18 @@ import Flow from '../Flow/Flow.jsx';
 const MainContainer = () => {
   const [buttonText, setButtonText] = useState('Select Chart');
   const [fileCache, setfileCache] = useState({ files: undefined });
-  const [topLevelChart, setTopLevelChart] = useState('No Chart Selected');
-  const [topLevelValues, setTopLevelValues] = useState('No Values Selected');
+
+  const [topLevelChart, setTopLevelChart] = useState({
+    value: 'No Chart Selected',
+    name: 'No Chart Selected',
+  });
+  const [topLevelValues, setTopLevelValues] = useState({
+    value: 'No Values Selected',
+    name: 'No Values Selected',
+  });
+
   const [filePathsArray, setFilePathsArray] = useState( [] );
+
 
   const setChartValues = (topLevelChart, topLevelValues, filePathsArray) => {
     setTopLevelChart(topLevelChart);

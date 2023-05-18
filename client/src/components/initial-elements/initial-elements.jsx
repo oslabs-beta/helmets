@@ -69,9 +69,9 @@ function makeNodes(dataArray) {
       animated: true,
       markerEnd: {
         type: MarkerType.ArrowClosed,
-        color: 'purple',
+        color: '#035aa6;',
       },
-      style: { stroke: '#f6ab6c' },
+      style: { stroke: '#035aa6' },
     });
   }
 }
