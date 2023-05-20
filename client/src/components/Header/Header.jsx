@@ -19,25 +19,29 @@ const Header = ({ handleChange, submitChart }) => {
   return (
     /* react fragment now semantic header*/
     <header>
-      <img style={{ height: '110%' }} src={logo} />
+      <img
+        style={{ height: '110%' }}
+        src={logo}
+        alt="logo image of three spartan helmets with the text helmets underneath"
+      />
       <div className="input-container">
-        <div className="chart-picker">
-          <form
-            encType="multipart/form-data"
-            method="post"
-            className="input-form"
-          >
-            <input
-              id="chartPicker"
-              type="file"
-              name="uploaded_file"
-              onChange={handleChange}
-              directory=""
-              webkitdirectory=""
-              mozdirectory=""
-            />
-          </form>
-        </div>
+        {/* <div className="chart-picker"> */}
+        <form
+          encType="multipart/form-data"
+          method="post"
+          className="input-form"
+        >
+          <input
+            className="custom-file-input"
+            type="file"
+            name="uploaded_file"
+            onChange={handleChange}
+            directory=""
+            webkitdirectory=""
+            mozdirectory=""
+          />
+        </form>
+        {/* </div> */}
         <div className="file-display">
           <div className="list-display">
             <ul title="Relative Path" id="fileInfo"></ul>
