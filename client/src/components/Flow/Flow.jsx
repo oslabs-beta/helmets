@@ -11,23 +11,28 @@ import 'reactflow/dist/style.css';
 import ObjectNode from '../object-node/object-node.jsx';
 import './Flow.scss';
 
+import createNodes from './createNodes.js';
+
 import {
   nodes as initialNodes,
-  edges as initialEdges,
+  edges as edges,
 } from '../initial-elements/initial-elements.jsx';
+
+import bodyNode from './Node-Types/bodyNode';
+
+const nodeTypes = {
+  bodyNode: bodyNode
+}
 
 const onInit = (reactFlowInstance) =>
   console.log('flow loaded:', reactFlowInstance);
 
-// adding to nodeTypes prop - unsure if necessary
-const nodeTypes = { object: ObjectNode };
-
 // pass in nodes/ edges to add a new nodeType
-export default function Flow({ topLevelChart, topLevelValues, filePathsArray }) {
+  export default function Flow ({ topLevelChart, topLevelValues, filePathsArray }) {
   // const nodeTypes = useMemo(() => ({ special: ObjectNode }), []);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  // const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedTemplate, setSelectedTemplate] = useState();
 
   const dropdownItems = filePathsArray.map((option, index) => 
@@ -37,6 +42,8 @@ export default function Flow({ topLevelChart, topLevelValues, filePathsArray }) 
     </option>
     )
   )
+
+  const handleNodeClick = (e, node) => {console.log('clicked node: ', node)};
 
   const handleDropdown = async (e) => {
     //try fetch request PUT @ /chart
@@ -54,6 +61,8 @@ export default function Flow({ topLevelChart, topLevelValues, filePathsArray }) 
       console.log('docModel returned from DB:', docModel);
 
       setSelectedTemplate(docModel); //test
+      const nodeArr = createNodes(docModel.fileContent, docModel.name);
+      setNodes(nodeArr);
     }
     catch (err) { 
       console.log('Error in request to get selected chart!');
@@ -81,16 +90,17 @@ export default function Flow({ topLevelChart, topLevelValues, filePathsArray }) 
           {dropdownItems}
         </select>
 
-        <pre>Selected Template: {JSON.stringify(selectedTemplate, null, 2)}</pre>
+        {/* <pre>Selected Template: {JSON.stringify(selectedTemplate, null, 2)}</pre> */}
         <ReactFlow
-          // nodeTypes={nodeTypes}
+          nodeTypes={nodeTypes}
           nodes={nodes}
-          edges={edges}
+          // edges={edges}
           onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
+          // onEdgesChange={onEdgesChange}
           onInit={onInit}
           fitView
           attributionPosition="top-right"
+          onNodeClick={handleNodeClick}
         >
           <MiniMap
             nodeStrokeColor={(n) => {
