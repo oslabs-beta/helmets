@@ -21,45 +21,14 @@ header {
   &::file-selector-button {
     @include button($mainBlue, $primaryWhite);
   }
-  &::placeholder {
-    color: aquamarine;
-  }
 }
-
-// input[type='file']::file-selector-button {
-//   @include button($mainBlue, $primaryWhite);
-// }
-
-// .custom-file-input {
-//   &::-webkit-file-upload-button {
-//     visibility: hidden;
-//   }
-//   &::before {
-//     color: $primaryWhite;
-//     content: 'Choose File';
-//     @include button($mainBlue, $primaryWhite);
-//     display: inline-block;
-
-//     -webkit-user-select: none;
-//   }
-//   &:hover::before {
-//     background-color: $primaryWhite;
-//     border: 2px $mainBlue;
-//     color: $mainBlue;
-//   }
-//   // .custom-file-input:active::before {
-//   //   // background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
-//   // }
-// }
 
 .file-display {
   width: 50vw;
 
   .list-display {
     background-color: $primaryWhite;
-
     height: 8vh;
-
     overflow-y: scroll;
     width: 100%;
     padding: 10px;

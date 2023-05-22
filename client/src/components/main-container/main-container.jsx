@@ -15,13 +15,12 @@ const MainContainer = () => {
     name: 'No Values Selected',
   });
 
-  const [filePathsArray, setFilePathsArray] = useState( [] );
-
+  const [filePathsArray, setFilePathsArray] = useState([]);
 
   const setChartValues = (topLevelChart, topLevelValues, filePathsArray) => {
     setTopLevelChart(topLevelChart);
     setTopLevelValues(topLevelValues);
-    setFilePathsArray(filePathsArray)
+    setFilePathsArray(filePathsArray);
     return;
   };
 
@@ -82,6 +81,7 @@ const MainContainer = () => {
 
   //sends files to server one at a time to checkServerFolderStructure then uploadFile (called on button click)
   const submitChart = async () => {
+    document.getElementById('submitBtn').innerText = 'Loading Chart';
     const list = document.getElementById('fileInfo');
     if (list.childElementCount <= 0) {
       console.log('nothing to upload');
@@ -123,8 +123,17 @@ const MainContainer = () => {
       const response = await fetch('http://localhost:3000/chart', options);
       const topLevelFiles = await response.json();
       console.log('CHART AND VALUES: ', topLevelFiles); // << contains topChart && topValues
-      setChartValues(topLevelFiles.topChart, topLevelFiles.topValues, topLevelFiles.filePathsArray);
+      setChartValues(
+        topLevelFiles.topChart,
+        topLevelFiles.topValues,
+        topLevelFiles.filePathsArray
+      );
     }
+    // reset button text + clear inner text to show user things are happening
+    document.getElementById('submitBtn').innerText = 'Submit Chart';
+    document.getElementById('fileInfo').innerText = '';
+    const inputTarget = document.getElementById('chartPicker');
+    inputTarget.reset();
   };
 
   //recreates folder structure on server
@@ -190,7 +199,11 @@ const MainContainer = () => {
   return (
     <div>
       <Header handleChange={handleChange} submitChart={submitChart} />
-      <Flow topLevelChart={topLevelChart} topLevelValues={topLevelValues} filePathsArray={filePathsArray} />
+      <Flow
+        topLevelChart={topLevelChart}
+        topLevelValues={topLevelValues}
+        filePathsArray={filePathsArray}
+      />
     </div>
   );
 };

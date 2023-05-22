@@ -6,13 +6,10 @@ const Header = ({ handleChange, submitChart }) => {
   //helper function to clear the unordered list in the header and reset the input target to nothing
   const resetHeader = () => {
     const fileInfo = document.getElementById('fileInfo');
-    // const inputTarget = document.getElementById('chartPicker');
-    if (fileInfo.childElementCount > 0) {
-      chartPicker.value = '';
-      while (fileInfo.firstChild) {
-        fileInfo.removeChild(fileInfo.firstChild);
-      }
-    }
+    const inputTarget = document.getElementById('chartPicker');
+    // reset the form + clear list of files
+    inputTarget.reset();
+    document.getElementById('fileInfo').innerText = '';
     return;
   };
 
@@ -30,6 +27,7 @@ const Header = ({ handleChange, submitChart }) => {
           encType="multipart/form-data"
           method="post"
           className="input-form"
+          id="chartPicker"
         >
           <input
             className="custom-file-input"
