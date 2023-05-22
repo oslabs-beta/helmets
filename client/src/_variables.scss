@@ -16,6 +16,9 @@ $primaryWhite: #fefefe;
 
 $borderRadius: 5px;
 
+$buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
+  inset 0 0 30px $secondaryBlack;
+
 @mixin button($bg-color, $text-color) {
   background-color: $bg-color;
   color: $text-color;
@@ -29,6 +32,11 @@ $borderRadius: 5px;
     background-color: $text-color;
     border: 2px $bg-color;
     color: $bg-color;
+  }
+  &:active {
+    // box-shadow: $buttonShadowActive;
+    transform: scale(0.95);
+    box-shadow: 3px 2px 10px 1px $primaryBlack;
   }
 }
 
