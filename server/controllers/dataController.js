@@ -4,6 +4,7 @@ const yaml = require('js-yaml');
 const path = require('path');
 const parser = require('../_parser/manual_parser');
 const { ADDRCONFIG } = require('dns');
+const { trace } = require('console');
 
 const sampleChartPath =
   '../../helm-chart-sample/charts/backend/templates/configmap-appsettings.yaml';
@@ -187,7 +188,7 @@ dataController.getTemplate = async (req, res, next) => {
 };
 
 //when selecting value on manifest or template
-dataController.getPath = async (req, res, next) => {
+dataController.deprecatedGetPath = async (req, res, next) => {
   res.locals.pathArray = [];
 
   // from front end, receive:
@@ -243,6 +244,93 @@ dataController.getPath = async (req, res, next) => {
 
   navigateFile(doc);
   next();
+};
+
+/********************************************************** getPath *******************************************************/
+/*
+Used to retrieve data flow path for a given value at given template
+Currently configured to handle any detected {{ }} Go expression with a .Values. reference
+*/
+dataController.getPath = async (req, res, next) => {
+  // get initial values from client request, retrieve corresponding template from DB, create path arr
+  const { targetVal, targetPath } = req.body;
+  const pathArr = [];
+  let keysArr = [];
+  // let extendedKeysArr = [...keysArr];
+
+  // logic for building the path, invokes helpers, returns nothing but updates pathArr
+  const buildPath = async (doc, valuesDoc, extendedKeysArr = [...keysArr]) => {
+    if (valuesDoc) {
+      // check to see if inital key path work in the values file. 
+      // if no, need to add key for each chart and test that
+      if (!traceKeyPath(doc, valuesDoc, valuesDoc.fileContent, keysArr)) {
+        let currentChart = doc;
+        // this loop is for checking additional variants of the keyPath, 
+        // adding on the name of each chart as a key (for detecting nested)
+        while (currentChart.source !== null) {
+          // re-invoke traceKeyPath passing in updated keysArr, w/ name unshifted 
+          const sourceDoc = await models.DataModel.findOne({_id: currentChart.source})
+          const chartName = sourceDoc.fileContent.name;
+          // extendedKeysArr = chartName ? [...extendedKeysArr] : undefined;
+          if (chartName){
+            extendedKeysArr.unshift(chartName);
+            traceKeyPath(currentChart, valuesDoc, valuesDoc.fileContent, extendedKeysArr);
+          }
+          currentChart = sourceDoc;
+        }
+      }
+
+      // next step is to iterate upwards regardless of a successful path match at first file, because we may have additional files to trace through
+      console.log('checking doc source for values');
+      let nextValues = await models.DataModel.findOne({_id: valuesDoc.values});
+      console.log('nextValues: ', nextValues);
+      while (nextValues) {
+        console.log('attempting to check upwards');
+        await buildPath(doc, nextValues);
+        const _nextValues = await models.DataModel.findOne({_id: nextValues.values});
+        nextValues = _nextValues ? _nextValues : undefined;
+      }
+    }
+  }
+    
+  const traceKeyPath = (doc, valuesDoc, obj, keysArr = keysArr) => {
+    console.log('keysArr is: ', keysArr);
+    const localKeysArr = [...keysArr];
+    let current = obj;
+    let validPath = true;
+    // check to see if pathArr exists in valuesDoc
+    for (const key of localKeysArr) {
+      if (current && typeof current === 'object' && key in current) {
+        current = current[key];
+      } else {
+        validPath = false;
+      }
+    }
+    if (validPath) {
+      pathArr.push(valuesDoc);
+    }
+    return validPath;
+  }
+
+
+  try {
+    const doc = await models.DataModel.findOne({filePath: targetPath});
+    pathArr.push(doc);
+
+    const valRegex = /\.Values\.(\S*)/;
+    const match = targetVal.match(valRegex);
+    keysArr = [...match[1].split('.')];
+    const docValues = await models.DataModel.findOne({_id: doc.values});
+    await buildPath(doc, docValues);
+    console.log("completed pathArr is: ", pathArr);
+    res.locals.pathArray = pathArr.reverse();
+    return next();
+  } catch (err) {
+    return next({
+      log: `Error in dataController.getPath: ${err}`,
+      message: { err: 'Error getting path for selected template/value' },
+    });
+  }
 };
 
 module.exports = dataController;
