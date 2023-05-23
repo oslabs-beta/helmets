@@ -5,6 +5,8 @@ import path from '../../../../server/sample_data/sample_path_payload.js';
 
 import './initial-elements.scss';
 
+import bodyNode from '../Flow/Node-Types/bodyNode.js';
+
 console.log('path: ', path);
 
 // nodes are in an array
@@ -13,7 +15,9 @@ console.log('path: ', path);
 // how do we pass props?
 // how do we update state?
 
-export const nodes = [];
+export const nodeTypes = {
+  bodyNode: bodyNode
+};
 
 export const edges = [];
 
@@ -49,7 +53,7 @@ const chartArray = Object.entries(fakeChart);
 
 function makeNodes(dataArray) {
   for (let i = 0; i < dataArray.length; i++) {
-    let type = 'default';
+    let type = 'bodyNode';
     if (i === 0) type = 'input';
     if (i === dataArray.length - 1) type = 'output';
     let x = 100 * i;
@@ -76,4 +80,4 @@ function makeNodes(dataArray) {
   }
 }
 
-makeNodes(path);
+// makeNodes(path);
