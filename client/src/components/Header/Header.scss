@@ -9,9 +9,23 @@ header {
   padding: 10px;
 }
 
-.chart-picker {
-  background-color: blanchedalmond;
-  width: 20vw;
+// custom file input class styling (webkit specific)
+// Webkit/Blink/Chrome specific styling, there is a proprietary pseudo element to hide, and then use an also non-standard psudeo-on-an-input
+// hide the file upload button
+// :: before pseudo element- creates element that is first child of the selected element.
+// It is often used to add cosmetic content to an element with the content property.
+
+.custom-file-input {
+  color: $primaryWhite;
+
+  &::file-selector-button {
+    @include button($mainBlue, $primaryWhite);
+    &:hover {
+      background-color: $primaryWhite;
+      border: 2px $mainBlue;
+      color: $mainBlue;
+    }
+  }
 }
 
 .file-display {
@@ -19,9 +33,7 @@ header {
 
   .list-display {
     background-color: $primaryWhite;
-
     height: 8vh;
-
     overflow-y: scroll;
     width: 100%;
     padding: 10px;

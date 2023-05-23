@@ -172,7 +172,7 @@ app.post('/chart', dataController.deleteData, dataController.addFiles, (req, res
 
 // GET to /chart
 app.put('/chart', dataController.getTemplate, (req, res) => {
-  res.status(200).json(res.locals.responseData)
+  res.status(200).json(res.locals.responseData);
 });
 
 // GET to /path
