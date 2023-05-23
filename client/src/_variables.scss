@@ -27,16 +27,21 @@ $buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
   padding: 5px 20px;
   border: 2px;
   border-radius: $borderRadius;
+  height: auto;
   cursor: pointer;
-  &:hover {
+  &:hover:not([disabled]) {
     background-color: $text-color;
     border: 2px $bg-color;
     color: $bg-color;
   }
-  &:active {
+  &:active:not([disabled]) {
     // box-shadow: $buttonShadowActive;
     transform: scale(0.95);
     box-shadow: 3px 2px 10px 1px $primaryBlack;
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 

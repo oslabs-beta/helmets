@@ -20,6 +20,11 @@ header {
 
   &::file-selector-button {
     @include button($mainBlue, $primaryWhite);
+    &:hover {
+      background-color: $primaryWhite;
+      border: 2px $mainBlue;
+      color: $mainBlue;
+    }
   }
 }
 

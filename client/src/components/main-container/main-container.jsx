@@ -5,6 +5,7 @@ import Flow from '../Flow/Flow.jsx';
 const MainContainer = () => {
   const [buttonText, setButtonText] = useState('Select Chart');
   const [fileCache, setfileCache] = useState({ files: undefined });
+  const [disabled, setDisabled] = useState(true);
 
   const [topLevelChart, setTopLevelChart] = useState({
     value: 'No Chart Selected',
@@ -41,6 +42,7 @@ const MainContainer = () => {
 
   // The handleChange() function to allow user to select a folder. contents are displayed.
   const handleChange = async (event) => {
+    console.log('HANDLE CHANGE');
     //selected folders saved to state
     fileCache.files = event.target.files;
 
@@ -70,13 +72,13 @@ const MainContainer = () => {
         error
       );
     }
-    //makes the submit button visible
-    try {
-      const submitBtn = document.getElementById('submitBtn');
-      submitBtn.style.display = 'block';
-    } catch (error) {
-      console.log('ERROR: ', error);
-    }
+    //makes the submit button active
+    // try {
+    //   const submitBtn = document.getElementById('submitBtn');
+    //   submitBtn.removeAttribute('disabled');
+    // } catch (error) {
+    //   console.log('ERROR: ', error);
+    // }
   };
 
   //sends files to server one at a time to checkServerFolderStructure then uploadFile (called on button click)

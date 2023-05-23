@@ -44,7 +44,7 @@ const Header = ({ handleChange, submitChart }) => {
           <div className="list-display">
             <ul title="Relative Path" id="fileInfo"></ul>
           </div>
-          <button style={{ height: 'auto' }} onClick={() => resetHeader()}>
+          <button onClick={() => resetHeader()} id="clearBtn">
             Clear Selection
           </button>
 
