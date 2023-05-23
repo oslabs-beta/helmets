@@ -75,6 +75,7 @@ const MainContainer = () => {
   const submitChart = async () => {
     document.getElementById('submitBtn').innerText = 'Loading Chart';
     setDisabled(true);
+    document.body.style.cursor = 'wait';
     const list = document.getElementById('fileInfo');
     if (list.childElementCount <= 0) {
       console.log('nothing to upload');
@@ -127,6 +128,7 @@ const MainContainer = () => {
     document.getElementById('fileInfo').innerText = '';
     const inputTarget = document.getElementById('chartPicker');
     inputTarget.reset();
+    document.body.style.cursor = 'default';
     // re-disable
     setDisabled(true);
   };

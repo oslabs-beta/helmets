@@ -4,9 +4,20 @@ header {
   box-sizing: border-box;
   display: flex;
   height: 25vh;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
   padding: 10px;
+}
+
+.img-container {
+  width: 450px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  img {
+    height: 100%;
+  }
 }
 
 // custom file input class styling (webkit specific)
@@ -17,6 +28,9 @@ header {
 
 .custom-file-input {
   color: $primaryWhite;
+  float: left;
+  display: block;
+  margin-left: 10px;
 
   &::file-selector-button {
     @include button($mainBlue, $primaryWhite);
@@ -60,6 +74,7 @@ header {
   button {
     float: right;
     margin-right: 10px;
+    display: block;
     @include button($mainBlue, $primaryWhite);
   }
 }
