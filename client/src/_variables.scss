@@ -16,6 +16,9 @@ $primaryWhite: #fefefe;
 
 $borderRadius: 5px;
 
+$buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
+  inset 0 0 30px $secondaryBlack;
+
 @mixin button($bg-color, $text-color) {
   background-color: $bg-color;
   color: $text-color;
@@ -24,11 +27,21 @@ $borderRadius: 5px;
   padding: 5px 20px;
   border: 2px;
   border-radius: $borderRadius;
+  height: auto;
   cursor: pointer;
-  &:hover {
+  &:hover:not([disabled]) {
     background-color: $text-color;
     border: 2px $bg-color;
     color: $bg-color;
+  }
+  &:active:not([disabled]) {
+    // box-shadow: $buttonShadowActive;
+    transform: scale(0.95);
+    box-shadow: 3px 2px 10px 1px $primaryBlack;
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 
