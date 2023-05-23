@@ -1,9 +1,6 @@
 
-
-const createNodes = (fileContents, fileName) => {
-  console.log('INSIDE CREATE NODES');
+const createNodes = (fileContents, fileName, filePath) => {
   
-
   const nodesArray = [];
   let i = 0;
   let y = 0;
@@ -11,13 +8,15 @@ const createNodes = (fileContents, fileName) => {
 
   const parentNode = {
     id: 'parentNode',
+    type: 'group',
     data: {label: fileName},
     position: { x: 0, y: 0 },
     style: { 
       backgroundColor: 'rgba(255, 0, 0, 0.2)', 
       width: 250, 
       height: 250
-    }
+    },
+    expandParent: true
   };
   nodesArray.push(parentNode);
 
@@ -33,7 +32,7 @@ const createNodes = (fileContents, fileName) => {
         // create node for key (this node will become parent for nested nodes)
         y += 20;
 
-        const keyNode = createNodeObj(++i, key.toString(), x, y);
+        const keyNode = createNodeObj(++i, key.toString(), x, y, filePath);
         nodesArray.push(keyNode);
 
         x += 25;
@@ -46,7 +45,7 @@ const createNodes = (fileContents, fileName) => {
         console.log('ARRAY FOUND');
         // create node for key (this node will become parent for nested nodes)
         y += 20;
-        const newNode = createNodeObj(++i, key.toString(), x, y);
+        const newNode = createNodeObj(++i, key.toString(), x, y, filePath);
         // newNode.position = {x: x, y: yPosition};
         // yPosition += 25;
         nodesArray.push(newNode);
@@ -63,7 +62,7 @@ const createNodes = (fileContents, fileName) => {
         const data = key.toString().trim() + ': ' + val.toString().trim();
         console.log('string created: \n', data);
         y += 20;
-        const newNode = createNodeObj(++i, data, x, y);
+        const newNode = createNodeObj(++i, data, x, y, filePath);
         // newNode.position = {x: x, y: yPosition};
         // yPosition += 25
         nodesArray.push(newNode);
@@ -78,18 +77,17 @@ const createNodes = (fileContents, fileName) => {
   // need to keep track of parent/child/group type ??
 
   nodesArray[0].style.height = (22 * (nodesArray.length) + (4 * nodesArray.length - 1));
-  console.log('new HEIGHT: ', nodesArray[0].style.height = (22 * (nodesArray.length)))
 
   return nodesArray;
 }
 
 // creates new node from current key-value pair
-const createNodeObj = (idVal, dataVal, x, y) => {
+const createNodeObj = (idVal, dataVal, x, y, filePath) => {
   console.log(`x: ${x}  y: ${y}`);
   const newNode = {
     id: idVal.toString(),
     type: 'bodyNode',
-    data: { label: dataVal },
+    data: { label: dataVal, path: filePath.toString()},
     position: { x: x, y: y },
     parentNode: 'parentNode',
     extent: 'parent',

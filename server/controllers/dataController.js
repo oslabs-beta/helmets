@@ -316,7 +316,7 @@ dataController.getPath = async (req, res, next) => {
   try {
     const doc = await models.DataModel.findOne({filePath: targetPath});
     pathArr.push(doc);
-
+    console.log('doc is: ', doc);
     const valRegex = /\.Values\.(\S*)/;
     const match = targetVal.match(valRegex);
     keysArr = [...match[1].split('.')];
