@@ -14,8 +14,6 @@ export default memo(({ data, isConnectable }) => {
       <div style={{backgroundColor: 'aliceblue', }}>
         <p>{data.label}</p>
       </div>
-      <div style={{display: 'none'}}>
-      </div>
       <Handle
         type="source"
         position={Position.Right}
