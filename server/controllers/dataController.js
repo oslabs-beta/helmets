@@ -254,52 +254,48 @@ Currently configured to handle any detected {{ }} Go expression with a .Values. 
 dataController.getPath = async (req, res, next) => {
   // get initial values from client request, retrieve corresponding template from DB, create path arr
   const { targetVal, targetPath } = req.body;
-  const pathArr = [];
-  let keysArr = [];
-  // let extendedKeysArr = [...keysArr];
+  const dataFlowPath = [];
+  let keyPath = [];
 
-  // logic for building the path, invokes helpers, returns nothing but updates pathArr
-  const buildPath = async (doc, valuesDoc, extendedKeysArr = [...keysArr]) => {
+  // logic for building the path, invokes helpers, returns nothing but updates dataFlowPath
+  const buildPath = async (doc, valuesDoc, nestedChartKeyPath = [...keyPath]) => {
     if (valuesDoc) {
       // check to see if inital key path work in the values file. 
       // if no, need to add key for each chart and test that
-      if (!traceKeyPath(doc, valuesDoc, valuesDoc.fileContent, keysArr)) {
+      if (!traceKeyPath(doc, valuesDoc, valuesDoc.fileContent, keyPath)) {
         let currentChart = doc;
         // this loop is for checking additional variants of the keyPath, 
         // adding on the name of each chart as a key (for detecting nested)
         while (currentChart.source !== null) {
-          // re-invoke traceKeyPath passing in updated keysArr, w/ name unshifted 
+          // re-invoke traceKeyPath passing in updated keyPath, w/ name unshifted 
           const sourceDoc = await models.DataModel.findOne({_id: currentChart.source})
           const chartName = sourceDoc.fileContent.name;
-          // extendedKeysArr = chartName ? [...extendedKeysArr] : undefined;
           if (chartName){
-            extendedKeysArr.unshift(chartName);
-            traceKeyPath(currentChart, valuesDoc, valuesDoc.fileContent, extendedKeysArr);
+            nestedChartKeyPath.unshift(chartName);
+            traceKeyPath(currentChart, valuesDoc, valuesDoc.fileContent, nestedChartKeyPath);
           }
           currentChart = sourceDoc;
         }
       }
 
-      // next step is to iterate upwards regardless of a successful path match at first file, because we may have additional files to trace through
-      console.log('checking doc source for values');
+      // next step is to iterate upwards regardless of a successful path match at first file, 
+      // because the user may have additional value files in the chart
       let nextValues = await models.DataModel.findOne({_id: valuesDoc.values});
-      console.log('nextValues: ', nextValues);
       while (nextValues) {
-        console.log('attempting to check upwards');
         await buildPath(doc, nextValues);
         const _nextValues = await models.DataModel.findOne({_id: nextValues.values});
         nextValues = _nextValues ? _nextValues : undefined;
       }
     }
   }
-    
-  const traceKeyPath = (doc, valuesDoc, obj, keysArr = keysArr) => {
-    console.log('keysArr is: ', keysArr);
-    const localKeysArr = [...keysArr];
+  
+  // helperFn that will check a given values.yaml file to see if it contains input keyPath
+  // iterates through each key in object, returns false if any key in keyPath array is absent
+  const traceKeyPath = (doc, valuesDoc, obj, localKeyPath = keyPath) => {
     let current = obj;
     let validPath = true;
-    // check to see if pathArr exists in valuesDoc
-    for (const key of localKeysArr) {
+    // check to see if dataFlowPath exists in valuesDoc
+    for (const key of localKeyPath) {
       if (current && typeof current === 'object' && key in current) {
         current = current[key];
       } else {
@@ -307,24 +303,43 @@ dataController.getPath = async (req, res, next) => {
       }
     }
     if (validPath) {
-      pathArr.push(valuesDoc);
+      dataFlowPath.push(valuesDoc);
     }
     return validPath;
   }
 
-
+  // try/catch block to invoke helper functions to build keyPath
+  // keyPath is based on a regex match on the selected template value
+  // includes specific error handling for nonexistent template & values files
+  // generic error handling for any additional errors
   try {
-    const doc = await models.DataModel.findOne({filePath: targetPath});
-    pathArr.push(doc);
+    const selectedDoc = await models.DataModel.findOne({filePath: targetPath});
+    
+    if (!selectedDoc) {
+      return next({
+        log: `Error in dataController.getPath: selectedDoc found in DB`,
+        message: { err: 'Error: selected template does not exist in DB' },
+      });
+    }
+
+    dataFlowPath.push(selectedDoc);
 
     const valRegex = /\.Values\.(\S*)/;
     const match = targetVal.match(valRegex);
-    keysArr = [...match[1].split('.')];
-    const docValues = await models.DataModel.findOne({_id: doc.values});
-    await buildPath(doc, docValues);
-    console.log("completed pathArr is: ", pathArr);
-    res.locals.pathArray = pathArr.reverse();
-    return next();
+    keyPath = [...match[1].split('.')];
+    const docValues = await models.DataModel.findOne({_id: selectedDoc.values});
+    
+    if (docValues) {
+      await buildPath(selectedDoc, docValues);
+      res.locals.dataFlowPath = dataFlowPath.reverse();
+      return next();
+    } else {
+      return next({
+        log: `Error in dataController.getPath: no values file found in DB`,
+        message: { err: 'Error: selected template does not have a values file' },
+      });
+    }
+
   } catch (err) {
     return next({
       log: `Error in dataController.getPath: ${err}`,

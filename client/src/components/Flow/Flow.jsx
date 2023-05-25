@@ -12,6 +12,7 @@ import ObjectNode from '../object-node/object-node.jsx';
 import './Flow.scss';
 
 import createNodes from './createNodes.js';
+import samplePath from '../../../../server/sample_data/sample_path_payload'
 
 import {
   nodes as initialNodes,
@@ -43,7 +44,40 @@ const onInit = (reactFlowInstance) =>
     )
   )
 
-  const handleNodeClick = (e, node) => {console.log('clicked node: ', node)};
+  const handleNodeClick = async (e, node) => {
+    const targetPath = node.data.path;
+    // need to change bc some entries have more than one colon
+    const targetVal = node.data.label.split(': ')[1].trim();
+    console.log('targetValue', targetVal)
+    try {
+      console.log('Attempting to PUT to get template data');
+      const options = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({targetVal: targetVal, targetPath: targetPath})
+      }
+      const response = await fetch('http://www.localhost:3000/path', options);
+      //server returns array of documents
+      const pathArray = await response.json();
+      // const pathArray = samplePath;
+      console.log('pathArray returned from DB:', pathArray);
+      let nodeArray = [];
+      // call createNodes() on each file in array
+      pathArray.forEach(doc => {
+        //create a parent node
+        //shift parent node to [0] index
+        nodeArray = [...nodeArray, ...createNodes(doc.fileContent, doc.name, doc.filePath)];
+      });
+      // render all files
+      console.log('NODE ARRAY ', nodeArray);
+      setNodes(nodeArray);
+    }
+    catch (err) {
+      console.log('ERROR in handleNodeClick ', err);
+    }
+  };
 
   const handleDropdown = async (e) => {
     //try fetch request PUT @ /chart
@@ -61,7 +95,7 @@ const onInit = (reactFlowInstance) =>
       console.log('docModel returned from DB:', docModel);
 
       setSelectedTemplate(docModel); //test
-      const nodeArr = createNodes(docModel.fileContent, docModel.name);
+      const nodeArr = createNodes(docModel.fileContent, docModel.name, e.target.value);
       setNodes(nodeArr);
     }
     catch (err) { 
