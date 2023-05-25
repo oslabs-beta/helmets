@@ -41,6 +41,7 @@ const Header = ({ handleChange, submitChart, disabled, resetHeader }) => {
               directory=""
               webkitdirectory=""
               mozdirectory=""
+              // disabled={disabled}
             />
           </form>
           <button
