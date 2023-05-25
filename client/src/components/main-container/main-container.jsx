@@ -25,24 +25,21 @@ const MainContainer = () => {
     return;
   };
 
-  //helperr function to clear the unordered list in the header and reset the input target to nothing
-  const resetHeader = (listEl) => {
+  // helperr function to clear the unordered list in the header and reset the input target to nothing
+  const resetHeader = () => {
+    const fileInfo = document.getElementById('fileInfo');
     const inputTarget = document.getElementById('chartPicker');
-    if (listEl.childElementCount > 0) {
-      chartPicker.value = '';
-      while (listEl.firstChild) {
-        listEl.removeChild(listEl.firstChild);
-      }
-    }
-    // const submitBtn = document.getElementById('submitBtn');
-    // submitBtn.style.display = 'none';
-
+    // reset the form + clear list of files
+    inputTarget.reset();
+    document.getElementById('fileInfo').innerText = '';
+    setDisabled(true);
     return;
   };
 
   // The handleChange() function to allow user to select a folder. contents are displayed.
   const handleChange = async (event) => {
-    console.log('HANDLE CHANGE');
+    // enable buttons to clear/ submit
+    setDisabled(false);
     //selected folders saved to state
     fileCache.files = event.target.files;
 
@@ -72,18 +69,13 @@ const MainContainer = () => {
         error
       );
     }
-    //makes the submit button active
-    // try {
-    //   const submitBtn = document.getElementById('submitBtn');
-    //   submitBtn.removeAttribute('disabled');
-    // } catch (error) {
-    //   console.log('ERROR: ', error);
-    // }
   };
 
   //sends files to server one at a time to checkServerFolderStructure then uploadFile (called on button click)
   const submitChart = async () => {
     document.getElementById('submitBtn').innerText = 'Loading Chart';
+    setDisabled(true);
+    document.body.style.cursor = 'wait';
     const list = document.getElementById('fileInfo');
     if (list.childElementCount <= 0) {
       console.log('nothing to upload');
@@ -136,6 +128,9 @@ const MainContainer = () => {
     document.getElementById('fileInfo').innerText = '';
     const inputTarget = document.getElementById('chartPicker');
     inputTarget.reset();
+    document.body.style.cursor = 'default';
+    // re-disable
+    setDisabled(true);
   };
 
   //recreates folder structure on server
@@ -200,7 +195,12 @@ const MainContainer = () => {
 
   return (
     <div>
-      <Header handleChange={handleChange} submitChart={submitChart} />
+      <Header
+        handleChange={handleChange}
+        submitChart={submitChart}
+        disabled={disabled}
+        resetHeader={resetHeader}
+      />
       <Flow
         topLevelChart={topLevelChart}
         topLevelValues={topLevelValues}
