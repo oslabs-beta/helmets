@@ -1,14 +1,19 @@
 const { v4: uuidv4 } = require('uuid');
-const Session = require('../models/sessionModel');
+const models = require('../models/dataModel');
 
 const cookieController = {};
 
 cookieController.setCookie = async (req, res, next) => {
   try {
     const cookie = req.cookies.session_id;
-    // check for cookie in req headers
-    if (!cookie) {
-      // if no cookie -> generate session cookie
+    let session;
+    // if cookie exists, is session still valid?
+    if (cookie) {
+      session = await models.SessionModel.findOne({cookieId: cookie});
+    }
+    // if cookie doesnt exist or session is expired
+    // generate new cookie and start session
+    if (!cookie || !session) {
       const session_id = uuidv4();
       // maxAge?
       const options = {
@@ -18,8 +23,7 @@ cookieController.setCookie = async (req, res, next) => {
       }
       res.cookie('session_id', session_id, options);
       // add session to db
-      const doc = await Session.create({cookieId: session_id});
-      console.log(doc)
+      await models.SessionModel.create({cookieId: session_id});
     }
   } catch (err) {
     next({

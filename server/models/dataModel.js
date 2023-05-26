@@ -47,7 +47,15 @@ const pathSchema = new Schema({
 
 const PathModel = mongoose.model('PathModel', pathSchema);
 
+const sessionSchema = new Schema({
+  cookieId: { type: String, required: true, unique: true },
+  createdAt: { type: Date, expires: 3600, default: Date.now }
+});
+
+const SessionModel = mongoose.model('SessionModel', sessionSchema);
+
 module.exports = {
   DataModel,
-  PathModel
+  PathModel,
+  SessionModel
 };
