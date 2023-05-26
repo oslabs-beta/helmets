@@ -139,7 +139,7 @@ export default function Flow({
             nodeBorderRadius={2}
           />
           <Controls />
-          <Background color="#aaa" gap={16} />
+          <Background color="#035aa6" gap={16} />
           <Panel />
         </ReactFlow>
       </section>

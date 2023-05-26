@@ -1,7 +1,7 @@
 const createNodes = (pathArray) => {
   const nodesArray = [];
   let i = -1;
-  let y = 0;
+  let y = 10;
   let x = 0;
   let parentX = 0;
   const heightIncrement = 18;
@@ -27,7 +27,7 @@ const createNodes = (pathArray) => {
         if (typeof val === 'object' && Array.isArray(val) === false) {
           // if yes ({} or []) -> recurse
           // create node for key (this node will become parent for nested nodes)
-          y += 20;
+          y += 50;
 
           const keyNode = createNodeObj(
             ++i,
@@ -45,7 +45,7 @@ const createNodes = (pathArray) => {
           if (x > 0) x -= 25;
         } else if (Array.isArray(val) === true) {
           // create node for key
-          y += 20;
+          y += 50;
           const newNode = createNodeObj(
             ++i,
             key.toString(),
@@ -67,7 +67,7 @@ const createNodes = (pathArray) => {
           // make key/val pair into string
           const data = key.toString().trim() + ': ' + val.toString().trim();
           // console.log('string created: \n', data);
-          y += 20;
+          y += 50;
           const newNode = createNodeObj(
             ++i,
             data,
@@ -108,9 +108,11 @@ const createParentNode = (idVal, dataVal, parentX, filePath) => {
     },
     position: { x: parentX, y: 0 },
     style: {
-      backgroundColor: 'rgba(255, 0, 0, 0.2)',
+      backgroundColor: '#fefefe',
+      border: '1px solid #035aa6',
       width: 250,
       height: 100,
+      borderRadius: 5,
     },
     draggable: false,
   };
