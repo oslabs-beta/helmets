@@ -1,6 +1,4 @@
-
 const createNodes = (pathArray) => {
-
   const nodesArray = [];
   let i = -1;
   let y = 0;
@@ -8,48 +6,61 @@ const createNodes = (pathArray) => {
   let parentX = 0;
   const heightIncrement = 18;
 
-  pathArray.forEach(doc => {
+  pathArray.forEach((doc) => {
     const fileContent = doc.fileContent;
     const filePath = doc.filePath;
     const parentNode = createParentNode(++i, doc.name, parentX, filePath);
     parentX += 800;
     nodesArray.push(parentNode);
-    nodesArray.push(createNodeObj(++i, doc.name, x, y, filePath, parentNode.id));
+    nodesArray.push(
+      createNodeObj(++i, doc.name, x, y, filePath, parentNode.id)
+    );
     nodesArray[Number(parentNode.id)].style.height += heightIncrement;
 
     //iterates through the file object that holds the contents of the selected file
     const readObject = (currObj) => {
-
-      console.log('INSIDE readObject()')
+      console.log('INSIDE readObject()');
       // iterate through the file object, create nodes for each line, set x and y position relative to parent
       for (const key in currObj) {
         const val = currObj[key];
         // for each key, check if val is obj or primitive
-        if (typeof(val) === 'object' && Array.isArray(val) === false) {
+        if (typeof val === 'object' && Array.isArray(val) === false) {
           // if yes ({} or []) -> recurse
           // create node for key (this node will become parent for nested nodes)
           y += 20;
 
-          const keyNode = createNodeObj(++i, key.toString(), x, y, filePath, parentNode.id);
+          const keyNode = createNodeObj(
+            ++i,
+            key.toString(),
+            x,
+            y,
+            filePath,
+            parentNode.id
+          );
           nodesArray.push(keyNode);
           nodesArray[Number(parentNode.id)].style.height += heightIncrement;
 
           x += 25;
           readObject(val);
-          if(x > 0 ) x -= 25;
-          
-        }
-        else if (Array.isArray(val) === true) {
+          if (x > 0) x -= 25;
+        } else if (Array.isArray(val) === true) {
           // create node for key
           y += 20;
-          const newNode = createNodeObj(++i, key.toString(), x, y, filePath, parentNode.id);       
+          const newNode = createNodeObj(
+            ++i,
+            key.toString(),
+            x,
+            y,
+            filePath,
+            parentNode.id
+          );
           nodesArray.push(newNode);
           nodesArray[Number(parentNode.id)].style.height += heightIncrement;
           x += 25;
-          val.forEach(el => {
+          val.forEach((el) => {
             readObject(el);
           });
-          if(x > 0 ) x -= 25;
+          if (x > 0) x -= 25;
         }
         // if no (string/number) -> create node and push to node array
         else {
@@ -57,29 +68,34 @@ const createNodes = (pathArray) => {
           const data = key.toString().trim() + ': ' + val.toString().trim();
           // console.log('string created: \n', data);
           y += 20;
-          const newNode = createNodeObj(++i, data, x, y, filePath, parentNode.id);
+          const newNode = createNodeObj(
+            ++i,
+            data,
+            x,
+            y,
+            filePath,
+            parentNode.id
+          );
           nodesArray.push(newNode);
           nodesArray[Number(parentNode.id)].style.height += heightIncrement;
         }
       }
       // *** end ForIn loop - all lines have been added as nodes to the parent
 
-      //reset x and y to 0 
+      //reset x and y to 0
       x = 0;
       // y = 0;
-    }
+    };
     readObject(fileContent);
     console.log('NODES ARRAY: ', nodesArray);
 
     // nodesArray[Number(parentNode.id)].style.height = (22 * (nodesArray.length) + (4 * nodesArray.length - 1));
     //
-    y = 0
-
+    y = 0;
   });
 
   return nodesArray;
-}
-
+};
 
 const createParentNode = (idVal, dataVal, parentX, filePath) => {
   // console.log('INSIDE CreateParentNode()')
@@ -88,19 +104,19 @@ const createParentNode = (idVal, dataVal, parentX, filePath) => {
     type: 'group',
     data: {
       label: `${dataVal}`,
-      path: filePath.toString()
+      path: filePath.toString(),
     },
-    position: {x: parentX, y: 0},
-    style: { 
-      backgroundColor: 'rgba(255, 0, 0, 0.2)', 
-      width: 250, 
-      height: 16
+    position: { x: parentX, y: 0 },
+    style: {
+      backgroundColor: 'rgba(255, 0, 0, 0.2)',
+      width: 250,
+      height: 16,
     },
-    draggable: false
-  }
-  
+    draggable: false,
+  };
+
   return parentNode;
-}
+};
 
 // creates new node from current key-value pair
 const createNodeObj = (idVal, dataVal, x, y, filePath, parentId) => {
@@ -109,20 +125,15 @@ const createNodeObj = (idVal, dataVal, x, y, filePath, parentId) => {
   const newNode = {
     id: idVal.toString(),
     type: 'bodyNode',
-    data: { label: dataVal, path: filePath.toString()},
+    data: { label: dataVal, path: filePath.toString() },
     position: { x: x, y: y },
     parentNode: `${parentId}`,
     extent: 'parent',
     draggable: false,
-    // style: {
-    //   height: 15,
-    //   padding: 0,
-    //   margin: 0
-    // }
   };
-  
+
   // console.log('NEW NODE:', newNode)
   return newNode;
-}
+};
 
 export default createNodes;

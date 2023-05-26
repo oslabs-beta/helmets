@@ -10,7 +10,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import './Flow.scss';
 import createNodes from './createNodes.js';
-import bodyNode from './Node-Types/bodyNode';
+import bodyNode from './Node-Types/bodyNode.jsx';
 
 const nodeTypes = {
   bodyNode: bodyNode,
