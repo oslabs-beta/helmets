@@ -177,7 +177,7 @@ app.put('/chart', dataController.getTemplate, (req, res) => {
 
 // GET to /path
 app.put('/path', dataController.getPath, (req, res) => {
-  res.status(200).json(res.locals.pathArray);
+  res.status(200).json(res.locals.dataFlowPath);
 });
 
 // unknown route handler 
