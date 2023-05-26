@@ -1,14 +1,24 @@
-.bodyNode {
-  padding: 2px, 10px;
-  margin: 0, 16px, 6px, 16px;
-  background-color: cornflowerblue;
+@import '../../../variables.scss';
+
+.handle-left {
+  background-color: $mainBlue;
 }
 
-.nodeText {
-  height: 16px;
-  padding: 0px;
-  margin: 0px;
-  background-color: aliceblue;
+.handle-right {
+  background-color: $mainBlue;
+}
+
+.bodyNode {
+  padding: 2px;
+  border-radius: $borderRadius;
+  padding: $standardPadding;
+  border: 1px solid $mainBlue;
+  background-color: $primaryWhite;
+  p {
+    margin: 0px !important;
+    font-family: $fontRegular;
+    font-weight: 200;
+  }
 }
 
 .parentNode {

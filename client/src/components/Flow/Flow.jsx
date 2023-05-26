@@ -9,8 +9,8 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './Flow.scss';
-import createNodes from './createNodes.js';
-import bodyNode from './Node-Types/bodyNode';
+import createNodes from './createNodes.jsx';
+import bodyNode from './Node-Types/bodyNode.jsx';
 
 const nodeTypes = {
   bodyNode: bodyNode,
@@ -125,16 +125,16 @@ export default function Flow({
           <MiniMap
             nodeStrokeColor={(n) => {
               if (n.style?.background) return n.style.background;
-              if (n.type === 'input') return '#035aa6';
-              if (n.type === 'output') return '#91bbf2';
+              if (n.type === 'group') return '#035aa6';
+              if (n.type === 'bodyNode') return '#91bbf2';
               if (n.type === 'default') return '#1a192b';
 
-              return '#eee';
+              return '#fefefe';
             }}
             nodeColor={(n) => {
               if (n.style?.background) return n.style.background;
 
-              return '#fff';
+              return '#fefefe';
             }}
             nodeBorderRadius={2}
           />
