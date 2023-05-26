@@ -15,6 +15,21 @@
   height: 75vh;
 }
 
+#dataContainer {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+
+.dropdown {
+  border-radius: $borderRadius;
+  margin-bottom: 10px;
+  align-self: center;
+  padding: 5px 20px;
+  font-family: $fontRegular;
+  width: 50%;
+}
+
 #chart {
   height: 25vh;
   @include sideChart($primaryWhite, $primaryBlack);
