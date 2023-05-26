@@ -1,5 +1,13 @@
 @import '../../../variables.scss';
 
+.handle-left {
+  background-color: $mainBlue;
+}
+
+.handle-right {
+  background-color: $mainBlue;
+}
+
 .bodyNode {
   padding: 2px;
   border-radius: $borderRadius;

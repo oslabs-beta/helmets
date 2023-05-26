@@ -9,7 +9,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './Flow.scss';
-import createNodes from './createNodes.js';
+import createNodes from './createNodes.jsx';
 import bodyNode from './Node-Types/bodyNode.jsx';
 
 const nodeTypes = {

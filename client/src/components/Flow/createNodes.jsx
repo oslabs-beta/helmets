@@ -110,7 +110,7 @@ const createParentNode = (idVal, dataVal, parentX, filePath) => {
     style: {
       backgroundColor: 'rgba(255, 0, 0, 0.2)',
       width: 250,
-      height: 16,
+      height: 100,
     },
     draggable: false,
   };
@@ -129,6 +129,7 @@ const createNodeObj = (idVal, dataVal, x, y, filePath, parentId) => {
     position: { x: x, y: y },
     parentNode: `${parentId}`,
     extent: 'parent',
+    expandParent: true,
     draggable: false,
   };
 
