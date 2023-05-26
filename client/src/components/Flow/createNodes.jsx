@@ -2,7 +2,7 @@ const createNodes = (pathArray) => {
   const nodesArray = [];
   let i = -1;
   let y = 10;
-  let x = 0;
+  let x = 10;
   let parentX = 0;
   const heightIncrement = 18;
 
@@ -42,7 +42,7 @@ const createNodes = (pathArray) => {
 
           x += 25;
           readObject(val);
-          if (x > 0) x -= 25;
+          if (x > 10) x -= 25;
         } else if (Array.isArray(val) === true) {
           // create node for key
           y += 50;
@@ -60,7 +60,7 @@ const createNodes = (pathArray) => {
           val.forEach((el) => {
             readObject(el);
           });
-          if (x > 0) x -= 25;
+          if (x > 10) x -= 25;
         }
         // if no (string/number) -> create node and push to node array
         else {
@@ -83,7 +83,7 @@ const createNodes = (pathArray) => {
       // *** end ForIn loop - all lines have been added as nodes to the parent
 
       //reset x and y to 0
-      x = 0;
+      x = 10;
       // y = 0;
     };
     readObject(fileContent);

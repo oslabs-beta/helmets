@@ -12,8 +12,7 @@
   padding: 2px;
   border-radius: $borderRadius;
   padding: $standardPadding;
-  border: 1px solid $primaryWhite;
-  background-color: $primaryWhite;
+  border: 1px solid transparent;
   color: $primaryBlack;
   p {
     margin: 0px !important;
