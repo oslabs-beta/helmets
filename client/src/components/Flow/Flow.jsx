@@ -125,16 +125,16 @@ export default function Flow({
           <MiniMap
             nodeStrokeColor={(n) => {
               if (n.style?.background) return n.style.background;
-              if (n.type === 'input') return '#035aa6';
-              if (n.type === 'output') return '#91bbf2';
+              if (n.type === 'group') return '#035aa6';
+              if (n.type === 'bodyNode') return '#91bbf2';
               if (n.type === 'default') return '#1a192b';
 
-              return '#eee';
+              return '#fefefe';
             }}
             nodeColor={(n) => {
               if (n.style?.background) return n.style.background;
 
-              return '#fff';
+              return '#fefefe';
             }}
             nodeBorderRadius={2}
           />
