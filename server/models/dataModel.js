@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 require("dotenv").config();
 
-// const MONGO_URI = process.env.MONGO_URI;
-const MONGO_URI = 'mongodb+srv://meganchoi732:LsQIOK8zRhTbOxBG@helmets.ulcyije.mongodb.net/?retryWrites=true&w=majority'
-// const MONGO_URI = 'mongodb+srv://dev-cameron:9vLKMyiMHDMdsX0n@devcluster0.psb6cpk.mongodb.net/?retryWrites=true&w=majority';
+const MONGO_URI = process.env.MONGO_URI
 
 mongoose.connect(MONGO_URI, {
   // options for the connect method to parse the URI
@@ -33,6 +31,7 @@ const dataModelSchema = new Schema({
   },
   fileContent: {type: Object, required:true},
   filePath:{ type: String, required: true},
+  session_id: {type: String, required: true},
   timeRun: {type: Date, default: () => Date.now()}
 });
 
