@@ -1,9 +1,10 @@
 import React, { memo } from 'react';
 import { Handle, Position } from 'reactflow';
+import './bodyNode.scss';
 
 export default memo(({ data, isConnectable }) => {
   return (
-    <>
+    <div className='bodyNode'>
       <Handle
         type="target"
         position={Position.Left}
@@ -12,7 +13,7 @@ export default memo(({ data, isConnectable }) => {
         isConnectable={isConnectable}
       />
       <div style={{backgroundColor: 'aliceblue', }}>
-        <p>{data.label}</p>
+        <p className='nodeText'>{data.label}</p>
       </div>
       <Handle
         type="source"
@@ -21,6 +22,6 @@ export default memo(({ data, isConnectable }) => {
         style={{ background: '#555' }}
         isConnectable={isConnectable}
       />
-    </>
+    </div>
   );
 });

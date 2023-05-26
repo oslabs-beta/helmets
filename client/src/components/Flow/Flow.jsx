@@ -8,17 +8,8 @@ import ReactFlow, {
   useEdgesState,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import ObjectNode from '../object-node/object-node.jsx';
 import './Flow.scss';
-
 import createNodes from './createNodes.js';
-import samplePath from '../../../../server/sample_data/sample_path_payload'
-
-import {
-  nodes as initialNodes,
-  edges as edges,
-} from '../initial-elements/initial-elements.jsx';
-
 import bodyNode from './Node-Types/bodyNode';
 
 const nodeTypes = {
@@ -28,7 +19,7 @@ const nodeTypes = {
 const onInit = (reactFlowInstance) =>
   console.log('flow loaded:', reactFlowInstance);
 
-// pass in nodes/ edges to add a new nodeType
+  // pass in nodes/ edges to add a new nodeType
   export default function Flow ({ topLevelChart, topLevelValues, filePathsArray }) {
   // const nodeTypes = useMemo(() => ({ special: ObjectNode }), []);
 
@@ -63,16 +54,13 @@ const onInit = (reactFlowInstance) =>
       const pathArray = await response.json();
       // const pathArray = samplePath;
       console.log('pathArray returned from DB:', pathArray);
-      let nodeArray = [];
-      // call createNodes() on each file in array
-      pathArray.forEach(doc => {
-        //create a parent node
-        //shift parent node to [0] index
-        nodeArray = [...nodeArray, ...createNodes(doc.fileContent, doc.name, doc.filePath)];
-      });
+      const nodeArray = createNodes(pathArray);
       // render all files
       console.log('NODE ARRAY ', nodeArray);
       setNodes(nodeArray);
+      // set edges
+      // source = node.id
+      // target = 
     }
     catch (err) {
       console.log('ERROR in handleNodeClick ', err);
@@ -94,8 +82,7 @@ const onInit = (reactFlowInstance) =>
       const docModel = await response.json();
       console.log('docModel returned from DB:', docModel);
 
-      setSelectedTemplate(docModel); //test
-      const nodeArr = createNodes(docModel.fileContent, docModel.name, e.target.value);
+      const nodeArr = createNodes([docModel]);
       setNodes(nodeArr);
     }
     catch (err) { 
@@ -124,7 +111,6 @@ const onInit = (reactFlowInstance) =>
           {dropdownItems}
         </select>
 
-        {/* <pre>Selected Template: {JSON.stringify(selectedTemplate, null, 2)}</pre> */}
         <ReactFlow
           nodeTypes={nodeTypes}
           nodes={nodes}
