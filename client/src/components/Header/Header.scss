@@ -10,13 +10,15 @@ header {
 }
 
 .img-container {
-  width: 450px;
+  width: 35vw;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   img {
     height: 100%;
+    left: auto;
+    right: auto;
   }
 }
 
@@ -52,7 +54,8 @@ header {
 }
 
 .file-display {
-  width: 50vw;
+  width: 55vw;
+  margin: 10px;
 
   .list-display {
     background-color: $primaryWhite;

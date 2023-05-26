@@ -49,12 +49,14 @@ $buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
 
 @mixin sideChart($bg-color, $text-color) {
   font-family: $fontRegular;
-  width: 400px;
+  width: 90%;
   padding: 10px;
   color: $text-color;
   background-color: $bg-color;
   border-radius: $borderRadius;
   margin: 10px;
+  left: auto;
+  right: auto;
 
   h3 {
     font-family: $fontRegular;
