@@ -13,42 +13,44 @@ import createNodes from './createNodes.js';
 import bodyNode from './Node-Types/bodyNode';
 
 const nodeTypes = {
-  bodyNode: bodyNode
-}
+  bodyNode: bodyNode,
+};
 
 const onInit = (reactFlowInstance) =>
   console.log('flow loaded:', reactFlowInstance);
 
-  // pass in nodes/ edges to add a new nodeType
-  export default function Flow ({ topLevelChart, topLevelValues, filePathsArray }) {
+// pass in nodes/ edges to add a new nodeType
+export default function Flow({
+  topLevelChart,
+  topLevelValues,
+  filePathsArray,
+}) {
   // const nodeTypes = useMemo(() => ({ special: ObjectNode }), []);
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   // const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedTemplate, setSelectedTemplate] = useState();
 
-  const dropdownItems = filePathsArray.map((option, index) => 
-    (
+  const dropdownItems = filePathsArray.map((option, index) => (
     <option key={index} value={option}>
       {option}
     </option>
-    )
-  )
+  ));
 
   const handleNodeClick = async (e, node) => {
     const targetPath = node.data.path;
     // need to change bc some entries have more than one colon
     const targetVal = node.data.label.split(': ')[1].trim();
-    console.log('targetValue', targetVal)
+    console.log('targetValue', targetVal);
     try {
       console.log('Attempting to PUT to get template data');
       const options = {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({targetVal: targetVal, targetPath: targetPath})
-      }
+        body: JSON.stringify({ targetVal: targetVal, targetPath: targetPath }),
+      };
       const response = await fetch('http://www.localhost:3000/path', options);
       //server returns array of documents
       const pathArray = await response.json();
@@ -60,9 +62,8 @@ const onInit = (reactFlowInstance) =>
       setNodes(nodeArray);
       // set edges
       // source = node.id
-      // target = 
-    }
-    catch (err) {
+      // target =
+    } catch (err) {
       console.log('ERROR in handleNodeClick ', err);
     }
   };
@@ -74,26 +75,32 @@ const onInit = (reactFlowInstance) =>
       const options = {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({filePath: e.target.value})
-      }
+        body: JSON.stringify({ filePath: e.target.value }),
+      };
       const response = await fetch('http://www.localhost:3000/chart', options);
       const docModel = await response.json();
       console.log('docModel returned from DB:', docModel);
 
       const nodeArr = createNodes([docModel]);
       setNodes(nodeArr);
-    }
-    catch (err) { 
+    } catch (err) {
       console.log('Error in request to get selected chart!');
     }
-
-  }
+  };
 
   return (
     <div id="tempContainer">
       <div id="dataContainer">
+        <select
+          className="dropdown"
+          value={selectedTemplate}
+          onChange={(e) => handleDropdown(e)}
+        >
+          <option value="">Select Chart</option>
+          {dropdownItems}
+        </select>
         <div id="chart">
           <h3>{topLevelChart.name}</h3>
           <pre>{JSON.stringify(topLevelChart.fileContent, null, 2)}</pre>
@@ -104,13 +111,6 @@ const onInit = (reactFlowInstance) =>
         </div>
       </div>
       <section className="flow-container">
-        <select
-          value={selectedTemplate}
-          onChange={e => handleDropdown(e)}
-        >
-          {dropdownItems}
-        </select>
-
         <ReactFlow
           nodeTypes={nodeTypes}
           nodes={nodes}
