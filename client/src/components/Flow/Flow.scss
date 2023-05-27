@@ -4,41 +4,42 @@
   margin-left: auto;
   margin-right: auto;
   width: 100%;
-  // height: 75vh;
+  height: 75vh;
   border: 1px solid $darkBlue;
   border-radius: $borderRadius;
 }
 
 #tempContainer {
   display: flex;
+  align-content: flex-start;
   justify-content: space-between;
-  height: 75vh;
-}
+  height: 100%;
 
-#dataContainer {
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  align-items: center;
-  width: 55vw;
-}
+  #dataContainer {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: flex-start;
+    justify-content: space-around;
+    min-width: 38vw;
+    max-width: 38vw;
 
-.dropdown {
-  border-radius: $borderRadius;
-  margin-bottom: 10px;
-  align-self: center;
-  padding: $standardPadding;
-  font-family: $fontRegular;
-  width: 50%;
-  color: $primaryBlack;
-}
+    .dropdown {
+      border-radius: $borderRadius;
+      margin-bottom: 10px;
+      align-self: center;
+      padding: $standardPadding;
+      font-family: $fontRegular;
+      width: 50%;
+      color: $primaryBlack;
+    }
 
-#chart {
-  height: 25vh;
-  @include sideChart($primaryWhite, $primaryBlack);
-}
+    #chart {
+      @include sideChart($primaryWhite, $primaryBlack, 25vh);
+    }
 
-#values {
-  height: 40vh;
-  @include sideChart($primaryWhite, $primaryBlack);
+    #values {
+      @include sideChart($primaryWhite, $primaryBlack, 40vh);
+    }
+  }
 }
