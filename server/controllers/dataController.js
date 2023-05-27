@@ -5,6 +5,7 @@ const path = require('path');
 const parser = require('../_parser/manual_parser');
 const { ADDRCONFIG } = require('dns');
 const { trace } = require('console');
+const flattenObject = require('../utils/flattenDataModel');
 
 const sampleChartPath =
   '../../helm-chart-sample/charts/backend/templates/configmap-appsettings.yaml';
@@ -177,7 +178,16 @@ dataController.getTemplate = async (req, res, next) => {
   console.log("request to getTemplate, filePath is:", filePath);
   try {
     const data = await models.DataModel.findOne({filePath: filePath});
-    res.locals.responseData = data;
+
+    const createdDataObj = { 
+      fileName: data.fileName,
+      filePath: data.filePath,
+      type: data.type,
+      nodeID: null,
+      flattenedDataArray: flattenObject(data.filePath, data.fileContent)
+     }
+
+    res.locals.responseData = createdDataObj;
     return next();
   } catch (err) {
     return next({
@@ -251,9 +261,11 @@ dataController.deprecatedGetPath = async (req, res, next) => {
 Used to retrieve data flow path for a given value at given template
 Currently configured to handle any detected {{ }} Go expression with a .Values. reference
 */
+
 dataController.getPath = async (req, res, next) => {
   // get initial values from client request, retrieve corresponding template from DB, create path arr
   const { targetVal, targetPath } = req.body;
+
   const dataFlowPath = [];
   let keyPath = [];
 
@@ -291,8 +303,9 @@ dataController.getPath = async (req, res, next) => {
   
   // helperFn that will check a given values.yaml file to see if it contains input keyPath
   // iterates through each key in object, returns false if any key in keyPath array is absent
-  const traceKeyPath = (doc, valuesDoc, obj, localKeyPath = keyPath) => {
-    let current = obj;
+  const traceKeyPath = (doc, valuesDoc, fileContent, localKeyPath = keyPath) => {
+    let lineNum = 1;
+    let current = fileContent;
     let validPath = true;
     // check to see if dataFlowPath exists in valuesDoc
     for (const key of localKeyPath) {
@@ -301,9 +314,19 @@ dataController.getPath = async (req, res, next) => {
       } else {
         validPath = false;
       }
+      lineNum++;
     }
     if (validPath) {
-      dataFlowPath.push(valuesDoc);
+      // dataFlowPath.push(valuesDoc);
+      // instead push a new dataFlowObj onto path
+      const createdDataFlowObj = { 
+        fileName: valuesDoc.fileName,
+        filePath: valuesDoc.filePath,
+        type: valuesDoc.type,
+        nodeID: `${valuesDoc.filePath}__${lineNum}`,
+        flattenedDataArray: flattenObject(valuesDoc.filePath, current)
+       }
+      dataFlowPath.push(createdDataFlowObj);
     }
     return validPath;
   }
