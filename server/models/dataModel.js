@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 require("dotenv").config();
 
-// const MONGO_URI = process.env.MONGO_URI;
-const MONGO_URI = 'mongodb+srv://devtestingdumm60:Asdf3211@helmetsdb.ptukjtj.mongodb.net/';     // <<< delete line 5 and uncomment line 4. used for testing front-end
+const MONGO_URI = process.env.MONGO_URI
+
 mongoose.connect(MONGO_URI, {
   // options for the connect method to parse the URI
   useNewUrlParser: true,
@@ -19,13 +19,24 @@ const Schema = mongoose.Schema;
 const dataModelSchema = new Schema({
   name: {type: String, required: true},
   type: {type: String, required: true},
-  source: {type: String, required: true},
+  source: {
+    type: Schema.Types.ObjectId, 
+    ref: 'DataModel',
+    default: null
+  },
   values: {
     type: Schema.Types.ObjectId, 
     ref: 'DataModel',
     default: null
   },
-  fileContent: {type: Object, required:true}
+  fileContent: {type: Object, required:true},
+  filePath:{ type: String, required: true},
+  session_id: {type: String, required: true},
+  expireAt: {
+    type: Date,
+    default: Date.now,
+    expires: 3600
+  },
 });
 
 const DataModel = mongoose.model('DataModel', dataModelSchema);
@@ -40,7 +51,19 @@ const pathSchema = new Schema({
 
 const PathModel = mongoose.model('PathModel', pathSchema);
 
+const sessionSchema = new Schema({
+  cookieId: { type: String, required: true, unique: true },
+  expireAt: {
+    type: Date,
+    default: Date.now,
+    expires: 3600
+  },
+});
+
+const SessionModel = mongoose.model('SessionModel', sessionSchema);
+
 module.exports = {
   DataModel,
-  PathModel
+  PathModel,
+  SessionModel
 };

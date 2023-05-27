@@ -1,0 +1,75 @@
+@use 'sass:color';
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600&display=swap');
+
+$fontRegular: 'Source Sans Pro', sans-serif;
+
+$darkBlue: #011526;
+$mediumBlue: #023059;
+$mainBlue: #035aa6;
+$lightBlue: #91bbf2;
+
+$primaryBlack: #22292f;
+$secondaryBlack: #60647b;
+$tertiaryBlack: #bdbdbd;
+
+$primaryWhite: #fefefe;
+
+$borderRadius: 5px;
+
+$standardPadding: 5px 20px;
+
+$buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
+  inset 0 0 30px $secondaryBlack;
+
+@mixin button($bg-color, $text-color) {
+  background-color: $bg-color;
+  color: $text-color;
+  font-family: $fontRegular;
+  font-weight: 600;
+  padding: $standardPadding;
+  border: 2px;
+  border-radius: $borderRadius;
+  height: auto;
+  cursor: pointer;
+  &:hover:not([disabled]) {
+    background-color: $text-color;
+    border: 2px $bg-color;
+    color: $bg-color;
+  }
+  &:active:not([disabled]) {
+    // box-shadow: $buttonShadowActive;
+    transform: scale(0.95);
+    box-shadow: 3px 2px 10px 1px $primaryBlack;
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@mixin sideChart($bg-color, $text-color) {
+  font-family: $fontRegular;
+  width: 90%;
+  padding: 10px;
+  color: $text-color;
+  background-color: $bg-color;
+  border-radius: $borderRadius;
+  margin: 10px;
+  left: auto;
+  right: auto;
+
+  h3 {
+    font-family: $fontRegular;
+    font-weight: 600;
+    text-align: center;
+    color: $mainBlue;
+    margin: 0;
+    // padding: 10px;
+    border-radius: $borderRadius;
+  }
+  pre {
+    height: 80%;
+    overflow: scroll;
+    margin-top: 10px;
+  }
+}

@@ -1,0 +1,44 @@
+@import '../../variables.scss';
+
+.flow-container {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  // height: 75vh;
+  border: 1px solid $darkBlue;
+  border-radius: $borderRadius;
+}
+
+#tempContainer {
+  display: flex;
+  justify-content: space-between;
+  height: 75vh;
+}
+
+#dataContainer {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  width: 55vw;
+}
+
+.dropdown {
+  border-radius: $borderRadius;
+  margin-bottom: 10px;
+  align-self: center;
+  padding: $standardPadding;
+  font-family: $fontRegular;
+  width: 50%;
+  color: $primaryBlack;
+}
+
+#chart {
+  height: 25vh;
+  @include sideChart($primaryWhite, $primaryBlack);
+}
+
+#values {
+  height: 40vh;
+  @include sideChart($primaryWhite, $primaryBlack);
+}

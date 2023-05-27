@@ -1,13 +1,12 @@
 import React from 'react';
-import Header from './components/Header.jsx';
+import MainContainer from './components/main-container/main-container.jsx';
 
-
-// import '../styles.css';
+import './App.scss';
 
 export default function App() {
-  return(
-    <div className='backsplash'>
-      <Header />
+  return (
+    <div className="app">
+      <MainContainer />
     </div>
-  )
+  );
 }

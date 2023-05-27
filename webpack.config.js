@@ -5,7 +5,7 @@ module.exports = {
   entry: './client/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
   module: {
     rules: [
@@ -15,33 +15,28 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: [
-              '@babel/preset-env',
-              '@babel/preset-react'
-            ]
-          }
-        } 
+            presets: ['@babel/preset-env', '@babel/preset-react'],
+          },
+        },
       },
       {
-        test: /.css$/i,
-        use: [
-          'style-loader',
-          'css-loader'
-        ]
+        test: /\.(png|jpe?g|gif)$/i,
+        use: ['file-loader'],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif|ogg|mp3|wav)$/i,
-        type: 'asset/resource',
-      },
-      {
-        test: /\.s[ac]ss$/i,
+        test: /\.(sa|sc|c)ss$/,
         use: ['style-loader', 'css-loader', 'sass-loader'],
       },
-    ]
+      {
+        test: /\.ttf$/i,
+        // use: ['file-loader'],
+        type: 'asset/resource',
+      },
+    ],
   },
-  plugins:[
+  plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname,"client/public/index.html")
+      template: path.resolve(__dirname, 'client/public/index.html'),
     }),
   ],
   devServer: {
@@ -52,7 +47,7 @@ module.exports = {
     compress: true,
     port: 8080,
     proxy: {
-      '/': 'http://localhost:3000'
-    }
-  }
-}
+      '/': 'http://localhost:3000',
+    },
+  },
+};
