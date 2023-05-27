@@ -9,8 +9,8 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './Flow.scss';
-import createNodes from './createNodes.js';
-import bodyNode from './Node-Types/bodyNode';
+import createNodes from './createNodes.jsx';
+import bodyNode from './Node-Types/bodyNode.jsx';
 
 const nodeTypes = {
   bodyNode: bodyNode,
@@ -41,7 +41,7 @@ export default function Flow({
     const targetPath = node.data.path;
     // need to change bc some entries have more than one colon
     const targetVal = node.data.label.split(': ')[1].trim();
-    console.log('targetValue', targetVal);
+    // console.log('targetValue', targetVal);
     try {
       console.log('Attempting to PUT to get template data');
       const options = {
@@ -51,11 +51,11 @@ export default function Flow({
         },
         body: JSON.stringify({ targetVal: targetVal, targetPath: targetPath }),
       };
-      const response = await fetch('http://www.localhost:3000/path', options);
+      const response = await fetch('/path', options);
       //server returns array of documents
       const pathArray = await response.json();
       // const pathArray = samplePath;
-      console.log('pathArray returned from DB:', pathArray);
+      // console.log('pathArray returned from DB:', pathArray);
       const nodeArray = createNodes(pathArray);
       // render all files
       console.log('NODE ARRAY ', nodeArray);
@@ -79,9 +79,9 @@ export default function Flow({
         },
         body: JSON.stringify({ filePath: e.target.value }),
       };
-      const response = await fetch('http://www.localhost:3000/chart', options);
+      const response = await fetch('/chart', options);
       const docModel = await response.json();
-      console.log('docModel returned from DB:', docModel);
+      // console.log('docModel returned from DB:', docModel);
 
       const nodeArr = createNodes([docModel]);
       setNodes(nodeArr);
@@ -125,21 +125,21 @@ export default function Flow({
           <MiniMap
             nodeStrokeColor={(n) => {
               if (n.style?.background) return n.style.background;
-              if (n.type === 'input') return '#035aa6';
-              if (n.type === 'output') return '#91bbf2';
+              if (n.type === 'group') return '#035aa6';
+              if (n.type === 'bodyNode') return '#91bbf2';
               if (n.type === 'default') return '#1a192b';
 
-              return '#eee';
+              return '#fefefe';
             }}
             nodeColor={(n) => {
               if (n.style?.background) return n.style.background;
 
-              return '#fff';
+              return '#fefefe';
             }}
             nodeBorderRadius={2}
           />
           <Controls />
-          <Background color="#aaa" gap={16} />
+          <Background color="#035aa6" gap={16} />
           <Panel />
         </ReactFlow>
       </section>

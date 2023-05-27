@@ -16,6 +16,8 @@ $primaryWhite: #fefefe;
 
 $borderRadius: 5px;
 
+$standardPadding: 5px 20px;
+
 $buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
   inset 0 0 30px $secondaryBlack;
 
@@ -24,7 +26,7 @@ $buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
   color: $text-color;
   font-family: $fontRegular;
   font-weight: 600;
-  padding: 5px 20px;
+  padding: $standardPadding;
   border: 2px;
   border-radius: $borderRadius;
   height: auto;
@@ -47,12 +49,14 @@ $buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
 
 @mixin sideChart($bg-color, $text-color) {
   font-family: $fontRegular;
-  width: 400px;
+  width: 90%;
   padding: 10px;
   color: $text-color;
   background-color: $bg-color;
   border-radius: $borderRadius;
   margin: 10px;
+  left: auto;
+  right: auto;
 
   h3 {
     font-family: $fontRegular;

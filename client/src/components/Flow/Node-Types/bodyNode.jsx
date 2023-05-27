@@ -4,22 +4,20 @@ import './bodyNode.scss';
 
 export default memo(({ data, isConnectable }) => {
   return (
-    <div className='bodyNode'>
+    <div className="bodyNode">
       <Handle
         type="target"
         position={Position.Left}
-        style={{ background: '#555' }}
+        className="handle-left"
         onConnect={(params) => console.log('handle onConnect', params)}
         isConnectable={isConnectable}
       />
-      <div style={{backgroundColor: 'aliceblue', }}>
-        <p className='nodeText'>{data.label}</p>
-      </div>
+      <p>{data.label}</p>
       <Handle
         type="source"
         position={Position.Right}
         id="a"
-        style={{ background: '#555' }}
+        className="handle-right"
         isConnectable={isConnectable}
       />
     </div>
