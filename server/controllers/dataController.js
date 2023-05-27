@@ -273,7 +273,7 @@ dataController.getPath = async (req, res, next) => {
     if (valuesDoc) {
       // check to see if inital key path work in the values file. 
       // if no, need to add key for each chart and test that
-      if (!traceKeyPath(doc, valuesDoc, valuesDoc.fileContent, keyPath)) {
+      if (!traceKeyPath(valuesDoc, valuesDoc.fileContent, keyPath)) {
         let currentChart = doc;
         // this loop is for checking additional variants of the keyPath, 
         // adding on the name of each chart as a key (for detecting nested)
@@ -283,7 +283,7 @@ dataController.getPath = async (req, res, next) => {
           const chartName = sourceDoc.fileContent.name;
           if (chartName){
             nestedChartKeyPath.unshift(chartName);
-            traceKeyPath(currentChart, valuesDoc, valuesDoc.fileContent, nestedChartKeyPath);
+            traceKeyPath(valuesDoc, valuesDoc.fileContent, nestedChartKeyPath);
           }
           currentChart = sourceDoc;
         }
@@ -302,7 +302,7 @@ dataController.getPath = async (req, res, next) => {
   
   // helperFn that will check a given values.yaml file to see if it contains input keyPath
   // iterates through each key in object, returns false if any key in keyPath array is absent
-  const traceKeyPath = (doc, valuesDoc, fileContent, localKeyPath = keyPath) => {
+  const traceKeyPath = (valuesDoc, fileContent, localKeyPath = keyPath) => {
     let lineNum = 1;
     let current = fileContent;
     let validPath = true;
@@ -323,7 +323,7 @@ dataController.getPath = async (req, res, next) => {
         filePath: valuesDoc.filePath,
         type: valuesDoc.type,
         nodeID: `${valuesDoc.filePath}__${lineNum}`,
-        flattenedDataArray: flattenObject(valuesDoc.filePath, current)
+        flattenedDataArray: flattenObject(valuesDoc.filePath, fileContent)
        }
       dataFlowPath.push(createdDataFlowObj);
     }
@@ -349,7 +349,7 @@ dataController.getPath = async (req, res, next) => {
       filePath: selectedDoc.filePath,
       type: selectedDoc.type,
       nodeID: selectedNodeID,
-      flattenedDataArray: flattenObject(selectedDoc.filePath, selectedDoc.fileContents)
+      flattenedDataArray: flattenObject(selectedDoc.filePath, selectedDoc.fileContent)
     }
 
     dataFlowPath.push(createdDataFlowObj);

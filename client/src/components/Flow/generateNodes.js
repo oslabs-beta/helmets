@@ -30,7 +30,7 @@ const generateNodes = (dataFlowArray) => {
   const nodesArray = [];
 
   // iterate over each obj in dataFlowArray
-  for (const dataFlowObj of dataFlowArray) {
+  dataFlowArray.forEach(dataFlowObj => {
     
     // iterate over each obj inside obj.flattenedDataArray
     const parent = createParentNode(dataFlowObj.filePath, parentX)
@@ -54,7 +54,7 @@ const generateNodes = (dataFlowArray) => {
       y += yIncrement;
     }
     y = 0;
-  }
+  });
 
   console.log(nodesArray);
   return nodesArray;
@@ -72,7 +72,6 @@ const createParentNode = (id, parentX) => {
       width: 250,
       height: 100,
       borderRadius: 5,
-      overflow: 'auto'
     },
     draggable: true,
   };
