@@ -263,7 +263,7 @@ Currently configured to handle any detected {{ }} Go expression with a .Values. 
 
 dataController.getPath = async (req, res, next) => {
   // get initial values from client request, retrieve corresponding template from DB, create path arr
-  const { targetVal, targetPath } = req.body;
+  const { targetVal, targetPath, selectedNodeID } = req.body;
   const { session_id } = req.cookies;
   const dataFlowPath = [];
   let keyPath = [];
@@ -344,7 +344,15 @@ dataController.getPath = async (req, res, next) => {
       });
     }
 
-    dataFlowPath.push(selectedDoc);
+    const createdDataFlowObj = { 
+      fileName: selectedDoc.fileName,
+      filePath: selectedDoc.filePath,
+      type: selectedDoc.type,
+      nodeID: selectedNodeID,
+      flattenedDataArray: flattenObject(selectedDoc.filePath, selectedDoc.fileContents)
+    }
+
+    dataFlowPath.push(createdDataFlowObj);
 
     const valRegex = /\.Values\.(\S*)/;
     const match = targetVal.match(valRegex);
