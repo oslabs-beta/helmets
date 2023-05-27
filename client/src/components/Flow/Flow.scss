@@ -19,6 +19,8 @@
   display: flex;
   flex-direction: column;
   align-content: center;
+  align-items: center;
+  width: 55vw;
 }
 
 .dropdown {
@@ -28,6 +30,7 @@
   padding: $standardPadding;
   font-family: $fontRegular;
   width: 50%;
+  color: $primaryBlack;
 }
 
 #chart {
