@@ -1,20 +1,15 @@
 const models = require('../models/dataModel');
 const fs = require('fs');
-const yaml = require('js-yaml');
 const path = require('path');
 const parser = require('../_parser/manual_parser');
-const { ADDRCONFIG } = require('dns');
-const { trace } = require('console');
-
-const sampleChartPath =
-  '../../helm-chart-sample/charts/backend/templates/configmap-appsettings.yaml';
 
 const dataController = {};
 
 // once new file is loaded, clear mongoDB
 dataController.deleteData = async (req, res, next) => {
   try {
-    await models.DataModel.deleteMany({});
+    const { session_id } = req.cookies;
+    await models.DataModel.deleteMany({ session_id: session_id });
     next();
   } catch (err) {
     next({
@@ -27,10 +22,12 @@ dataController.deleteData = async (req, res, next) => {
 //on initial load of chart folder
 dataController.addFiles = async (req, res, next) => {
   res.locals.filePathsArray = [];
+  const { session_id } = req.cookies;
+  console.log('REQ COOKIES', req.cookies)
 
   // helper function to actually add the file
   const saveFile = async (filePath, sourceFile, valuesFile) => {
-    console.log('filePath in SaveFile is ', filePath);
+    // console.log('filePath in SaveFile is ', filePath);
     // const relative_path = path.join(__dirname, `../uploads/${filePath}`);
     const relative_path = filePath;
     try {
@@ -58,6 +55,7 @@ dataController.addFiles = async (req, res, next) => {
       // console.log('MATCH: ',match);
       const pathAfterUploads = match[1];
       file.filePath = pathAfterUploads;
+      file.session_id = session_id;
       // save on locals so front-end can retrieve it
       res.locals.filePathsArray.push(pathAfterUploads);
       // add doc to db
@@ -65,12 +63,12 @@ dataController.addFiles = async (req, res, next) => {
       let doc = await models.DataModel.create(file);
       // console.log('doc pre-json is ', doc);
       doc = doc.toJSON();
-      console.log('DOC ADDED TO DB:', doc);
+      // console.log('DOC ADDED TO DB:', doc);
       return doc;
     } catch (err) {
       return next({
         log: `Error in dataController.addFiles.saveFile: ${err}`,
-        message: { err: 'Error adding files to database' },
+        message: { err: `Error adding files to database addFiles.saveFile` },
       });
     }
   };
@@ -78,9 +76,9 @@ dataController.addFiles = async (req, res, next) => {
   // check if thing is a file or a folder
   const checkType = async (file_path, sourceFile = null, valuesFile = null) => {
     try {
-      console.log('file we are trying to read: ', file_path);
+      // console.log('file we are trying to read: ', file_path);
       const relative_path = file_path;
-      console.log('path: ', relative_path);
+      // console.log('path: ', relative_path);
       const stats = await fs.promises.stat(relative_path);
       // console.log('stats is: ', stats);
       if (stats.isDirectory()) {
@@ -90,9 +88,9 @@ dataController.addFiles = async (req, res, next) => {
 
         // check for Chart.yaml and Values.yaml to add to db first
         for (const file of files) {
-          console.log('file is ', file);
+          // console.log('file is ', file);
           const innerFilePath = `${relative_path}/${file}`;
-          console.log('innerFilePath is ', innerFilePath);
+          // console.log('innerFilePath is ', innerFilePath);
           if (/[Cc]hart\.yaml$/.test(file)) {
             sourceFile = await saveFile(innerFilePath, sourceFile, valuesFile);
             if (!res.locals.topChart) res.locals.topChart = sourceFile;
@@ -107,13 +105,13 @@ dataController.addFiles = async (req, res, next) => {
         // save other .yaml files on same level
         for (const file of files) {
           const innerFilePath = `${relative_path}/${file}`;
-          console.log('check 2, file is: ', file);
+          // console.log('check 2, file is: ', file);
           if (
             !/[Cc]hart\.yaml$/.test(file) &&
             !/[Vv]alues\.yaml$/.test(file) &&
             /\.yaml$/i.test(file)
           ) {
-            console.log("it's a yaml, calling saveFile");
+            // console.log("it's a yaml, calling saveFile");
             await saveFile(innerFilePath, sourceFile, valuesFile);
             files.delete(file);
           }
@@ -121,7 +119,7 @@ dataController.addFiles = async (req, res, next) => {
         // recurse through directories
         for (const file of files) {
           const innerFilePath = `${relative_path}/${file}`;
-          console.log('inner file we are trying to read: ', file);
+          // console.log('inner file we are trying to read: ', file);
           if (file.startsWith('.')) continue;
           const fileStats = await fs.promises.stat(innerFilePath);
           if (fileStats.isDirectory()) {
@@ -130,7 +128,7 @@ dataController.addFiles = async (req, res, next) => {
           }
         }
       } else {
-        console.log(file_path, 'is a file, so adding it');
+        // console.log(file_path, 'is a file, so adding it');
         const fileName = path.basename(file_path);
         if (
           !/[Cc]hart\.yaml$/.test(fileName) &&
@@ -142,10 +140,9 @@ dataController.addFiles = async (req, res, next) => {
         }
       }
     } catch (err) {
-      console.log('error!');
       return next({
         log: `Error in dataController.addFiles.checkType: ${err}`,
-        message: { err: 'Error adding files to database' },
+        message: { err: 'Error adding files to database addFiles.checkType' },
       });
     }
   };
@@ -153,9 +150,9 @@ dataController.addFiles = async (req, res, next) => {
   // parse thru the uploads folder
   try {
     const files = await fs.promises.readdir(path.join(__dirname, '../uploads'));
-    console.log('FILES ARRAY: ', files);
+    // console.log('FILES ARRAY: ', files);
     for (const dir of files) {
-      console.log('dir ', dir);
+      // console.log('dir ', dir);
       const dirPath = path.join(__dirname, '../uploads', dir);
       await checkType(dirPath);
     }
@@ -174,9 +171,10 @@ dataController.addFiles = async (req, res, next) => {
 dataController.getTemplate = async (req, res, next) => {
   // retrieve specified file from DB 
   const { filePath } = req.body;
-  console.log("request to getTemplate, filePath is:", filePath);
+  const { session_id } = req.cookies;
+  // console.log("request to getTemplate, filePath is:", filePath);
   try {
-    const data = await models.DataModel.findOne({filePath: filePath});
+    const data = await models.DataModel.findOne({filePath: filePath, session_id: session_id});
     res.locals.responseData = data;
     return next();
   } catch (err) {
@@ -254,6 +252,7 @@ Currently configured to handle any detected {{ }} Go expression with a .Values. 
 dataController.getPath = async (req, res, next) => {
   // get initial values from client request, retrieve corresponding template from DB, create path arr
   const { targetVal, targetPath } = req.body;
+  const { session_id } = req.cookies;
   const dataFlowPath = [];
   let keyPath = [];
 
@@ -268,7 +267,7 @@ dataController.getPath = async (req, res, next) => {
         // adding on the name of each chart as a key (for detecting nested)
         while (currentChart.source !== null) {
           // re-invoke traceKeyPath passing in updated keyPath, w/ name unshifted 
-          const sourceDoc = await models.DataModel.findOne({_id: currentChart.source})
+          const sourceDoc = await models.DataModel.findOne({_id: currentChart.source, session_id: session_id})
           const chartName = sourceDoc.fileContent.name;
           if (chartName){
             nestedChartKeyPath.unshift(chartName);
@@ -280,10 +279,10 @@ dataController.getPath = async (req, res, next) => {
 
       // next step is to iterate upwards regardless of a successful path match at first file, 
       // because the user may have additional value files in the chart
-      let nextValues = await models.DataModel.findOne({_id: valuesDoc.values});
+      let nextValues = await models.DataModel.findOne({_id: valuesDoc.values, session_id: session_id});
       while (nextValues) {
         await buildPath(doc, nextValues);
-        const _nextValues = await models.DataModel.findOne({_id: nextValues.values});
+        const _nextValues = await models.DataModel.findOne({_id: nextValues.values, session_id: session_id});
         nextValues = _nextValues ? _nextValues : undefined;
       }
     }
@@ -313,7 +312,7 @@ dataController.getPath = async (req, res, next) => {
   // includes specific error handling for nonexistent template & values files
   // generic error handling for any additional errors
   try {
-    const selectedDoc = await models.DataModel.findOne({filePath: targetPath});
+    const selectedDoc = await models.DataModel.findOne({filePath: targetPath, session_id: session_id});
     
     if (!selectedDoc) {
       return next({
@@ -327,7 +326,7 @@ dataController.getPath = async (req, res, next) => {
     const valRegex = /\.Values\.(\S*)/;
     const match = targetVal.match(valRegex);
     keyPath = [...match[1].split('.')];
-    const docValues = await models.DataModel.findOne({_id: selectedDoc.values});
+    const docValues = await models.DataModel.findOne({_id: selectedDoc.values, session_id: session_id});
     
     if (docValues) {
       await buildPath(selectedDoc, docValues);

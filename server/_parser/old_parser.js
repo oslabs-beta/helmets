@@ -190,5 +190,5 @@ const path = require('path');
 
 const yamlContent = fs.readFileSync(path.join(__dirname, 'ingress_test.yaml'), 'utf8');
 
-console.log(parser(yamlContent));
-console.log(JSON.stringify(parser(yamlContent), null, 2));
+// console.log(parser(yamlContent));
+// console.log(JSON.stringify(parser(yamlContent), null, 2));

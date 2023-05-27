@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 require("dotenv").config();
 
-// const MONGO_URI = process.env.MONGO_URI;
-const MONGO_URI = 'mongodb+srv://meganchoi732:LsQIOK8zRhTbOxBG@helmets.ulcyije.mongodb.net/?retryWrites=true&w=majority'
-// const MONGO_URI = 'mongodb+srv://dev-cameron:9vLKMyiMHDMdsX0n@devcluster0.psb6cpk.mongodb.net/?retryWrites=true&w=majority';
+const MONGO_URI = process.env.MONGO_URI
 
 mongoose.connect(MONGO_URI, {
   // options for the connect method to parse the URI
@@ -33,6 +31,7 @@ const dataModelSchema = new Schema({
   },
   fileContent: {type: Object, required:true},
   filePath:{ type: String, required: true},
+  session_id: {type: String, required: true},
   timeRun: {type: Date, default: () => Date.now()}
 });
 
@@ -48,7 +47,15 @@ const pathSchema = new Schema({
 
 const PathModel = mongoose.model('PathModel', pathSchema);
 
+const sessionSchema = new Schema({
+  cookieId: { type: String, required: true, unique: true },
+  createdAt: { type: Date, expires: 3600, default: Date.now }
+});
+
+const SessionModel = mongoose.model('SessionModel', sessionSchema);
+
 module.exports = {
   DataModel,
-  PathModel
+  PathModel,
+  SessionModel
 };
