@@ -5,7 +5,7 @@ const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
 const dataController = require('./controllers/dataController');
-const cookieController = require('./controllers/cookieController');
+const sessionController = require('./controllers/sessionController');
 const cookieParser = require('cookie-parser');
 
 
@@ -41,7 +41,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-app.get('/', cookieController.setCookie, (req, res) => {
+app.get('/', sessionController.setCookie, (req, res) => {
   res.sendFile(path.join(__dirname, '../client/public/index.html'));
 });
 
@@ -173,7 +173,7 @@ app.post('/delete-file', (req, res) => {
 })
 
 // POST to /chart
-app.post('/chart', dataController.deleteData, dataController.addFiles, (req, res) => {
+app.post('/chart', sessionController.startSession, dataController.deleteData, dataController.addFiles, (req, res) => {
   // console.log('res locals: ', res.locals.topChart);
   res.status(200).json(res.locals);
 });
