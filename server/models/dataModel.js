@@ -32,7 +32,11 @@ const dataModelSchema = new Schema({
   fileContent: {type: Object, required:true},
   filePath:{ type: String, required: true},
   session_id: {type: String, required: true},
-  timeRun: {type: Date, default: () => Date.now()}
+  expireAt: {
+    type: Date,
+    default: Date.now,
+    expires: 3600
+  },
 });
 
 const DataModel = mongoose.model('DataModel', dataModelSchema);
@@ -49,7 +53,11 @@ const PathModel = mongoose.model('PathModel', pathSchema);
 
 const sessionSchema = new Schema({
   cookieId: { type: String, required: true, unique: true },
-  createdAt: { type: Date, expires: 3600, default: Date.now }
+  expireAt: {
+    type: Date,
+    default: Date.now,
+    expires: 3600
+  },
 });
 
 const SessionModel = mongoose.model('SessionModel', sessionSchema);
