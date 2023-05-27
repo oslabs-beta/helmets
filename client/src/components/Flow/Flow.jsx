@@ -17,7 +17,8 @@ const nodeTypes = {
 };
 
 const onInit = (reactFlowInstance) =>
-  console.log('flow loaded:', reactFlowInstance);
+  // console.log('flow loaded:', reactFlowInstance);
+  console.log('');
 
 // pass in nodes/ edges to add a new nodeType
 export default function Flow({
@@ -41,9 +42,9 @@ export default function Flow({
     const targetPath = node.data.path;
     // need to change bc some entries have more than one colon
     const targetVal = node.data.label.split(': ')[1].trim();
-    console.log('targetValue', targetVal);
+    // console.log('targetValue', targetVal);
     try {
-      console.log('Attempting to PUT to get template data');
+      // console.log('Attempting to PUT to get template data');
       const options = {
         method: 'PUT',
         headers: {
@@ -55,23 +56,23 @@ export default function Flow({
       //server returns array of documents
       const pathArray = await response.json();
       // const pathArray = samplePath;
-      console.log('pathArray returned from DB:', pathArray);
+      // console.log('pathArray returned from DB:', pathArray);
       const nodeArray = createNodes(pathArray);
       // render all files
-      console.log('NODE ARRAY ', nodeArray);
+      // console.log('NODE ARRAY ', nodeArray);
       setNodes(nodeArray);
       // set edges
       // source = node.id
       // target =
     } catch (err) {
-      console.log('ERROR in handleNodeClick ', err);
+      // console.log('ERROR in handleNodeClick ', err);
     }
   };
 
   const handleDropdown = async (e) => {
     //try fetch request PUT @ /chart
     try {
-      console.log('Attempting to PUT to get template data');
+      // console.log('Attempting to PUT to get template data');
       const options = {
         method: 'PUT',
         headers: {
@@ -81,12 +82,12 @@ export default function Flow({
       };
       const response = await fetch('http://www.localhost:3000/chart', options);
       const docModel = await response.json();
-      console.log('docModel returned from DB:', docModel);
+      // console.log('docModel returned from DB:', docModel);
 
       const nodeArr = createNodes([docModel]);
       setNodes(nodeArr);
     } catch (err) {
-      console.log('Error in request to get selected chart!');
+      // console.log('Error in request to get selected chart!');
     }
   };
 
