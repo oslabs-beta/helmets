@@ -98,7 +98,7 @@ const MainContainer = () => {
         data.append('files', file, file.name);
         data.append('filePath', filePath);
 
-        console.log('current file: ', filePath, file.name);
+        // console.log('current file: ', filePath, file.name);
         await checkServerFolderStructure(data); //POST to /check-directory
         await uploadFile(data); //POST to /upload
         await moveFile(data); //POST to /move-file
@@ -110,13 +110,14 @@ const MainContainer = () => {
       // POST to /chart to populate db, return necessary files
       const options = {
         method: 'POST',
+        withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
         },
       };
-      const response = await fetch('http://localhost:3000/chart', options);
+      const response = await fetch('/chart', options);
       const topLevelFiles = await response.json();
-      console.log('CHART AND VALUES: ', topLevelFiles); // << contains topChart && topValues
+      // console.log('CHART AND VALUES: ', topLevelFiles); // << contains topChart && topValues
       setChartValues(
         topLevelFiles.topChart,
         topLevelFiles.topValues,
@@ -137,7 +138,7 @@ const MainContainer = () => {
   //POST to /check-directory
   const checkServerFolderStructure = async (data) => {
     const filePath = data.get('filePath');
-    console.log('CheckServerFolderStructure for', filePath);
+    // console.log('CheckServerFolderStructure for', filePath);
     const options = {
       method: 'POST',
       headers: {
@@ -145,26 +146,26 @@ const MainContainer = () => {
       },
       body: JSON.stringify({ filePath }),
     };
-    await fetch('http://localhost:3000/check-directory', options);
+    await fetch('/check-directory', options);
   };
 
   //uploads the file
   //POST to /chart
   const uploadFile = async (data) => {
-    console.log('Uploading File: ', data.get('files').name);
+    // console.log('Uploading File: ', data.get('files').name);
     const options = {
       method: 'POST',
       body: data,
     };
 
-    await fetch('http://localhost:3000/upload', options); // <<< UPDATE POST LOCATION URL & database URI value in dataModel.js
+    await fetch('/upload', options); // <<< UPDATE POST LOCATION URL & database URI value in dataModel.js
   };
 
   //copies file from static upload folder to recreated folder structure
   const moveFile = async (data) => {
     const fileName = data.get('files').name;
     const filePath = data.get('filePath');
-    console.log('Move file to uploads/', filePath, fileName);
+    // console.log('Move file to uploads/', filePath, fileName);
 
     const options = {
       method: 'POST',
@@ -174,13 +175,13 @@ const MainContainer = () => {
       body: JSON.stringify({ filePath: filePath, fileName: fileName }),
     };
 
-    await fetch('http://localhost:3000/move-file', options);
+    await fetch('/move-file', options);
   };
 
   //deletes file from static upload folder on server
   const deleteFile = async (data) => {
     const fileName = data.get('files').name;
-    console.log('Delete file:  uploads/', fileName);
+    // console.log('Delete file:  uploads/', fileName);
 
     const options = {
       method: 'POST',
@@ -190,7 +191,7 @@ const MainContainer = () => {
       body: JSON.stringify({ fileName }),
     };
 
-    await fetch('http://localhost:3000/delete-file', options);
+    await fetch('/delete-file', options);
   };
 
   return (

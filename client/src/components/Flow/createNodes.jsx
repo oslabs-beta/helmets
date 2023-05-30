@@ -19,7 +19,7 @@ const createNodes = (pathArray) => {
 
     //iterates through the file object that holds the contents of the selected file
     const readObject = (currObj) => {
-      console.log('INSIDE readObject()');
+      // console.log('INSIDE readObject()');
       // iterate through the file object, create nodes for each line, set x and y position relative to parent
       for (const key in currObj) {
         const val = currObj[key];
@@ -87,7 +87,7 @@ const createNodes = (pathArray) => {
       // y = 0;
     };
     readObject(fileContent);
-    console.log('NODES ARRAY: ', nodesArray);
+    // console.log('NODES ARRAY: ', nodesArray);
 
     // nodesArray[Number(parentNode.id)].style.height = (22 * (nodesArray.length) + (4 * nodesArray.length - 1));
     //
@@ -123,7 +123,7 @@ const createParentNode = (idVal, dataVal, parentX, filePath) => {
 // creates new node from current key-value pair
 const createNodeObj = (idVal, dataVal, x, y, filePath, parentId) => {
   // console.log('INSIDE createNodeObj()')
-  console.log(`node: ${filePath} x: ${x}  y: ${y}`);
+  // console.log(`node: ${filePath} x: ${x}  y: ${y}`);
   const newNode = {
     id: idVal.toString(),
     type: 'bodyNode',
