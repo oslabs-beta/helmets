@@ -147,7 +147,6 @@ app.post('/delete-file', (req, res) => {
   //DELETE FILE FROM UPLOADS
   try{
     fs.unlinkSync(source);
-    // fs.rmdirSync(source)
   }
   catch{ (err) => {
     console.log('error encountered while deleting file:', err);
@@ -175,8 +174,8 @@ app.post('/delete-file', (req, res) => {
 })
 
 // POST to /chart
-app.post('/chart', sessionController.startSession, dataController.deleteData, dataController.addFiles, (req, res) => {
-  // console.log('res locals: ', res.locals.topChart);
+app.post('/chart', sessionController.startSession, dataController.deleteData, 
+  dataController.addFiles, dataController.deleteDirectory, (req, res) => {
   res.status(200).json(res.locals);
 });
 

@@ -181,7 +181,7 @@ const MainContainer = () => {
   //deletes file from static upload folder on server
   const deleteFile = async (data) => {
     const fileName = data.get('files').name;
-    // console.log('Delete file:  uploads/', fileName);
+    console.log('Delete file:  uploads/', fileName);
 
     const options = {
       method: 'POST',

@@ -199,6 +199,20 @@ dataController.getTemplate = async (req, res, next) => {
   }
 };
 
+dataController.deleteDirectory = (req, res, next) => {
+  try {
+    const { session_id } = req.cookies;
+    fs.rmSync(path.join(__dirname, `../uploads/${session_id}`), { recursive: true, force: true });
+    return next();
+  }
+  catch (err) {
+    return next({
+      log: `Error in dataController.deleteDirectory: ${err}`,
+      message: { err: 'Error deleting uploads/session_id' },
+    });
+  }
+}
+
 //when selecting value on manifest or template
 dataController.deprecatedGetPath = async (req, res, next) => {
   res.locals.pathArray = [];
