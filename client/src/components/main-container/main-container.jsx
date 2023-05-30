@@ -103,7 +103,6 @@ const MainContainer = () => {
         await uploadFile(data); //POST to /upload
         await moveFile(data); //POST to /move-file
         await deleteFile(data); //POST to /delete-file
-
         data.delete('files');
         data.delete('filePath');
       }
@@ -123,6 +122,7 @@ const MainContainer = () => {
         topLevelFiles.topValues,
         topLevelFiles.filePathsArray
       );
+      // await deleteFile(data); //POST to /delete-file
     }
     // reset button text + clear inner text to show user things are happening
     document.getElementById('submitBtn').innerText = 'Submit Chart';
