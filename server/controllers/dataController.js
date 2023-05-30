@@ -54,8 +54,8 @@ dataController.addFiles = async (req, res, next) => {
       // add file path
       // escape special chars in session_id (-)
       const escapedSessionId = session_id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      // const regex = new RegExp(`uploads\/${escapedSessionId}\/(.*)`);
-      const regex = /\/uploads\/(.*)/;
+      const regex = new RegExp(`uploads\/${escapedSessionId}\/(.*)`);
+      // const regex = /\/uploads\/(.*)/;
       const match = regex.exec(relative_path);
       const pathAfterUploads = match[1];
       file.filePath = pathAfterUploads;
