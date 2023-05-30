@@ -47,7 +47,7 @@ $buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
   }
 }
 
-@mixin sideChart($bg-color, $text-color) {
+@mixin sideChart($bg-color, $text-color, $height) {
   font-family: $fontRegular;
   width: 90%;
   padding: 10px;
@@ -57,6 +57,7 @@ $buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
   margin: 10px;
   left: auto;
   right: auto;
+  height: $height;
 
   h3 {
     font-family: $fontRegular;
@@ -68,8 +69,13 @@ $buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
     border-radius: $borderRadius;
   }
   pre {
-    height: 80%;
-    overflow: scroll;
+    height: 90%;
+    overflow-x: scroll;
+    overflow-y: auto;
     margin-top: 10px;
+    margin-bottom: 10px;
+    &::-webkit-scrollbar:horizontal {
+      height: 8px;
+    }
   }
 }
