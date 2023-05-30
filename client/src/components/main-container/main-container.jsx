@@ -99,10 +99,7 @@ const MainContainer = () => {
         data.append('filePath', filePath);
 
         // console.log('current file: ', filePath, file.name);
-        await checkServerFolderStructure(data); //POST to /check-directory
         await uploadFile(data); //POST to /upload
-        await moveFile(data); //POST to /move-file
-        await deleteFile(data); //POST to /delete-file
         data.delete('files');
         data.delete('filePath');
       }
@@ -133,21 +130,6 @@ const MainContainer = () => {
     setDisabled(true);
   };
 
-  //recreates folder structure on server
-  //POST to /check-directory
-  const checkServerFolderStructure = async (data) => {
-    const filePath = data.get('filePath');
-    // console.log('CheckServerFolderStructure for', filePath);
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ filePath }),
-    };
-    await fetch('/check-directory', options);
-  };
-
   //uploads the file
   //POST to /chart
   const uploadFile = async (data) => {
@@ -158,39 +140,6 @@ const MainContainer = () => {
     };
 
     await fetch('/upload', options); // <<< UPDATE POST LOCATION URL & database URI value in dataModel.js
-  };
-
-  //copies file from static upload folder to recreated folder structure
-  const moveFile = async (data) => {
-    const fileName = data.get('files').name;
-    const filePath = data.get('filePath');
-    // console.log('Move file to uploads/', filePath, fileName);
-
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ filePath: filePath, fileName: fileName }),
-    };
-
-    await fetch('/move-file', options);
-  };
-
-  //deletes file from static upload folder on server
-  const deleteFile = async (data) => {
-    const fileName = data.get('files').name;
-    console.log('Delete file:  uploads/', fileName);
-
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ fileName }),
-    };
-
-    await fetch('/delete-file', options);
   };
 
   return (
