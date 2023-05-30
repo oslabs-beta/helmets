@@ -9,7 +9,8 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './Flow.scss';
-import createNodes from './createNodes.jsx';
+import generateNodes from './generateNodes';
+import generateEdges from './generateEdges';
 import bodyNode from './Node-Types/bodyNode.jsx';
 
 const nodeTypes = {
@@ -39,8 +40,9 @@ export default function Flow({
 
   const handleNodeClick = async (e, node) => {
     const targetPath = node.data.path;
-    // need to change bc some entries have more than one colon
+    const selectedNodeID = node.id;
     const targetVal = node.data.label.split(': ')[1].trim();
+
     // console.log('targetValue', targetVal);
     try {
       console.log('Attempting to PUT to get template data');
@@ -49,14 +51,19 @@ export default function Flow({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ targetVal: targetVal, targetPath: targetPath }),
+        body: JSON.stringify({ 
+          targetVal: targetVal, 
+          targetPath: targetPath , 
+          selectedNodeID: selectedNodeID}),
       };
       const response = await fetch('/path', options);
       //server returns array of documents
-      const pathArray = await response.json();
+      const dataFlowArray = await response.json();
+      console.log('returned obj: ', dataFlowArray);
       // const pathArray = samplePath;
       // console.log('pathArray returned from DB:', pathArray);
-      const nodeArray = createNodes(pathArray);
+      const nodeArray = generateNodes(dataFlowArray);
+
       // render all files
       console.log('NODE ARRAY ', nodeArray);
       setNodes(nodeArray);
@@ -80,13 +87,13 @@ export default function Flow({
         body: JSON.stringify({ filePath: e.target.value }),
       };
       const response = await fetch('/chart', options);
-      const docModel = await response.json();
-      // console.log('docModel returned from DB:', docModel);
+      const dataFlowArray = await response.json();
+      console.log('dataFLowArray returned from DB:', dataFlowArray);
 
-      const nodeArr = createNodes([docModel]);
+      const nodeArr = generateNodes([dataFlowArray]);
       setNodes(nodeArr);
     } catch (err) {
-      console.log('Error in request to get selected chart!');
+      console.log(`ERROR getting template: ${err}`);
     }
   };
 

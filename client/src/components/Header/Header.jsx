@@ -59,6 +59,7 @@ const Header = ({ handleChange, submitChart, disabled, resetHeader }) => {
           >
             Submit Chart
           </button>
+
         </div>
       </div>
     </header>
