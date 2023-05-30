@@ -9,7 +9,6 @@ const sessionController = require('./controllers/sessionController');
 const fileController = require('./controllers/filecontroller');
 const cookieParser = require('cookie-parser');
 
-
 app.use(express.json());
 app.use(cookieParser());
 
