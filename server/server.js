@@ -33,7 +33,8 @@ app.use(allowCrossDomain);
 // set up multer to assign save location for uploaded file and file name
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, `./uploads`));
+    const { session_id } = req.cookies;
+    cb(null, path.join(__dirname, `./uploads/${session_id}`));
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
@@ -47,9 +48,9 @@ app.get('/', sessionController.setCookie, (req, res) => {
 
 //CREATE DIRECTORY SYNC
 app.post('/check-directory', (req, res) => {
-
+  const { session_id } = req.cookies;
   const { filePath } = req.body;
-  const directoryPath = path.join(__dirname, 'uploads', filePath);
+  const directoryPath = path.join(__dirname, `uploads/${session_id}`, filePath);
   // console.log(`*** Check-Directory: ${filePath}`);
   
   //CHECK IF FOLDER ALREADY EXISTS
@@ -103,9 +104,10 @@ app.post('/upload',
 //MOVE FILE SYNCHRONOUS
 app.post('/move-file', (req, res) => {
   const { filePath, fileName } = req.body;
+  const { session_id } = req.cookies;
 
-  const source = path.join(__dirname, `uploads/${fileName}`);
-  const dest = path.join(__dirname, `uploads/${filePath}${fileName}`);
+  const source = path.join(__dirname, `uploads/${session_id}/${fileName}`);
+  const dest = path.join(__dirname, `uploads/${session_id}/${filePath}${fileName}`);
   // console.log('*** Move from ', source, '\nto ', dest);
 
   //COPY FILE
@@ -136,15 +138,15 @@ app.post('/move-file', (req, res) => {
 
 // DELETE FILE SYNCHRONOUS
 app.post('/delete-file', (req, res) => {
-
+  const { session_id } = req.cookies;
   const { fileName } = req.body;
   // console.log('*** Delete file ', fileName);
 
-  const source = path.join(__dirname, `./uploads/${fileName}`);
+  const source = path.join(__dirname, `./uploads/${session_id}/${fileName}`);
 
   //DELETE FILE FROM UPLOADS
   try{
-  fs.unlinkSync(source);
+    fs.unlinkSync(source);
   }
   catch{ (err) => {
     console.log('error encountered while deleting file:', err);
@@ -167,14 +169,13 @@ app.post('/delete-file', (req, res) => {
     return res.status(500).send('error encountered during file deletion verification');
   }    
   }
-  
   // console.log(`*** ${fileName} deleted`);
   return res.status(200).send(`${fileName} deleted`);
 })
 
 // POST to /chart
-app.post('/chart', sessionController.startSession, dataController.deleteData, dataController.addFiles, (req, res) => {
-  // console.log('res locals: ', res.locals.topChart);
+app.post('/chart', sessionController.startSession, dataController.deleteData, 
+  dataController.addFiles, dataController.deleteDirectory, (req, res) => {
   res.status(200).json(res.locals);
 });
 
