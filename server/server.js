@@ -6,13 +6,15 @@ const multer = require('multer');
 const fs = require('fs');
 const dataController = require('./controllers/dataController');
 const sessionController = require('./controllers/sessionController');
+const cacheController = require('./controllers/cacheController');
 const cookieParser = require('cookie-parser');
-
 
 app.use(express.json());
 app.use(cookieParser());
 
 const cors = require('cors');
+
+
 app.use(cors());
 const allowCrossDomain = function (req, res, next) {
   const allowedOrigins = ['http://localhost:8080'];
@@ -41,8 +43,14 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+// serve index.html and establish session cookies
 app.get('/', sessionController.setCookie, (req, res) => {
   res.sendFile(path.join(__dirname, '../client/public/index.html'));
+});
+
+// route to check redis cache for user data, using specific session id and respective data info
+app.post('/check-cache', cacheController.checkCache, (req, res) => {
+  res.status(200).json(res.locals.cacheData);
 });
 
 //CREATE DIRECTORY SYNC
@@ -173,7 +181,7 @@ app.post('/delete-file', (req, res) => {
 })
 
 // POST to /chart
-app.post('/chart', sessionController.startSession, dataController.deleteData, dataController.addFiles, (req, res) => {
+app.post('/chart', sessionController.startSession, dataController.deleteData, dataController.addFiles, cacheController.setCache, (req, res) => {
   // console.log('res locals: ', res.locals.topChart);
   res.status(200).json(res.locals);
 });
