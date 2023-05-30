@@ -25,6 +25,7 @@ export default function Flow({
   topLevelChart,
   topLevelValues,
   filePathsArray,
+  chartDirectory
 }) {
   // const nodeTypes = useMemo(() => ({ special: ObjectNode }), []);
 
@@ -84,7 +85,7 @@ export default function Flow({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ filePath: e.target.value }),
+        body: JSON.stringify({ filePath: e.target.value, chartData: e.target.value }),
       };
       const response = await fetch('/chart', options);
       const dataFlowArray = await response.json();

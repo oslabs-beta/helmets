@@ -186,8 +186,17 @@ app.post('/chart', sessionController.startSession, dataController.deleteData, da
   res.status(200).json(res.locals);
 });
 
-// GET to /chart
-app.put('/chart', dataController.getTemplate, (req, res) => {
+// PUT to /chart
+app.put('/chart', cacheController.checkCache, (req, res, next) => {
+  if (res.locals.cacheData) {
+    // If cache hit, send cached data as response
+    responseData = JSON.parse(res.locals.cacheData).responseData;
+    res.status(200).json(responseData);
+  } else {
+    // If cache miss, continue with the middleware chain
+    next();
+  }
+}, dataController.getTemplate, cacheController.setCache, (req, res) => {
   res.status(200).json(res.locals.responseData);
 });
 

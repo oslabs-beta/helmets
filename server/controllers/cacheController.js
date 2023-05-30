@@ -19,7 +19,7 @@ cacheController.checkCache = async (req, res, next) => {
     
     // check cache for given key (on req.body)
     console.log('req cookies is ', req.cookies);
-    const cacheKey = `${req.cookies.session_id}_${req.body.chartDirectory}`;
+    const cacheKey = `${req.cookies.session_id}_${req.body.chartData}`;
     console.log('attempting to check cache for: ', cacheKey);
     const data = await redisClient.get(cacheKey);
       // if data exists in cache, send data to client
@@ -44,17 +44,35 @@ cacheController.checkCache = async (req, res, next) => {
 
 cacheController.setCache = async (req, res, next) => {
   try {
-    
-    // set cache with given key (on req.body) and value (on res.locals)
-    const { topValues, topChart, filePathsArray } = res.locals;
+    /* 
+    using a generic caching middleware that will cache whatever VALID keys are found on res.locals
+    specifying array of valid keys
+    generating cacheKey based on session_id and specific chartData passed from client
+    */
+    const validCacheKeys = [
+      'topValues', 
+      'topChart', 
+      'filePathsArray', 
+      'cacheData', 
+      'dataFlowArray',
+      'responseData',
+    ];
+
+    const cacheObj = {};
+
+    for (const key of validCacheKeys) {
+      if (res.locals[key]) {
+        cacheObj[key] = res.locals[key];
+      }
+    }
+
+    // const { topValues, topChart, filePathsArray, cacheData } = res.locals;
+
     // removed JSON.stringify from value
-    const cacheKey = `${req.cookies.session_id}_${req.body.chartDirectory}`;
+    const cacheKey = `${req.cookies.session_id}_${req.body.chartData}`;
     console.log('attempting to set cache for: ', cacheKey);
-    await redisClient.set(cacheKey, JSON.stringify({
-      topValues,
-      topChart,
-      filePathsArray
-    }));
+    // console.log('cacheObj is ', cacheObj);
+    await redisClient.set(cacheKey, JSON.stringify(cacheObj));
     console.log('cache set');
     return next();
   } catch (err) {

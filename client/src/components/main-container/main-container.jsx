@@ -91,7 +91,7 @@ const MainContainer = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ chartDirectory }),
+        body: JSON.stringify({ chartData: chartDirectory }),
       };
       const cacheCheckResponse = await fetch('/check-cache', cacheCheckOptions);
       const cacheCheckResult = await cacheCheckResponse.json();
@@ -150,7 +150,7 @@ const MainContainer = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ chartDirectory }),
+          body: JSON.stringify({ chartData: chartDirectory }),
         };
         const response = await fetch('/chart', options);
         const topLevelFiles = await response.json();
@@ -244,6 +244,7 @@ const MainContainer = () => {
         topLevelChart={topLevelChart}
         topLevelValues={topLevelValues}
         filePathsArray={filePathsArray}
+        chartDirectory={chartDirectory}
       />
     </div>
   );
