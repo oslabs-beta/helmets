@@ -6,7 +6,7 @@ const multer = require('multer');
 const fs = require('fs');
 const dataController = require('./controllers/dataController');
 const sessionController = require('./controllers/sessionController');
-const fileController = require('./controllers/filecontroller');
+const fileController = require('./controllers/fileController');
 const cookieParser = require('cookie-parser');
 
 app.use(express.json());
@@ -60,7 +60,7 @@ app.post('/upload',
 
 // POST to /chart
 app.post('/chart', sessionController.startSession, dataController.deleteData, 
-  dataController.addFiles, (req, res) => {
+  dataController.addFiles, fileController.deleteDirectory, (req, res) => {
   res.status(200).json(res.locals);
 });
 
