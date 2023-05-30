@@ -103,7 +103,6 @@ const MainContainer = () => {
         await uploadFile(data); //POST to /upload
         await moveFile(data); //POST to /move-file
         await deleteFile(data); //POST to /delete-file
-
         data.delete('files');
         data.delete('filePath');
       }
@@ -181,7 +180,7 @@ const MainContainer = () => {
   //deletes file from static upload folder on server
   const deleteFile = async (data) => {
     const fileName = data.get('files').name;
-    // console.log('Delete file:  uploads/', fileName);
+    console.log('Delete file:  uploads/', fileName);
 
     const options = {
       method: 'POST',
