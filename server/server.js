@@ -7,6 +7,7 @@ const fs = require('fs');
 const dataController = require('./controllers/dataController');
 const sessionController = require('./controllers/sessionController');
 const cacheController = require('./controllers/cacheController');
+const fileController = require('./controllers/fileController');
 const cookieParser = require('cookie-parser');
 
 app.use(express.json());
@@ -35,7 +36,10 @@ app.use(allowCrossDomain);
 // set up multer to assign save location for uploaded file and file name
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, `./uploads`));
+    const { session_id } = req.cookies;
+    const destinationPath = path.join(__dirname, `./uploads/${session_id}`);
+    fs.mkdirSync(destinationPath, { recursive: true });
+    cb(null, destinationPath);
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
@@ -102,87 +106,19 @@ app.post('/check-directory', (req, res) => {
 
 });
 
+const uploadFiles = upload.fields([{name: 'files'}, {name: 'filePath'}]);
 //SAVE UPLOADED FILE TO ./UPLOADS
 app.post('/upload', 
-  upload.fields([{name: 'files'}, {name: 'filePath'}]), 
+  uploadFiles,
+  fileController.checkServerFolderStructure,
+  fileController.moveFile,
+  fileController.deleteFile,
   (req, res) => { return res.status(201).send('file uploaded'); }
 );
 
-//MOVE FILE SYNCHRONOUS
-app.post('/move-file', (req, res) => {
-  const { filePath, fileName } = req.body;
-
-  const source = path.join(__dirname, `uploads/${fileName}`);
-  const dest = path.join(__dirname, `uploads/${filePath}${fileName}`);
-  // console.log('*** Move from ', source, '\nto ', dest);
-
-  //COPY FILE
-  try {
-
-    //copy file from uploads folder to proper destination
-    fs.copyFileSync(source, dest);
-  }
-  catch {(err) => {
-    console.log('error encountered while moving file: ', err);
-    return res.status(500).send('move error');
-  }}
-  //VERIFY COPIED FILE IS IN PLACE
-  try {
-    // console.log(`*** ${fileName} copied`)
-    const stats = fs.statSync(dest);
-    if (stats.isFile()) {
-      // console.log('*** Verified file exists: ', dest );
-    }
-  }
-  catch { (err) => {
-    console.log('*** FILE VERIFICATION FAILED --> DO SOMETHING HERE');
-    res.status(500).send('copy fail');
-  }}
-
-  return res.status(200).send(`${fileName} copied`);
-});
-
-// DELETE FILE SYNCHRONOUS
-app.post('/delete-file', (req, res) => {
-
-  const { fileName } = req.body;
-  // console.log('*** Delete file ', fileName);
-
-  const source = path.join(__dirname, `./uploads/${fileName}`);
-
-  //DELETE FILE FROM UPLOADS
-  try{
-  fs.unlinkSync(source);
-  }
-  catch{ (err) => {
-    console.log('error encountered while deleting file:', err);
-    res.status(500).send('deletion error');
-    }
-  }
-  //VERIFY FILE DELETION
-  try {
-    // console.log('*** Verifying file deletion');
-    const stats = fs.statSync(source);
-    // console.log(`*** ${fileName} still exists: `, stats.isFile);
-  }
-  catch {(err) => {
-    if(err) {
-      console.log('*** DELETION VERIFICATION ERROR');
-      console.log('error.code: ', err.code);
-      console.log('*** File deletion verified');
-    }
-    console.log('error encountered during file deletion verification: ', err);
-    return res.status(500).send('error encountered during file deletion verification');
-  }    
-  }
-  
-  // console.log(`*** ${fileName} deleted`);
-  return res.status(200).send(`${fileName} deleted`);
-})
-
 // POST to /chart
-app.post('/chart', sessionController.startSession, dataController.deleteData, dataController.addFiles, cacheController.setCache, (req, res) => {
-  // console.log('res locals: ', res.locals.topChart);
+app.post('/chart', sessionController.startSession, dataController.deleteData, 
+  dataController.addFiles, fileController.deleteDirectory, cacheController.setCache, (req, res) => {
   res.status(200).json(res.locals);
 });
 
