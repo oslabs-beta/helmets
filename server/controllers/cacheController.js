@@ -1,5 +1,15 @@
 const redis = require('redis');
-const redisClient = redis.createClient();
+const REDIS_PWD = process.env.REDIS_PWD;
+const REDIS_HOST = process.env.REDIS_HOST;
+const REDIS_PORT = process.env.REDIS_PORT;
+
+const redisClient = redis.createClient({
+    password: REDIS_PWD,
+    socket: {
+        host: REDIS_HOST,
+        port: REDIS_PORT
+    }
+});
 
 redisClient.connect();
 
