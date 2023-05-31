@@ -190,18 +190,29 @@ app.post('/chart', sessionController.startSession, dataController.deleteData, da
 app.put('/chart', cacheController.checkCache, (req, res, next) => {
   if (res.locals.cacheData) {
     // If cache hit, send cached data as response
-    responseData = JSON.parse(res.locals.cacheData).responseData;
+    const responseData = JSON.parse(res.locals.cacheData).responseData;
     res.status(200).json(responseData);
   } else {
     // If cache miss, continue with the middleware chain
     next();
   }
-}, dataController.getTemplate, cacheController.setCache, (req, res) => {
+}, 
+dataController.getTemplate, cacheController.setCache, (req, res) => {
   res.status(200).json(res.locals.responseData);
 });
 
 // GET to /path
-app.put('/path', dataController.getPath, (req, res) => {
+app.put('/path', cacheController.checkCache, (req, res, next) => {
+  if (res.locals.cacheData) {
+    // If cache hit, send cached data as response
+    const responseData = JSON.parse(res.locals.cacheData).dataFlowPath;
+    res.status(200).json(responseData);
+  } else {
+    // If cache miss, continue with the middleware chain
+    next();
+  }
+},
+dataController.getPath, cacheController.setCache, (req, res) => {
   res.status(200).json(res.locals.dataFlowPath);
 });
 

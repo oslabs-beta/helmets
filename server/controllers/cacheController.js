@@ -55,6 +55,7 @@ cacheController.setCache = async (req, res, next) => {
       'filePathsArray', 
       'cacheData', 
       'dataFlowArray',
+      'dataFlowPath',
       'responseData',
     ];
 
