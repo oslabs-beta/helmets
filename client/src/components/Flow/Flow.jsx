@@ -25,7 +25,7 @@ export default function Flow({
   topLevelChart,
   topLevelValues,
   filePathsArray,
-  chartDirectory
+  chartDirectory,
 }) {
   // const nodeTypes = useMemo(() => ({ special: ObjectNode }), []);
 
@@ -58,11 +58,11 @@ export default function Flow({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          targetVal: targetVal, 
-          targetPath: targetPath , 
+        body: JSON.stringify({
+          targetVal: targetVal,
+          targetPath: targetPath,
           selectedNodeID: selectedNodeID,
-          chartData: selectedNodeID
+          chartData: selectedNodeID,
         }),
       };
       const response = await fetch('/path', options);
@@ -78,14 +78,13 @@ export default function Flow({
 
       //extract NodeIDs and update state based on result of generate edges
       const dataFlowEdge = [];
-      dataFlowArray.forEach(el => {
+      dataFlowArray.forEach((el) => {
         dataFlowEdge.push(el.nodeID);
-      })
+      });
       console.log('NODE ID FROM PATH: ', dataFlowEdge);
       const edgeArray = generateEdges(dataFlowEdge);
       console.log('EDGE ARRAY: ', edgeArray);
       setEdges(edgeArray);
-
     } catch (err) {
       console.log('ERROR in handleNodeClick ', err);
     }
@@ -100,7 +99,10 @@ export default function Flow({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ filePath: e.target.value, chartData: e.target.value }),
+        body: JSON.stringify({
+          filePath: e.target.value,
+          chartData: e.target.value,
+        }),
       };
       const response = await fetch('/chart', options);
       const dataFlowArray = await response.json();
@@ -160,6 +162,7 @@ export default function Flow({
               return '#fefefe';
             }}
             nodeBorderRadius={2}
+            pannable
           />
           <Controls />
           <Background color="#035aa6" gap={16} />
