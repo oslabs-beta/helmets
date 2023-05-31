@@ -25,6 +25,7 @@ export default function Flow({
   topLevelChart,
   topLevelValues,
   filePathsArray,
+  chartDirectory
 }) {
   // const nodeTypes = useMemo(() => ({ special: ObjectNode }), []);
 
@@ -39,6 +40,13 @@ export default function Flow({
   ));
 
   const handleNodeClick = async (e, node) => {
+    const targetPath = node.data.path;
+    const selectedNodeID = node.id;
+
+    // TODO: update this logic to detect if object value is "EXP", in which case we want to use the key as targetVal
+    const targetVal = node.data.label.split(': ')[1].trim();
+
+    // console.log('targetValue', targetVal);
     try {
       //targetVal was throwing error so moved it within try block
       const targetPath = node.data.path;
@@ -53,7 +61,9 @@ export default function Flow({
         body: JSON.stringify({ 
           targetVal: targetVal, 
           targetPath: targetPath , 
-          selectedNodeID: selectedNodeID}),
+          selectedNodeID: selectedNodeID,
+          chartData: selectedNodeID
+        }),
       };
       const response = await fetch('/path', options);
       //server returns array of documents
@@ -90,7 +100,7 @@ export default function Flow({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ filePath: e.target.value }),
+        body: JSON.stringify({ filePath: e.target.value, chartData: e.target.value }),
       };
       const response = await fetch('/chart', options);
       const dataFlowArray = await response.json();

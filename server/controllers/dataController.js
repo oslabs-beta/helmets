@@ -176,6 +176,7 @@ dataController.addFiles = async (req, res, next) => {
 dataController.getTemplate = async (req, res, next) => {
   // retrieve specified file from DB 
   const { filePath } = req.body;
+  console.log('filePath is: ', filePath);
   const { session_id } = req.cookies;
   // console.log("request to getTemplate, filePath is:", filePath);
   try {
