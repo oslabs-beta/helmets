@@ -60,7 +60,7 @@ app.post('/upload',
 
 // POST to /chart
 app.post('/chart', sessionController.startSession, dataController.deleteData, 
-  dataController.addFiles, (req, res) => {
+  dataController.addFiles, fileController.deleteDirectory, (req, res) => {
   res.status(200).json(res.locals);
 });
 
