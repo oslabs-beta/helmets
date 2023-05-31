@@ -1,4 +1,6 @@
-const generateEdges= (array) => {
+import ReactFlow, { Background, MarkerType } from 'reactflow';
+
+const generateEdges = (array) => {
   //array ==> [last node, next node, value node];
   const edgeArray = [];
   let current = 0;
@@ -8,8 +10,7 @@ const generateEdges= (array) => {
     current++;
   }
   return edgeArray;
-}
-
+};
 
 const setEdge = (idVal, sourceVal, targetVal) => {
   const newEdge = {
@@ -18,11 +19,22 @@ const setEdge = (idVal, sourceVal, targetVal) => {
     target: `${targetVal}`,
     animated: true,
     // label: 'animated styled edge',
-    style: { stroke: 'black' },
-  }
+    markerStart: {
+      type: MarkerType.ArrowClosed,
+      with: 20,
+      height: 20,
+      color: '#035aa6',
+    },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      orient: 'auto-start-reverse',
+      width: 20,
+      height: 20,
+      color: '#035aa6',
+    },
+    style: { stroke: '#035aa6' },
+  };
   return newEdge;
-}
-
-
+};
 
 export default generateEdges;
