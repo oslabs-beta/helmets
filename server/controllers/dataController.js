@@ -52,9 +52,11 @@ dataController.addFiles = async (req, res, next) => {
       file.values = valuesFile;
 
       // add file path
-      const regex = /\/uploads\/(.*)/;
+      // escape special chars in session_id (-)
+      const escapedSessionId = session_id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`uploads\/${escapedSessionId}\/(.*)`);
+      // const regex = /\/uploads\/(.*)/;
       const match = regex.exec(relative_path);
-      // console.log('MATCH: ',match);
       const pathAfterUploads = match[1];
       file.filePath = pathAfterUploads;
       file.session_id = session_id;
@@ -151,11 +153,12 @@ dataController.addFiles = async (req, res, next) => {
 
   // parse thru the uploads folder
   try {
-    const files = await fs.promises.readdir(path.join(__dirname, '../uploads'));
-    // console.log('FILES ARRAY: ', files);
+    const files = await fs.promises.readdir(path.join(__dirname, `../uploads/${session_id}`));
+    console.log('chart path', path.join(__dirname, `../uploads/${session_id}`));
+    console.log('FILES ARRAY: ', files);
     for (const dir of files) {
       // console.log('dir ', dir);
-      const dirPath = path.join(__dirname, '../uploads', dir);
+      const dirPath = path.join(__dirname, `../uploads/${session_id}`, dir);
       await checkType(dirPath);
     }
     return next();
