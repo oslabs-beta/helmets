@@ -307,27 +307,36 @@ dataController.getPath = async (req, res, next) => {
   // helperFn that will check a given values.yaml file to see if it contains input keyPath
   // iterates through each key in object, returns false if any key in keyPath array is absent
   const traceKeyPath = (valuesDoc, fileContent, localKeyPath = keyPath) => {
-    let lineNum = 1;
-    let current = fileContent;
-    let validPath = true;
+    let objID = '';
+    let validPath = false;
     // check to see if dataFlowPath exists in valuesDoc
-    for (const key of localKeyPath) {
-      if (current && typeof current === 'object' && key in current) {
-        current = current[key];
-      } else {
-        validPath = false;
+    // for (const key of localKeyPath) {
+    //   if (current && typeof current === 'object' && key in current) {
+    //     current = current[key];
+    //   } else {
+    //     validPath = false;
+    //   }
+    //   lineNum++;
+    // }
+    const flatObj = flattenObject(valuesDoc.filePath, fileContent);
+    loop1:
+      for (const key of localKeyPath) { 
+        for (let i = 0; i < flatObj.length; i ++) {
+          if (flatObj[i].value[key]) {
+            validPath = true;
+            objID = flatObj[i].nodeID;
+            break loop1;
+          }
+        }
       }
-      lineNum++;
-    }
     if (validPath) {
-      // dataFlowPath.push(valuesDoc);
       // instead push a new dataFlowObj onto path
       const createdDataFlowObj = { 
         fileName: valuesDoc.fileName,
         filePath: valuesDoc.filePath,
         type: valuesDoc.type,
-        nodeID: `${valuesDoc.filePath}__${lineNum}`,
-        flattenedDataArray: flattenObject(valuesDoc.filePath, fileContent)
+        nodeID: objID,
+        flattenedDataArray: flatObj
        }
       dataFlowPath.push(createdDataFlowObj);
     }
