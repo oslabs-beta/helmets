@@ -20,8 +20,7 @@ const setEdge = (idVal, sourceVal, targetVal) => {
     // label: 'animated styled edge',
     style: { stroke: 'black' },
   }
-
-  return newEdge
+  return newEdge;
 }
 
 
