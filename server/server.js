@@ -47,63 +47,20 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+app.use(sessionController.setCookie);
+app.use(express.static(path.join(__dirname, '../dist/')));
+
+
 // serve index.html and establish session cookies
-app.get('/', sessionController.setCookie, (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/public/index.html'));
-});
+// app.get('/', sessionController.setCookie, (req, res) => {
+//   res.sendFile(path.join(__dirname, '../client/public/index.html'));
+// });
+
+
 
 // route to check redis cache for user data, using specific session id and respective data info
 app.post('/check-cache', cacheController.checkCache, (req, res) => {
   res.status(200).json(res.locals.cacheData);
-});
-
-//CREATE DIRECTORY SYNC
-app.post('/check-directory', (req, res) => {
-
-  const { filePath } = req.body;
-  const directoryPath = path.join(__dirname, 'uploads', filePath);
-  // console.log(`*** Check-Directory: ${filePath}`);
-  
-  //CHECK IF FOLDER ALREADY EXISTS
-  try {
-    const stats = fs.statSync(directoryPath);
-    if (stats.isDirectory()) {
-      // console.log('*** Directory already exists: ', filePath );
-    }
-  } 
-  //FOLDER CHECK FAILED SO MAKE A FOLDER
-  catch (err) {
-    if (err.code === 'ENOENT') {
-      //CREATE DIRECTORY
-      try {
-        fs.mkdirSync(directoryPath, { recursive: true });
-        // console.log(`*** Directory created: ${directoryPath}`);
-      } 
-      catch (err) {
-        console.error('Error encountered while making directory');
-        console.error(err);
-        return res.status(500).send('Internal Server Error @ fs.mkdirSync');
-      }
-      //VERIFY DIRECTORY
-      try {
-        const stats2 = fs.statSync(directoryPath);
-        if (stats2.isDirectory()) {
-          // console.log(`*** Verified ${directoryPath} has been successfully created`)
-        }
-      } catch (err) {
-        console.log(`${directoryPath} not found. *** DO SOMETHING HERE ***`)
-        return res.status(500).send('folder verify failed');
-      }
-    } 
-    else {
-      // Other error
-      console.error('Error encountered when checking if directory exists', err);
-      res.status(500).send('Internal Server Error');
-    }
-  }
-
-  return res.status(200).send('server folder structure ready');
-
 });
 
 const uploadFiles = upload.fields([{name: 'files'}, {name: 'filePath'}]);
