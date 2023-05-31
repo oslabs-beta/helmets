@@ -57,7 +57,8 @@ $buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
   margin: 10px;
   left: auto;
   right: auto;
-  height: $height;
+  min-height: $height;
+  max-height: $height;
 
   h3 {
     font-family: $fontRegular;
@@ -65,17 +66,13 @@ $buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
     text-align: center;
     color: $mainBlue;
     margin: 0;
-    // padding: 10px;
     border-radius: $borderRadius;
   }
   pre {
-    height: 90%;
+    max-height: 90%;
     overflow-x: scroll;
-    overflow-y: auto;
+    overflow-y: scroll;
     margin-top: 10px;
-    margin-bottom: 10px;
-    &::-webkit-scrollbar:horizontal {
-      height: 8px;
-    }
+    margin-bottom: 0 !important;
   }
 }

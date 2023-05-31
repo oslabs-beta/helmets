@@ -7,6 +7,7 @@ header {
   justify-content: flex-start;
   align-items: center;
   padding: 10px;
+  margin-bottom: 5px;
 }
 
 .img-container {
@@ -76,7 +77,7 @@ header {
       li {
         margin-top: 5px;
         height: '6em';
-        overflow-y: 'auto';
+        overflow-y: auto;
       }
     }
   }
@@ -90,25 +91,3 @@ header {
     @include button($mainBlue, $primaryWhite);
   }
 }
-
-::-webkit-scrollbar {
-  width: 8px;
-  overflow: visible;
-}
-
-::-webkit-scrollbar-track {
-  background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #bdbdbd;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: #757575;
-}
-
-/* For Firefox */
-// ::scrollbar-color: #bdbdbd transparent;
-// ::scrollbar-width: thin;

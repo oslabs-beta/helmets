@@ -5,10 +5,5 @@
   flex-direction: column;
   justify-content: space-between;
   align-content: flex-start;
-
-  .flow-container {
-    background-color: $primaryWhite;
-    border-radius: $borderRadius;
-    margin: 10px;
-  }
+  height: 100%;
 }
