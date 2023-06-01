@@ -10,7 +10,7 @@ sessionController.setCookie = async (req, res, next) => {
       const session_id = uuidv4();
       const options = {
         httpOnly: true,
-        secure: false,
+        secure: true,
         path: '/'
       }
       res.cookie('session_id', session_id, options);
