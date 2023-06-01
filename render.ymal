@@ -1,0 +1,14 @@
+services:
+  - name: helmets
+    type: web
+    buildCommand: npm run build
+    startCommand: npm start
+    env:
+      - key: REDIS_PWD
+        value: process.env.REDIS_PWD
+      - key: REDIS_HOST
+        value: process.env.REDIS_HOST
+      - key: REDIS_PORT
+      value: process.env.REDIS_PORT
+      - key: MONGO_URI
+      value: process.env.MONGO_URI
