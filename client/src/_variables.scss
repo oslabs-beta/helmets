@@ -76,3 +76,25 @@ $buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
     margin-bottom: 0 !important;
   }
 }
+
+// in case we need it
+@mixin scrollbars(
+  $size: 10px,
+  $foreground-color: #999,
+  $background-color: #333
+) {
+  // For Chrome & Safari
+  &::-webkit-scrollbar {
+    width: $size;
+    height: $size;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $foreground-color;
+  }
+  &::-webkit-scrollbar-track {
+    background: $background-color;
+  }
+
+  // Standard version (Firefox only for now)
+  scrollbar-color: $foreground-color $background-color;
+}
