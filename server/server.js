@@ -16,22 +16,29 @@ app.use(cookieParser());
 const cors = require('cors');
 
 
-app.use(cors());
-const allowCrossDomain = function (req, res, next) {
-  const allowedOrigins = ['http://localhost:8080'];
-  const { origin } = req.headers;
+// app.use(cors());
+// const allowCrossDomain = function (req, res, next) {
+//   const allowedOrigins = ['http://localhost:8080'];
+//   const { origin } = req.headers;
 
-  res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+//   res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+//   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Credentials', true);
-  }
+//   if (allowedOrigins.includes(origin)) {
+//     res.setHeader('Access-Control-Allow-Origin', origin);
+//     res.setHeader('Access-Control-Allow-Credentials', true);
+//   }
 
-  next();
+//   next();
+// };
+// app.use(allowCrossDomain);
+
+const corsOptions = {
+  origin: true,
+  credentials: true
 };
-app.use(allowCrossDomain);
+
+app.use(cors(corsOptions));
 
 // set up multer to assign save location for uploaded file and file name
 const storage = multer.diskStorage({
