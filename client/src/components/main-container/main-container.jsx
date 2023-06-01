@@ -98,6 +98,7 @@ const MainContainer = () => {
 
       if (cacheCheckResponse.ok) {
         // Response status is in the 2xx range (e.g., 200 OK)
+        console.log('response status is ok');
         const cacheCheckResult = await cacheCheckResponse.json();
         console.log('parsed response from backend: ', cacheCheckResult);
       } else {
@@ -105,7 +106,7 @@ const MainContainer = () => {
         console.log('Error: cache check request failed with status', cacheCheckResponse.status);
         // Additional error handling if needed
       }
-      
+
       // const cacheCheckResult = cacheCheckResponse ? await cacheCheckResponse.json() : undefined;
       // console.log('parsed response from backend: ', cacheCheckResult);
 
