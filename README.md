@@ -1,25 +1,25 @@
 # helmets
 
-What is Helmets?
+## What is Helmets?
 
-Documentation and Installation
+## Documentation and Installation
 
-Key Features
-Upload chart folder
+## Key Features
+> Upload chart folder
 Select sub-chart
 Select value
 
-Questions and Support
+## Questions and Support
 
-Contributing
+## Contributing
 
-Read More
+## Read More
 medium article link here
 
-The Team
+## The Team
 
-Tech Stack
+## Tech Stack
 
-How is the Repo Structured
+## How is the Repo Structured
 
-License
+## License
