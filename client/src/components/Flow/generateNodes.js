@@ -19,21 +19,19 @@ sample flattenedArray obJ
 */
 
 const generateNodes = (dataFlowArray) => {
-  
   let y = 0;
   let parentX = 0;
   const persistentData = {
-    markerID: 0
-  }
+    markerID: 0,
+  };
   const yIncrement = 20;
   const xIncrement = 25;
   const nodesArray = [];
 
   // iterate over each obj in dataFlowArray
-  dataFlowArray.forEach(dataFlowObj => {
-    
+  dataFlowArray.forEach((dataFlowObj) => {
     // iterate over each obj inside obj.flattenedDataArray
-    const parent = createParentNode(dataFlowObj.filePath, parentX)
+    const parent = createParentNode(dataFlowObj.filePath, parentX);
     nodesArray.push(parent);
     parentX += 800;
     y += yIncrement;
@@ -42,11 +40,12 @@ const generateNodes = (dataFlowArray) => {
     for (const dataLineObj of dataFlowObj.flattenedDataArray) {
       const { nodeID, indent, value } = dataLineObj;
       const bodyNode = createBodyNode(
-        nodeID, 
-        indent * xIncrement, 
-        value, y, 
-        parentId, 
-        dataFlowObj.filePath, 
+        nodeID,
+        indent * xIncrement,
+        value,
+        y,
+        parentId,
+        dataFlowObj.filePath,
         persistentData
       );
 
@@ -58,7 +57,7 @@ const generateNodes = (dataFlowArray) => {
 
   console.log(nodesArray);
   return nodesArray;
-}
+};
 
 // creates new parent node from current file name
 const createParentNode = (id, parentX) => {
@@ -69,7 +68,7 @@ const createParentNode = (id, parentX) => {
     style: {
       backgroundColor: '#fefefe',
       border: '1px solid #035aa6',
-      width: 250,
+      width: 600,
       height: 100,
       borderRadius: 5,
     },
@@ -79,22 +78,29 @@ const createParentNode = (id, parentX) => {
 };
 
 // creates new body node from current key-value pair
-const createBodyNode = (nodeID, indent, value, y, parentId, path, persistentData) => {
-  
-  if (typeof value !== 'string' ){
-    const [ valKey, valValue ] = Object.entries(value)[0];
+const createBodyNode = (
+  nodeID,
+  indent,
+  value,
+  y,
+  parentId,
+  path,
+  persistentData
+) => {
+  if (typeof value !== 'string') {
+    const [valKey, valValue] = Object.entries(value)[0];
     value = `${valKey}: ${valValue}`;
   }
-  if (nodeID==='marker'){
+  if (nodeID === 'marker') {
     nodeID = nodeID.concat(persistentData.markerID++);
   }
-  
+
   const newNode = {
     id: `${nodeID}`,
     type: 'bodyNode',
-    data: { 
+    data: {
       label: `${value}`,
-      path: path
+      path: path,
     },
     position: { x: indent, y: y },
     parentNode: `${parentId}`,

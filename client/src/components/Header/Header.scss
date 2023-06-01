@@ -1,114 +1,90 @@
 @import '../../variables.scss';
 
-header {
+.show-modal {
+  @include button($mainBlue, $primaryWhite);
+  position: absolute;
+  font-weight: 300;
+}
+
+.flex-container {
   box-sizing: border-box;
   display: flex;
   height: 25vh;
   justify-content: flex-start;
   align-items: center;
   padding: 10px;
-}
+  margin-bottom: 5px;
 
-.img-container {
-  width: 38vw;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  img {
+  .img-container {
+    width: 38vw;
     height: 100%;
-    left: auto;
-    right: auto;
-  }
-}
-
-// custom file input class styling (webkit specific)
-// Webkit/Blink/Chrome specific styling, there is a proprietary pseudo element to hide, and then use an also non-standard psudeo-on-an-input
-// hide the file upload button
-// :: before pseudo element- creates element that is first child of the selected element.
-// It is often used to add cosmetic content to an element with the content property.
-
-.custom-file-input {
-  color: $primaryWhite;
-  float: left;
-  display: block;
-  margin-left: 10px;
-
-  &::file-selector-button {
-    @include button($mainBlue, $primaryWhite);
-    &:hover {
-      background-color: $primaryWhite;
-      border: 2px $mainBlue;
-      color: $mainBlue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img {
+      height: 100%;
+      left: auto;
+      right: auto;
     }
-    &:active {
-      // box-shadow: $buttonShadowActive;
-      transform: scale(0.95);
-      box-shadow: 3px 2px 10px 1px $primaryBlack;
-    }
-    // &:disabled {
-    //   opacity: 0.6;
-    //   cursor: not-allowed;
-    // }
   }
-}
 
-.file-display {
-  width: 55vw;
-  margin: 10px;
+  .custom-file-input {
+    color: $primaryWhite;
+    float: left;
+    display: block;
+    margin-left: 10px;
 
-  .list-display {
-    background-color: $primaryWhite;
-    height: 8vh;
-    overflow-y: scroll;
-    width: 100%;
-    padding: 10px;
+    &::file-selector-button {
+      @include button($mainBlue, $primaryWhite);
+      &:hover {
+        background-color: $primaryWhite;
+        border: 2px $mainBlue;
+        color: $mainBlue;
+      }
+      &:active {
+        // box-shadow: $buttonShadowActive;
+        transform: scale(0.95);
+        box-shadow: 3px 2px 10px 1px $primaryBlack;
+      }
+      // &:disabled {
+      //   opacity: 0.6;
+      //   cursor: not-allowed;
+      // }
+    }
+  }
+
+  .file-display {
+    width: 55vw;
     margin: 10px;
-    scrollbar-color: $mainBlue;
-    border-radius: $borderRadius;
 
-    ul {
+    .list-display {
+      background-color: $primaryWhite;
+      height: 8vh;
+      overflow-y: scroll;
+      width: 100%;
+      padding: 10px;
       margin: 10px;
-      padding-left: 20px;
-      font-family: $fontRegular;
-      color: $primaryBlack;
+      border-radius: $borderRadius;
 
-      li {
-        margin-top: 5px;
-        height: '6em';
-        overflow-y: 'auto';
+      ul {
+        margin: 10px;
+        padding-left: 20px;
+        font-family: $fontRegular;
+        color: $primaryBlack;
+
+        li {
+          margin-top: 5px;
+          height: '6em';
+          overflow-y: auto;
+        }
       }
     }
-  }
 
-  // add some conditional logic for hover only if form has content
-  // make variables for button design
-  button {
-    float: right;
-    margin-right: 10px;
-    display: block;
-    @include button($mainBlue, $primaryWhite);
+    button {
+      float: right;
+      margin-right: 10px;
+      display: block;
+      @include button($mainBlue, $primaryWhite);
+    }
   }
 }
-
-::-webkit-scrollbar {
-  width: 8px;
-  overflow: visible;
-}
-
-::-webkit-scrollbar-track {
-  background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #bdbdbd;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: #757575;
-}
-
-/* For Firefox */
-// ::scrollbar-color: #bdbdbd transparent;
-// ::scrollbar-width: thin;

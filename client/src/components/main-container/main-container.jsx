@@ -66,7 +66,6 @@ const MainContainer = () => {
 
       // [cam] after successful file selection, update chartDirectory state
       setChartDirectory(event.target.files[0].webkitRelativePath.split('/')[0]);
-
     } catch (error) {
       console.log(
         'error occurred during front-end operations while managing selected chart:',
@@ -84,7 +83,6 @@ const MainContainer = () => {
     if (list.childElementCount <= 0) {
       console.log('nothing to upload');
     } else {
-
       // Check if the cache contains this chart already
       const cacheCheckOptions = {
         method: 'POST',
@@ -101,11 +99,7 @@ const MainContainer = () => {
         const { topChart, topValues, filePathsArray } = cacheObj;
         console.log('cache already contains this chart');
         console.log(cacheObj);
-        setChartValues(
-          topChart,
-          topValues,
-          filePathsArray
-        );
+        setChartValues(topChart, topValues, filePathsArray);
         document.getElementById('submitBtn').innerText = 'Submit Chart';
         document.getElementById('fileInfo').innerText = '';
         const inputTarget = document.getElementById('chartPicker');
@@ -113,7 +107,6 @@ const MainContainer = () => {
         document.body.style.cursor = 'default';
         setDisabled(true);
         return;
-
       } else {
         console.log('cache does not contain this chart');
         //iterates over fileCache
@@ -181,7 +174,7 @@ const MainContainer = () => {
   };
 
   return (
-    <div>
+    <>
       <Header
         handleChange={handleChange}
         submitChart={submitChart}
@@ -194,7 +187,7 @@ const MainContainer = () => {
         filePathsArray={filePathsArray}
         chartDirectory={chartDirectory}
       />
-    </div>
+    </>
   );
 };
 
