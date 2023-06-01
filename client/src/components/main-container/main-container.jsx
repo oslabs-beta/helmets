@@ -93,22 +93,9 @@ const MainContainer = () => {
         body: JSON.stringify({ chartData: chartDirectory }),
       };
       const cacheCheckResponse = await fetch('/check-cache', cacheCheckOptions);
-      console.log('response from backend: ', cacheCheckResponse);
-
-
-      if (cacheCheckResponse.ok) {
-        // Response status is in the 2xx range (e.g., 200 OK)
-        console.log('response status is ok');
-        const cacheCheckResult = await cacheCheckResponse.json();
-        console.log('parsed response from backend: ', cacheCheckResult);
-      } else {
-        // Handle non-successful response
-        console.log('Error: cache check request failed with status', cacheCheckResponse.status);
-        // Additional error handling if needed
-      }
-
-      // const cacheCheckResult = cacheCheckResponse ? await cacheCheckResponse.json() : undefined;
-      // console.log('parsed response from backend: ', cacheCheckResult);
+      console.log('response from backend: ', cacheCheckResult);
+      const cacheCheckResult = await cacheCheckResponse.json();
+      console.log('parsed response from backend: ', cacheCheckResult);
 
       if (cacheCheckResult !== null) {
         const cacheObj = JSON.parse(cacheCheckResult);
