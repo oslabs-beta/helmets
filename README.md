@@ -8,27 +8,38 @@
 
 Helmets provides a means of tracking shared values across multiple charts.
 
+[CLICK HERE TO USE HELMETS IN YOUR BROWSER](https://helmets.app/)
+
 [![Medium](https://img.shields.io/badge/-Medium-black.svg?style=for-the-badge&logo=medium&logoColor=black&colorB=white)]()
 
 </div>
 
 <br>
 
-## Documentation and Installation
+## Installation
 
-> To download the app, you can find it under "Releases" on the right-hand side of GitHub!
+> 1. Fork and clone the repository to your local machine
+> 2. Install dependencies with `npm install`
+> 3. Run `npm start` to spin up the server
+> 4. Run `npm run dev` to start up the application
+>    <br>
+>    This will allow you to begin making changes and testing your code.
 
 <br>
 
 ## Key Features
 
-> Upload your Kubernetes Helm chart folder
-> <br>
-> Select a sub-chart from the dropdown menu
-> <br>
-> Select a value from the React Flow area
-> <br>
-> Helmets provides a path to track the shared values
+> - Upload your Kubernetes Helm chart folder
+>   <br>
+> - Select a sub-chart from the dropdown menu
+>   <br>
+> - Select a value from the React Flow area
+>   <br>
+> - Helmets provides a path to track the shared values
+
+<br>
+
+https://github.com/oslabs-beta/helmets/blob/dev/github_assets/demo/helmet-demo.mov
 
 <br>
 
@@ -40,7 +51,7 @@ Helmets provides a means of tracking shared values across multiple charts.
 
 ## Contributing
 
-Please check out [Contributing](CONTRIBUTING.md) for more information on how to contribute to Helmets.
+> Please check out [CONTRIBUTING](CONTRIBUTING.md) for more information on how to contribute to Helmets.
 
 <br>
 
@@ -56,7 +67,7 @@ Please check out [Contributing](CONTRIBUTING.md) for more information on how to 
 
 <br>
 
-Give a ⭐️ if this project helped you!
+Don't forget to give us a ⭐️ on GitHub!
 
 <br>
 
@@ -64,7 +75,7 @@ Give a ⭐️ if this project helped you!
 
 <br>
 
-[![JavaScript][JavaScript]][JavaScript-url] [![React][React.js]][React-url] ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white) [![HTML5][HTML5]][HTML5-url] [![SASS][SASS]][SASS-url] ![Webpack](https://img.shields.io/badge/webpack-%238DD6F9.svg?style=for-the-badge&logo=webpack&logoColor=black)
+[![JavaScript][JavaScript]][JavaScript-url] [![React][React.js]][React-url] ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white) [![HTML5][HTML5]][HTML5-url] [![SASS][SASS]][SASS-url] ![Webpack](https://img.shields.io/badge/webpack-%238DD6F9.svg?style=for-the-badge&logo=webpack&logoColor=black) ![Mongo](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white) ![Redis](https://img.shields.io/badge/redis-CC0000.svg?&style=for-the-badge&logo=redis&logoColor=white)
 
 <br>
 

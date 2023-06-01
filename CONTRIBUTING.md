@@ -24,6 +24,8 @@ We expect contributors to adhere to our code of conduct. Please read the full te
     - Used to upload files from client to server
   - [Redis](https://redis.io/)
     - Provided for server-side caching
+  - [Mongoose](https://www.mongodb.com/developer/languages/javascript/getting-started-with-mongodb-and-mongoose/)
+    - Provided for server-side caching
     <hr/>
 
 ### Setup
@@ -58,8 +60,9 @@ Not sure what contribution you want to make? Here are a few starting points:
 
    - If you make a pull request with a new component, consider adding an accompanying test file
 
-2. Adding support for **_INSERT DESCRIPTION FOR MISSING FILE PATHS_**
-3. Adding support for components written in TypeScript
+2. Investigating and adding solutions for more edge cases in the file parser
+3. add functionality to capture values from helper functions and provide tracing in React Flow
+4. Adding support for components written in TypeScript
 
 ## License
 
