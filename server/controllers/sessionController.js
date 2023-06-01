@@ -11,6 +11,7 @@ sessionController.setCookie = async (req, res, next) => {
       const options = {
         httpOnly: true,
         secure: true,
+        SameSite: none,
         path: '/'
       }
       res.cookie('session_id', session_id, options);
