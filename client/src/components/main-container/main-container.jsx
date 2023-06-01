@@ -93,8 +93,9 @@ const MainContainer = () => {
         body: JSON.stringify({ chartData: chartDirectory }),
       };
       const cacheCheckResponse = await fetch('/check-cache', cacheCheckOptions);
-      const cacheCheckResult = await cacheCheckResponse.json();
-      console.log('response from backend: ', cacheCheckResult);
+      console.log('response from backend: ', cacheCheckResponse);
+      const cacheCheckResult = cacheCheckResponse ? await cacheCheckResponse.json() : undefined;
+      console.log('parsed response from backend: ', cacheCheckResult);
 
       if (cacheCheckResult !== null) {
         const cacheObj = JSON.parse(cacheCheckResult);
