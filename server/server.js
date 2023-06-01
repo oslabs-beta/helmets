@@ -47,7 +47,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-app.use(sessionController.setCookie);
+// app.use(sessionController.setCookie);
 // app.use(express.static(path.join(__dirname, '../dist/')));
 
 
