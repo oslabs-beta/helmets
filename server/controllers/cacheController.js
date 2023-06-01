@@ -40,7 +40,7 @@ cacheController.checkCache = async (req, res, next) => {
       }
       // if data does not exist in cache, invoke next middleware
       console.log('cache miss');
-      res.locals.cacheData = null;
+      res.locals.cacheData = { cache:null };
       return next();
 
   } catch (err) {
