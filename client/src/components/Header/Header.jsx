@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Header.scss';
 import logo from '../../assets/Helmets_logo_white.png';
+import Modal from '../About/about.jsx';
 
 const Header = ({ handleChange, submitChart, disabled, resetHeader }) => {
   // //helper function to clear the unordered list in the header and reset the input target to nothing
@@ -16,6 +17,8 @@ const Header = ({ handleChange, submitChart, disabled, resetHeader }) => {
   return (
     /* react fragment now semantic header*/
     <header>
+      <button className="show-modal">About</button>
+      <Modal />
       <div className="img-container">
         <img
           src={logo}
@@ -59,7 +62,6 @@ const Header = ({ handleChange, submitChart, disabled, resetHeader }) => {
           >
             Submit Chart
           </button>
-
         </div>
       </div>
     </header>

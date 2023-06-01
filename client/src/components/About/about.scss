@@ -1,0 +1,26 @@
+@import '../../variables.scss';
+
+.modal {
+  //   z-index: 1;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  color: $primaryWhite;
+  background-color: $darkBlue;
+  font-family: $fontRegular;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .about-content {
+    width: 500px;
+    padding: 10px;
+  }
+
+  .close-button {
+    @include button($mainBlue, $primaryWhite);
+  }
+}
