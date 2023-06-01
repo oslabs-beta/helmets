@@ -22,7 +22,16 @@ function Modal(props) {
     <div className="modal" onClick={props.onClose}>
       <div className="about-content" onClick={(e) => e.stopPropagation()}>
         <h4>About Helmets</h4>
-        <p>Helmets is ... </p>
+        <p>Helmets is a lightweight visualizer for Kubernetes Helm charts.</p>
+        <ol>
+          <li>Select charts to upload</li>
+          <li>Submit charts</li>
+          <li>Choose a chart from the dropdown to view</li>
+          <li>
+            Click on nodes to render data flow *
+            <p>* currently only works with .values nodes</p>
+          </li>
+        </ol>
         <button className="close-button" onClick={props.onClose}>
           Close
         </button>

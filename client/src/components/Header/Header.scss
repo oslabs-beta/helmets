@@ -3,6 +3,7 @@
 .show-modal {
   @include button($mainBlue, $primaryWhite);
   position: absolute;
+  font-weight: 300;
 }
 
 .flex-container {
