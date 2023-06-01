@@ -33,7 +33,7 @@ const cors = require('cors');
 // };
 
 app.use(cors());
-app.use(allowCrossDomain);
+// app.use(allowCrossDomain);
 
 // set up multer to assign save location for uploaded file and file name
 const storage = multer.diskStorage({
@@ -49,14 +49,14 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// app.use(sessionController.setCookie);
-// app.use(express.static(path.join(__dirname, '../dist/')));
+app.use(sessionController.setCookie);
+app.use(express.static(path.join(__dirname, '../dist/')));
 
 
 // serve index.html and establish session cookies
-app.get('/', sessionController.setCookie, (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/public/index.html'));
-});
+// app.get('/', sessionController.setCookie, (req, res) => {
+//   res.sendFile(path.join(__dirname, '../client/public/index.html'));
+// });
 
 
 
