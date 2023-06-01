@@ -2,6 +2,7 @@
 
 .show-modal {
   @include button($mainBlue, $primaryWhite);
+  position: absolute;
 }
 
 .flex-container {
