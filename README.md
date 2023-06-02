@@ -31,15 +31,17 @@ Helmets provides a means of tracking shared values across multiple charts.
 
 - Upload your Kubernetes Helm chart folder
   <br>
+  <img src="github_assets/demo/Demo-1.gif" width="600" >
+
 - Select a sub-chart from the dropdown menu
-  <br>
+
+  <img src="github_assets/demo/Demo-2.gif" width="600" >
+
 - Select a value from the React Flow area
-  <br>
+
+  <img src="github_assets/demo/Demo-3.gif" width="600" >
+
 - Helmets provides a path to track the shared values
-
-<br>
-
-<img src="" width="600" >
 
 <br>
 
