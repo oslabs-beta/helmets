@@ -25,11 +25,12 @@ export default function Flow({
   topLevelChart,
   topLevelValues,
   filePathsArray,
+  chartDirectory,
 }) {
   // const nodeTypes = useMemo(() => ({ special: ObjectNode }), []);
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  // const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedTemplate, setSelectedTemplate] = useState();
 
   const dropdownItems = filePathsArray.map((option, index) => (
@@ -41,20 +42,28 @@ export default function Flow({
   const handleNodeClick = async (e, node) => {
     const targetPath = node.data.path;
     const selectedNodeID = node.id;
+
+    // TODO: update this logic to detect if object value is "EXP", in which case we want to use the key as targetVal
     const targetVal = node.data.label.split(': ')[1].trim();
 
     // console.log('targetValue', targetVal);
     try {
+      //targetVal was throwing error so moved it within try block
+      const targetPath = node.data.path;
+      const selectedNodeID = node.id;
+      const targetVal = node.data.label.split(': ')[1].trim();
       console.log('Attempting to PUT to get template data');
       const options = {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          targetVal: targetVal, 
-          targetPath: targetPath , 
-          selectedNodeID: selectedNodeID}),
+        body: JSON.stringify({
+          targetVal: targetVal,
+          targetPath: targetPath,
+          selectedNodeID: selectedNodeID,
+          chartData: selectedNodeID,
+        }),
       };
       const response = await fetch('/path', options);
       //server returns array of documents
@@ -63,13 +72,19 @@ export default function Flow({
       // const pathArray = samplePath;
       // console.log('pathArray returned from DB:', pathArray);
       const nodeArray = generateNodes(dataFlowArray);
-
       // render all files
       console.log('NODE ARRAY ', nodeArray);
       setNodes(nodeArray);
-      // set edges
-      // source = node.id
-      // target =
+
+      //extract NodeIDs and update state based on result of generate edges
+      const dataFlowEdge = [];
+      dataFlowArray.forEach((el) => {
+        dataFlowEdge.push(el.nodeID);
+      });
+      console.log('NODE ID FROM PATH: ', dataFlowEdge);
+      const edgeArray = generateEdges(dataFlowEdge);
+      console.log('EDGE ARRAY: ', edgeArray);
+      setEdges(edgeArray);
     } catch (err) {
       console.log('ERROR in handleNodeClick ', err);
     }
@@ -84,7 +99,10 @@ export default function Flow({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ filePath: e.target.value }),
+        body: JSON.stringify({
+          filePath: e.target.value,
+          chartData: e.target.value,
+        }),
       };
       const response = await fetch('/chart', options);
       const dataFlowArray = await response.json();
@@ -121,9 +139,9 @@ export default function Flow({
         <ReactFlow
           nodeTypes={nodeTypes}
           nodes={nodes}
-          // edges={edges}
+          edges={edges}
           onNodesChange={onNodesChange}
-          // onEdgesChange={onEdgesChange}
+          onEdgesChange={onEdgesChange}
           onInit={onInit}
           fitView
           attributionPosition="top-right"
@@ -144,6 +162,7 @@ export default function Flow({
               return '#fefefe';
             }}
             nodeBorderRadius={2}
+            pannable
           />
           <Controls />
           <Background color="#035aa6" gap={16} />

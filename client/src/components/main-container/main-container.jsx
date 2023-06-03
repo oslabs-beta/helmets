@@ -6,6 +6,7 @@ const MainContainer = () => {
   const [buttonText, setButtonText] = useState('Select Chart');
   const [fileCache, setfileCache] = useState({ files: undefined });
   const [disabled, setDisabled] = useState(true);
+  const [chartDirectory, setChartDirectory] = useState(null);
 
   const [topLevelChart, setTopLevelChart] = useState({
     value: 'No Chart Selected',
@@ -42,7 +43,6 @@ const MainContainer = () => {
     setDisabled(false);
     //selected folders saved to state
     fileCache.files = event.target.files;
-
     //manages display of selected data on the front-end
     try {
       //grab the html element of the unordered list
@@ -63,6 +63,9 @@ const MainContainer = () => {
           file.webkitRelativePath;
         fileInfo.appendChild(item);
       }
+
+      // [cam] after successful file selection, update chartDirectory state
+      setChartDirectory(event.target.files[0].webkitRelativePath.split('/')[0]);
     } catch (error) {
       console.log(
         'error occurred during front-end operations while managing selected chart:',
@@ -80,49 +83,73 @@ const MainContainer = () => {
     if (list.childElementCount <= 0) {
       console.log('nothing to upload');
     } else {
-      //iterates over fileCache
-      for (const file of fileCache.files) {
-        //remove the filename from the relative path
-        let index;
-        const fullPath = file.webkitRelativePath;
-        for (let i = fullPath.length - 1; i > 0; i--) {
-          if (fullPath[i] === `/`) {
-            index = i;
-            break;
-          }
-        }
-        const filePath = fullPath.substring(0, index + 1);
-
-        //append form data with files and paths
-        const data = new FormData();
-        data.append('files', file, file.name);
-        data.append('filePath', filePath);
-
-        // console.log('current file: ', filePath, file.name);
-        await checkServerFolderStructure(data); //POST to /check-directory
-        await uploadFile(data); //POST to /upload
-        await moveFile(data); //POST to /move-file
-        await deleteFile(data); //POST to /delete-file
-
-        data.delete('files');
-        data.delete('filePath');
-      }
-      // POST to /chart to populate db, return necessary files
-      const options = {
+      // Check if the cache contains this chart already
+      const cacheCheckOptions = {
         method: 'POST',
-        withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ chartData: chartDirectory }),
       };
-      const response = await fetch('/chart', options);
-      const topLevelFiles = await response.json();
-      // console.log('CHART AND VALUES: ', topLevelFiles); // << contains topChart && topValues
-      setChartValues(
-        topLevelFiles.topChart,
-        topLevelFiles.topValues,
-        topLevelFiles.filePathsArray
-      );
+      const cacheCheckResponse = await fetch('/check-cache', cacheCheckOptions);
+      const cacheCheckResult = await cacheCheckResponse.json();
+
+      if (cacheCheckResult !== null) {
+        const cacheObj = JSON.parse(cacheCheckResult);
+        const { topChart, topValues, filePathsArray } = cacheObj;
+        console.log('cache already contains this chart');
+        console.log(cacheObj);
+        setChartValues(topChart, topValues, filePathsArray);
+        document.getElementById('submitBtn').innerText = 'Submit Chart';
+        document.getElementById('fileInfo').innerText = '';
+        const inputTarget = document.getElementById('chartPicker');
+        inputTarget.reset();
+        document.body.style.cursor = 'default';
+        setDisabled(true);
+        return;
+      } else {
+        console.log('cache does not contain this chart');
+        //iterates over fileCache
+        for (const file of fileCache.files) {
+          //remove the filename from the relative path
+          let index;
+          const fullPath = file.webkitRelativePath;
+          for (let i = fullPath.length - 1; i > 0; i--) {
+            if (fullPath[i] === `/`) {
+              index = i;
+              break;
+            }
+          }
+          const filePath = fullPath.substring(0, index + 1);
+
+          //append form data with files and paths
+          const data = new FormData();
+          data.append('files', file, file.name);
+          data.append('filePath', filePath);
+
+          // console.log('current file: ', filePath, file.name);
+          await uploadFile(data); //POST to /upload
+          data.delete('files');
+          data.delete('filePath');
+        }
+        // POST to /chart to populate db, return necessary files
+        const options = {
+          method: 'POST',
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ chartData: chartDirectory }),
+        };
+        const response = await fetch('/chart', options);
+        const topLevelFiles = await response.json();
+        // console.log('CHART AND VALUES: ', topLevelFiles); // << contains topChart && topValues
+        setChartValues(
+          topLevelFiles.topChart,
+          topLevelFiles.topValues,
+          topLevelFiles.filePathsArray
+        );
+      }
     }
     // reset button text + clear inner text to show user things are happening
     document.getElementById('submitBtn').innerText = 'Submit Chart';
@@ -132,21 +159,6 @@ const MainContainer = () => {
     document.body.style.cursor = 'default';
     // re-disable
     setDisabled(true);
-  };
-
-  //recreates folder structure on server
-  //POST to /check-directory
-  const checkServerFolderStructure = async (data) => {
-    const filePath = data.get('filePath');
-    // console.log('CheckServerFolderStructure for', filePath);
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ filePath }),
-    };
-    await fetch('/check-directory', options);
   };
 
   //uploads the file
@@ -161,41 +173,8 @@ const MainContainer = () => {
     await fetch('/upload', options); // <<< UPDATE POST LOCATION URL & database URI value in dataModel.js
   };
 
-  //copies file from static upload folder to recreated folder structure
-  const moveFile = async (data) => {
-    const fileName = data.get('files').name;
-    const filePath = data.get('filePath');
-    // console.log('Move file to uploads/', filePath, fileName);
-
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ filePath: filePath, fileName: fileName }),
-    };
-
-    await fetch('/move-file', options);
-  };
-
-  //deletes file from static upload folder on server
-  const deleteFile = async (data) => {
-    const fileName = data.get('files').name;
-    // console.log('Delete file:  uploads/', fileName);
-
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ fileName }),
-    };
-
-    await fetch('/delete-file', options);
-  };
-
   return (
-    <div>
+    <>
       <Header
         handleChange={handleChange}
         submitChart={submitChart}
@@ -206,8 +185,9 @@ const MainContainer = () => {
         topLevelChart={topLevelChart}
         topLevelValues={topLevelValues}
         filePathsArray={filePathsArray}
+        chartDirectory={chartDirectory}
       />
-    </div>
+    </>
   );
 };
 

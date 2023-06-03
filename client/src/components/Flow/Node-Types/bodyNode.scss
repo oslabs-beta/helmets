@@ -1,11 +1,13 @@
 @import '../../../variables.scss';
 
 .handle-left {
-  background-color: white;
+  background-color: transparent;
+  border: transparent;
 }
 
 .handle-right {
-  background-color: white;
+  background-color: transparent;
+  border: transparent;
 }
 
 .bodyNode {
@@ -30,7 +32,6 @@
     box-shadow: 3px 2px 10px 1px $tertiaryBlack;
   }
 }
-
-.parentNode {
-  overflow-x: auto;
+.react-flow__node {
+  z-index: -1 !important;
 }

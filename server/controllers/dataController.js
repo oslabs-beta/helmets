@@ -52,9 +52,11 @@ dataController.addFiles = async (req, res, next) => {
       file.values = valuesFile;
 
       // add file path
-      const regex = /\/uploads\/(.*)/;
+      // escape special chars in session_id (-)
+      const escapedSessionId = session_id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`uploads\/${escapedSessionId}\/(.*)`);
+      // const regex = /\/uploads\/(.*)/;
       const match = regex.exec(relative_path);
-      // console.log('MATCH: ',match);
       const pathAfterUploads = match[1];
       file.filePath = pathAfterUploads;
       file.session_id = session_id;
@@ -151,11 +153,12 @@ dataController.addFiles = async (req, res, next) => {
 
   // parse thru the uploads folder
   try {
-    const files = await fs.promises.readdir(path.join(__dirname, '../uploads'));
-    // console.log('FILES ARRAY: ', files);
+    const files = await fs.promises.readdir(path.join(__dirname, `../uploads/${session_id}`));
+    console.log('chart path', path.join(__dirname, `../uploads/${session_id}`));
+    console.log('FILES ARRAY: ', files);
     for (const dir of files) {
       // console.log('dir ', dir);
-      const dirPath = path.join(__dirname, '../uploads', dir);
+      const dirPath = path.join(__dirname, `../uploads/${session_id}`, dir);
       await checkType(dirPath);
     }
     return next();
@@ -173,6 +176,7 @@ dataController.addFiles = async (req, res, next) => {
 dataController.getTemplate = async (req, res, next) => {
   // retrieve specified file from DB 
   const { filePath } = req.body;
+  console.log('filePath is: ', filePath);
   const { session_id } = req.cookies;
   // console.log("request to getTemplate, filePath is:", filePath);
   try {
@@ -303,27 +307,36 @@ dataController.getPath = async (req, res, next) => {
   // helperFn that will check a given values.yaml file to see if it contains input keyPath
   // iterates through each key in object, returns false if any key in keyPath array is absent
   const traceKeyPath = (valuesDoc, fileContent, localKeyPath = keyPath) => {
-    let lineNum = 1;
-    let current = fileContent;
-    let validPath = true;
+    let objID = '';
+    let validPath = false;
     // check to see if dataFlowPath exists in valuesDoc
-    for (const key of localKeyPath) {
-      if (current && typeof current === 'object' && key in current) {
-        current = current[key];
-      } else {
-        validPath = false;
+    // for (const key of localKeyPath) {
+    //   if (current && typeof current === 'object' && key in current) {
+    //     current = current[key];
+    //   } else {
+    //     validPath = false;
+    //   }
+    //   lineNum++;
+    // }
+    const flatObj = flattenObject(valuesDoc.filePath, fileContent);
+    loop1:
+      for (const key of localKeyPath) { 
+        for (let i = 0; i < flatObj.length; i ++) {
+          if (flatObj[i].value[key]) {
+            validPath = true;
+            objID = flatObj[i].nodeID;
+            break loop1;
+          }
+        }
       }
-      lineNum++;
-    }
     if (validPath) {
-      // dataFlowPath.push(valuesDoc);
       // instead push a new dataFlowObj onto path
       const createdDataFlowObj = { 
         fileName: valuesDoc.fileName,
         filePath: valuesDoc.filePath,
         type: valuesDoc.type,
-        nodeID: `${valuesDoc.filePath}__${lineNum}`,
-        flattenedDataArray: flattenObject(valuesDoc.filePath, fileContent)
+        nodeID: objID,
+        flattenedDataArray: flatObj
        }
       dataFlowPath.push(createdDataFlowObj);
     }

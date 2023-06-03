@@ -47,7 +47,7 @@ $buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
   }
 }
 
-@mixin sideChart($bg-color, $text-color) {
+@mixin sideChart($bg-color, $text-color, $height) {
   font-family: $fontRegular;
   width: 90%;
   padding: 10px;
@@ -57,6 +57,8 @@ $buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
   margin: 10px;
   left: auto;
   right: auto;
+  min-height: $height;
+  max-height: $height;
 
   h3 {
     font-family: $fontRegular;
@@ -64,12 +66,35 @@ $buttonShadowActive: inset 0 0 5px 3px $tertiaryBlack,
     text-align: center;
     color: $mainBlue;
     margin: 0;
-    // padding: 10px;
     border-radius: $borderRadius;
   }
   pre {
-    height: 80%;
-    overflow: scroll;
+    max-height: 90%;
+    overflow-x: scroll;
+    overflow-y: scroll;
     margin-top: 10px;
+    margin-bottom: 0 !important;
   }
+}
+
+// in case we need it
+@mixin scrollbars(
+  $size: 10px,
+  $foreground-color: #999,
+  $background-color: #333
+) {
+  // For Chrome & Safari
+  &::-webkit-scrollbar {
+    width: $size;
+    height: $size;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $foreground-color;
+  }
+  &::-webkit-scrollbar-track {
+    background: $background-color;
+  }
+
+  // Standard version (Firefox only for now)
+  scrollbar-color: $foreground-color $background-color;
 }
