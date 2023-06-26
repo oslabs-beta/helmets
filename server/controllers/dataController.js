@@ -1,7 +1,7 @@
 const models = require('../models/dataModel');
 const fs = require('fs');
 const path = require('path');
-const parser = require('../_parser/manual_parser');
+const parser = require('../utils/manual_parser');
 const flattenObject = require('../utils/flattenDataModel');
 
 
