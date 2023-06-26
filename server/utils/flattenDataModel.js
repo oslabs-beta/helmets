@@ -9,15 +9,18 @@ const flattenObject = (path, obj) => {
   }
 
   const addLineObject = (lineNumber, indent, value) => {
+    console.log('adding line object, value is: ', value);
 
     // invoke checkExpression, passing in value
     const { active, handlerID } = expressionDirector.checkExpression(value);
+
+    console.log(`active is ${active}, handlerID is ${handlerID}`);
 
     output.push(nodeObjectFactory(
       nodeID = `${path}__${lineNumber}`, 
       indent, 
       value, 
-      active = null,
+      active,
       handlerID
       ));
   }
@@ -26,7 +29,6 @@ const flattenObject = (path, obj) => {
     output.push(nodeObjectFactory(
       nodeID = `marker`, 
       indent, 
-      value, 
       active = false
       ));
   }

@@ -54,14 +54,15 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-app.use(sessionController.setCookie);
+
 app.use(express.static(path.join(__dirname, '../dist/')));
 
+// app.use(sessionController.setCookie);
 
 // serve index.html and establish session cookies
-// app.get('/', sessionController.setCookie, (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client/public/index.html'));
-// });
+app.get('/', sessionController.setCookie, (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/public/index.html'));
+});
 
 
 
@@ -101,7 +102,7 @@ dataController.getTemplate, cacheController.setCache, (req, res) => {
   res.status(200).json(res.locals.responseData);
 });
 
-// GET to /path
+// PUT to /path
 app.put('/path', cacheController.checkCache, (req, res, next) => {
   if (res.locals.cacheData) {
     // If cache hit, send cached data as response

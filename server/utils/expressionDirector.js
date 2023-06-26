@@ -27,11 +27,14 @@ const expressionDirector = {
       if (matchObj.regex.test(value)) {
         return { active: true, handlerID: key } ;
       }
+      return { active: false, handlerID: null }
     }
   },
 
   // invoke respective handler function
-  handleExpression: () => {}
+  handleExpression: ( handlerID, payload ) => {
+    return this[handlerID](payload);
+  }
 
 }
 

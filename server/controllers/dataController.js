@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const parser = require('../utils/manual_parser');
 const flattenObject = require('../utils/flattenDataModel');
+const expressionDirector = require('../utils/expressionDirector');
 
 
 const dataController = {};
@@ -182,6 +183,8 @@ dataController.getTemplate = async (req, res, next) => {
   try {
     const data = await models.DataModel.findOne({filePath: filePath, session_id: session_id});
 
+    console.log(`data retrieved: ${data}`);
+    
     const createdDataObj = { 
       fileName: data.fileName,
       filePath: data.filePath,
@@ -267,7 +270,7 @@ Currently configured to handle any detected {{ }} Go expression with a .Values. 
 
 dataController.getPath = async (req, res, next) => {
   // get initial values from client request, retrieve corresponding template from DB, create path arr
-  const { targetVal, targetPath, selectedNodeID } = req.body;
+  const { targetVal, targetPath, selectedNodeID, handlerID } = req.body;
   const { session_id } = req.cookies;
   const dataFlowPath = [];
   let keyPath = [];
@@ -367,13 +370,28 @@ dataController.getPath = async (req, res, next) => {
 
     dataFlowPath.push(createdDataFlowObj);
 
-    const valRegex = /\.Values\.(\S*)/;
-    const match = targetVal.match(valRegex);
-    keyPath = [...match[1].split('.')];
+    // invoke expressionDirector to invoke appropriate expression handler
+    expressionDirector.handleExpression(targetVal)
+
+    // const valRegex = /\.Values\.(\S*)/;
+    // const match = targetVal.match(valRegex);
+    // keyPath = [...match[1].split('.')];
     const docValues = await models.DataModel.findOne({_id: selectedDoc.values, session_id: session_id});
     
     if (docValues) {
-      await buildPath(selectedDoc, docValues);
+      // await buildPath(selectedDoc, docValues); 
+        // replaced by expressionHandler, we need returned a full dataFlowPath
+
+      const returnedDataFlowPath = await expressionHandler.handleExpression(
+        handlerID,
+        payload = {
+          selectedDoc, 
+          docValues,
+          targetVal,
+          initialDataFlowPath : dataFlowPath
+        }
+      ); 
+
       res.locals.dataFlowPath = dataFlowPath.reverse();
       return next();
     } else {

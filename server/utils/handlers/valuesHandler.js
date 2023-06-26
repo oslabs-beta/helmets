@@ -1,16 +1,18 @@
-const valuesHandler = (
+const models = require('../../models/dataModel');
+const flattenObject = require('../flattenDataModel');
+
+/*
+valuesHandler is used to trace data for .Values. expressions in template YAML files
+it will determine the required key path to the selected value on front-end,
+and return an array of node objects containing all files where value is updated
+*/
+
+const valuesHandler = async ({
   selectedDoc,
   docValues,
   targetVal,
-) => {
-
-  const keyPath = [];
-  const dataFlowPath = [];
-
-  // generate keyPath from input targetVal string
-  const valRegex = /\.Values\.(\S*)/;
-  const match = targetVal.match(valRegex);
-  keyPath = [...match[1].split('.')];
+  initialDataFlowPath
+}) => {
 
   const buildPath = async (doc, valuesDoc, nestedChartKeyPath = [...keyPath]) => {
     if (valuesDoc) {
@@ -76,6 +78,20 @@ const valuesHandler = (
     }
     return validPath;
   }
+
+  // KICKOFF DATA FLOW GENERATION
+  const keyPath = [];
+  const dataFlowPath = [ ...initialDataFlowPath ];
+
+  // generate keyPath from input targetVal string
+  const valRegex = /\.Values\.(\S*)/;
+  const match = targetVal.match(valRegex);
+  keyPath = [...match[1].split('.')];
+
+  await buildPath(selectedDoc, docValues);
+
+  return dataFlowPath;
+
 }
 
 module.exports = valuesHandler;

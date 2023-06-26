@@ -12,7 +12,7 @@ sessionController.setCookie = async (req, res, next) => {
         httpOnly: true,
         secure: false,
         path: '/',
-        domain: 'helmets.app',
+        domain: process.env.NODE_ENV === 'production' ? 'helmets.app' : 'localhost',
       }
       res.cookie('session_id', session_id, options);
     }
