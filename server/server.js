@@ -15,7 +15,6 @@ app.use(cookieParser());
 
 const cors = require('cors');
 
-
 // app.use(cors());
 // const allowCrossDomain = function (req, res, next) {
 //   const allowedOrigins = ['http://localhost:8080'];
@@ -40,6 +39,16 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// prod container set cookie
+app.use(sessionController.setCookie);
+
+// serve index.html and establish session cookies
+// app.get('/', sessionController.setCookie, (req, res) => {
+//   res.sendFile(path.join(__dirname, '../client/public/index.html'));
+// });
+
+app.use(express.static(path.join(__dirname, '../dist/')));
+
 // set up multer to assign save location for uploaded file and file name
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -53,17 +62,6 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage: storage });
-
-app.use(sessionController.setCookie);
-app.use(express.static(path.join(__dirname, '../dist/')));
-
-
-// serve index.html and establish session cookies
-// app.get('/', sessionController.setCookie, (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client/public/index.html'));
-// });
-
-
 
 // route to check redis cache for user data, using specific session id and respective data info
 app.post('/check-cache', cacheController.checkCache, (req, res) => {

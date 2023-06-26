@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
     "dev": "webpack-dev-server --mode development --open --hot",
     "build": "webpack --mode production",

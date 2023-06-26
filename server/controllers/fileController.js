@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const fileController = {};
 
-//CREATE DIRECTORIES TO MATCH SOURCE
+// CREATE DIRECTORIES TO MATCH SOURCE
 fileController.checkServerFolderStructure =  (req, res, next) => {
   console.log('*** fileController.checkServerFolderStructure');
 
@@ -17,18 +17,18 @@ fileController.checkServerFolderStructure =  (req, res, next) => {
   res.locals.fileName = fileName;
 
   console.log('*** fileController.checkServerFolderStructure invoked');
-  
+
   const directoryPath = path.resolve(__dirname, `../uploads/${session_id}`, filePath);
   console.log(`*** Check-Directory: ${filePath}`);
-  
-  //CHECK IF FOLDER ALREADY EXISTS
+
+  // CHECK IF FOLDER ALREADY EXISTS
   try {
     const stats = fs.statSync(directoryPath);
     if (stats.isDirectory()) {
       console.log('*** Directory already exists: ', filePath );
     }
-  } 
-  //FOLDER CHECK FAILED SO MAKE A FOLDER
+  }
+  // FOLDER CHECK FAILED SO MAKE A FOLDER
   catch (err) {
     if (err.code === 'ENOENT') {
       //CREATE DIRECTORY
@@ -51,7 +51,8 @@ fileController.checkServerFolderStructure =  (req, res, next) => {
         console.log(`${directoryPath} not found. *** DO SOMETHING HERE ***`);
         return next(err);
       }
-    } 
+    }
+
     else {
       // OTHER ERROR
       console.error('Error encountered when checking if directory exists', err);
@@ -63,9 +64,8 @@ fileController.checkServerFolderStructure =  (req, res, next) => {
 
 };
 
-//MOVE FILE TO NEW DIRECTORY
+// MOVE FILE TO NEW DIRECTORY
 fileController.moveFile = (req, res, next) => {
-
   console.log('*** MoveFile invoked');
 
   const filePath = res.locals.filePath;

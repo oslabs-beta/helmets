@@ -3,16 +3,19 @@ const models = require('../models/dataModel');
 
 const sessionController = {};
 
+require("dotenv").config();
+
 sessionController.setCookie = async (req, res, next) => {
   try {
     // if cookie doesnt exist, create the cookie
+    console.log('attempting to create cookie');
     if (!req.cookies.session_id) {
       const session_id = uuidv4();
       const options = {
         httpOnly: true,
         secure: false,
         path: '/',
-        domain: 'helmets.app',
+        domain: process.env.NODE_ENV === 'production' ? 'helmets.app' : 'localhost',
       }
       res.cookie('session_id', session_id, options);
     }

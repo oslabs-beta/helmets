@@ -309,35 +309,30 @@ dataController.getPath = async (req, res, next) => {
   const traceKeyPath = (valuesDoc, fileContent, localKeyPath = keyPath) => {
     let objID = '';
     let validPath = false;
-    // check to see if dataFlowPath exists in valuesDoc
-    // for (const key of localKeyPath) {
-    //   if (current && typeof current === 'object' && key in current) {
-    //     current = current[key];
-    //   } else {
-    //     validPath = false;
-    //   }
-    //   lineNum++;
-    // }
     const flatObj = flattenObject(valuesDoc.filePath, fileContent);
-    loop1:
-      for (const key of localKeyPath) { 
-        for (let i = 0; i < flatObj.length; i ++) {
-          if (flatObj[i].value[key]) {
-            validPath = true;
-            objID = flatObj[i].nodeID;
-            break loop1;
-          }
+
+    // iterate through each key in keyPath, check if it exists in valuesDoc
+    // will progressively update objID to the nodeID of the last key in keyPath
+    for (const key of localKeyPath) {
+      // may need to set validPath to false here ** REVIEW
+      for (let i = 0; i < flatObj.length; i++) {
+        if (flatObj[i].value[key]) {
+          validPath = true;
+          objID = flatObj[i].nodeID;
+          break;
         }
       }
+    }
+
     if (validPath) {
       // instead push a new dataFlowObj onto path
-      const createdDataFlowObj = { 
+      const createdDataFlowObj = {
         fileName: valuesDoc.fileName,
         filePath: valuesDoc.filePath,
         type: valuesDoc.type,
         nodeID: objID,
         flattenedDataArray: flatObj
-       }
+      }
       dataFlowPath.push(createdDataFlowObj);
     }
     return validPath;
@@ -349,7 +344,7 @@ dataController.getPath = async (req, res, next) => {
   // generic error handling for any additional errors
   try {
     const selectedDoc = await models.DataModel.findOne({filePath: targetPath, session_id: session_id});
-    
+
     if (!selectedDoc) {
       return next({
         log: `Error in dataController.getPath: selectedDoc found in DB`,
