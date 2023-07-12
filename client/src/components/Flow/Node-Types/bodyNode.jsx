@@ -4,7 +4,7 @@ import './bodyNode.scss';
 
 export default memo(({ data, isConnectable }) => {
   return (
-    <div className="bodyNode">
+    <div className="bodyNode" style={data.active ? { border: '2px solid #035aa6' } : {}}>
       <Handle
         type="target"
         position={Position.Left}

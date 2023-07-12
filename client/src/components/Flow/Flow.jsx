@@ -40,9 +40,6 @@ export default function Flow({
   ));
 
   const handleNodeClick = async (e, node) => {
-    const targetPath = node.data.path;
-    const selectedNodeID = node.id;
-
     // TODO: update this logic to detect if object value is "EXP", in which case we want to use the key as targetVal
     const targetVal = node.data.label.split(': ')[1].trim();
 
@@ -51,6 +48,8 @@ export default function Flow({
       //targetVal was throwing error so moved it within try block
       const targetPath = node.data.path;
       const selectedNodeID = node.id;
+      const handlerID = node.data.handlerID;
+
       const targetVal = node.data.label.split(': ')[1].trim();
       console.log('Attempting to PUT to get template data');
       const options = {
@@ -63,6 +62,7 @@ export default function Flow({
           targetPath: targetPath,
           selectedNodeID: selectedNodeID,
           chartData: selectedNodeID,
+          handlerID: handlerID
         }),
       };
       const response = await fetch('/path', options);

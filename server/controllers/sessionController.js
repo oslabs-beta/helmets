@@ -10,8 +10,9 @@ sessionController.setCookie = async (req, res, next) => {
       const session_id = uuidv4();
       const options = {
         httpOnly: true,
-        secure: true,
-        path: '/'
+        secure: false,
+        path: '/',
+        domain: process.env.NODE_ENV === 'production' ? 'helmets.app' : 'localhost',
       }
       res.cookie('session_id', session_id, options);
     }

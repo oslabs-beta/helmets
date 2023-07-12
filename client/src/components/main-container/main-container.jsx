@@ -83,6 +83,7 @@ const MainContainer = () => {
     if (list.childElementCount <= 0) {
       console.log('nothing to upload');
     } else {
+      console.log('checking cache for this chart');
       // Check if the cache contains this chart already
       const cacheCheckOptions = {
         method: 'POST',
@@ -92,7 +93,9 @@ const MainContainer = () => {
         body: JSON.stringify({ chartData: chartDirectory }),
       };
       const cacheCheckResponse = await fetch('/check-cache', cacheCheckOptions);
+      console.log('response from backend: ', cacheCheckResult);
       const cacheCheckResult = await cacheCheckResponse.json();
+      console.log('parsed response from backend: ', cacheCheckResult);
 
       if (cacheCheckResult !== null) {
         const cacheObj = JSON.parse(cacheCheckResult);

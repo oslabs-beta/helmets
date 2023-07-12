@@ -42,7 +42,7 @@ module.exports = {
   devServer: {
     // static: {
     //   directory: path.resolve(__dirname, 'dist'),
-    //   publicPath: '/build'
+    //   publicPath: '/'
     // },
     compress: true,
     port: 8080,

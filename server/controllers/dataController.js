@@ -1,8 +1,9 @@
 const models = require('../models/dataModel');
 const fs = require('fs');
 const path = require('path');
-const parser = require('../_parser/manual_parser');
-const flattenObject = require('../utils/flattenDataModel');
+const parser = require('../utils/manual_parser');
+const flattenObject = require('../utils/flattenObject');
+const expressionDirector = require('../utils/expressionDirector');
 
 
 const dataController = {};
@@ -182,6 +183,8 @@ dataController.getTemplate = async (req, res, next) => {
   try {
     const data = await models.DataModel.findOne({filePath: filePath, session_id: session_id});
 
+    console.log(`data retrieved: ${data}`);
+    
     const createdDataObj = { 
       fileName: data.fileName,
       filePath: data.filePath,
@@ -267,7 +270,7 @@ Currently configured to handle any detected {{ }} Go expression with a .Values. 
 
 dataController.getPath = async (req, res, next) => {
   // get initial values from client request, retrieve corresponding template from DB, create path arr
-  const { targetVal, targetPath, selectedNodeID } = req.body;
+  const { targetVal, targetPath, selectedNodeID, handlerID } = req.body;
   const { session_id } = req.cookies;
   const dataFlowPath = [];
   let keyPath = [];
@@ -367,14 +370,37 @@ dataController.getPath = async (req, res, next) => {
 
     dataFlowPath.push(createdDataFlowObj);
 
-    const valRegex = /\.Values\.(\S*)/;
-    const match = targetVal.match(valRegex);
-    keyPath = [...match[1].split('.')];
+    // // invoke expressionDirector to invoke appropriate expression handler
+    // const payload = {
+    //     selectedDoc,
+    //     docValues,
+    //     targetVal,
+    //     initialDataFlowPath
+    // }
+
+    // expressionDirector.handleExpression(handlerID, targetVal)
+
+    // const valRegex = /\.Values\.(\S*)/;
+    // const match = targetVal.match(valRegex);
+    // keyPath = [...match[1].split('.')];
     const docValues = await models.DataModel.findOne({_id: selectedDoc.values, session_id: session_id});
     
     if (docValues) {
-      await buildPath(selectedDoc, docValues);
-      res.locals.dataFlowPath = dataFlowPath.reverse();
+      // await buildPath(selectedDoc, docValues); 
+        // replaced by expressionDirector, we need returned a full dataFlowPath
+      console.log('doc values found, attempting to invoke expressionDirector');
+      const returnedDataFlowPath = await expressionDirector.handleExpression(
+        handlerID,
+        payload = {
+          selectedDoc, 
+          docValues,
+          targetVal,
+          initialDataFlowPath : dataFlowPath,
+          session_id: session_id
+        }
+      ); 
+      console.log('expressionDirector completed, returning dataFlowPath');
+      res.locals.dataFlowPath = returnedDataFlowPath.reverse();
       return next();
     } else {
       return next({
