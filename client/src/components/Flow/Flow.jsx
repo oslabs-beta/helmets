@@ -48,7 +48,7 @@ export default function Flow({
       //targetVal was throwing error so moved it within try block
       const targetPath = node.data.path;
       const selectedNodeID = node.id;
-      const handlerID = node.handlerID;
+      const handlerID = node.data.handlerID;
 
       const targetVal = node.data.label.split(': ')[1].trim();
       console.log('Attempting to PUT to get template data');
@@ -62,7 +62,7 @@ export default function Flow({
           targetPath: targetPath,
           selectedNodeID: selectedNodeID,
           chartData: selectedNodeID,
-          handlerID
+          handlerID: handlerID
         }),
       };
       const response = await fetch('/path', options);

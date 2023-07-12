@@ -1,5 +1,5 @@
 const models = require('../../models/dataModel');
-const flattenObject = require('../flattenDataModel');
+// const flattenObject = require('../flattenObject');
 
 /*
 valuesHandler is used to trace data for .Values. expressions in template YAML files
@@ -11,8 +11,9 @@ const valuesHandler = async ({
   selectedDoc,
   docValues,
   targetVal,
-  initialDataFlowPath
-}) => {
+  initialDataFlowPath,
+  session_id
+}, flattenObject) => {
 
   const buildPath = async (doc, valuesDoc, nestedChartKeyPath = [...keyPath]) => {
     if (valuesDoc) {
@@ -50,6 +51,8 @@ const valuesHandler = async ({
   const traceKeyPath = (valuesDoc, fileContent, localKeyPath = keyPath) => {
     let objID = '';
     let validPath = false;
+    console.log('attempting to flatten object')
+    console.log('flattenObject is: ', flattenObject)
     const flatObj = flattenObject(valuesDoc.filePath, fileContent);
 
     // iterate through each key in keyPath, check if it exists in valuesDoc
@@ -80,13 +83,13 @@ const valuesHandler = async ({
   }
 
   // KICKOFF DATA FLOW GENERATION
-  const keyPath = [];
+  // const keyPath = [];
   const dataFlowPath = [ ...initialDataFlowPath ];
 
   // generate keyPath from input targetVal string
   const valRegex = /\.Values\.(\S*)/;
   const match = targetVal.match(valRegex);
-  keyPath = [...match[1].split('.')];
+  const keyPath = [...match[1].split('.')];
 
   await buildPath(selectedDoc, docValues);
 

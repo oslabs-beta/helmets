@@ -2,7 +2,7 @@ const models = require('../models/dataModel');
 const fs = require('fs');
 const path = require('path');
 const parser = require('../utils/manual_parser');
-const flattenObject = require('../utils/flattenDataModel');
+const flattenObject = require('../utils/flattenObject');
 const expressionDirector = require('../utils/expressionDirector');
 
 
@@ -370,8 +370,15 @@ dataController.getPath = async (req, res, next) => {
 
     dataFlowPath.push(createdDataFlowObj);
 
-    // invoke expressionDirector to invoke appropriate expression handler
-    expressionDirector.handleExpression(targetVal)
+    // // invoke expressionDirector to invoke appropriate expression handler
+    // const payload = {
+    //     selectedDoc,
+    //     docValues,
+    //     targetVal,
+    //     initialDataFlowPath
+    // }
+
+    // expressionDirector.handleExpression(handlerID, targetVal)
 
     // const valRegex = /\.Values\.(\S*)/;
     // const match = targetVal.match(valRegex);
@@ -380,19 +387,20 @@ dataController.getPath = async (req, res, next) => {
     
     if (docValues) {
       // await buildPath(selectedDoc, docValues); 
-        // replaced by expressionHandler, we need returned a full dataFlowPath
-
-      const returnedDataFlowPath = await expressionHandler.handleExpression(
+        // replaced by expressionDirector, we need returned a full dataFlowPath
+      console.log('doc values found, attempting to invoke expressionDirector');
+      const returnedDataFlowPath = await expressionDirector.handleExpression(
         handlerID,
         payload = {
           selectedDoc, 
           docValues,
           targetVal,
-          initialDataFlowPath : dataFlowPath
+          initialDataFlowPath : dataFlowPath,
+          session_id: session_id
         }
       ); 
-
-      res.locals.dataFlowPath = dataFlowPath.reverse();
+      console.log('expressionDirector completed, returning dataFlowPath');
+      res.locals.dataFlowPath = returnedDataFlowPath.reverse();
       return next();
     } else {
       return next({

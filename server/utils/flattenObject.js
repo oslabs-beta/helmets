@@ -1,4 +1,4 @@
-const expressionDirector = require('./expressionDirector');
+const { checkExpression } = require('./helpers');
 
 const flattenObject = (path, obj) => {
   const output = [];
@@ -9,12 +9,12 @@ const flattenObject = (path, obj) => {
   }
 
   const addLineObject = (lineNumber, indent, value) => {
-    console.log('adding line object, value is: ', value);
+    // console.log('adding line object, value is: ', value);
 
     // invoke checkExpression, passing in value
-    const { active, handlerID } = expressionDirector.checkExpression(value);
+    const { active, handlerID } = checkExpression(value);
 
-    console.log(`active is ${active}, handlerID is ${handlerID}`);
+    // console.log(`active is ${active}, handlerID is ${handlerID}`);
 
     output.push(nodeObjectFactory(
       nodeID = `${path}__${lineNumber}`, 

@@ -1,5 +1,7 @@
 // import required expression handler utilities
+const flattenObject = require('./flattenObject');
 const valuesHandler = require('./handlers/valuesHandler');
+const { checkExpression } = require('./helpers');
 
 /*
 goExpressionMap maps the possible go expressions that appear in YAML files to
@@ -20,24 +22,12 @@ checkExpressionDirector takes in a key/value pair representing a line in YAML
 */
 const expressionDirector = {
   // identity and assign expression handler from expression handler map
-  checkExpression: ( input ) => {
-
-    // extract the exact string from input value obj
-    const value = Object.values(input)[0];
-
-    // iterate through expression handler map, checking if value matches regex
-    for (const [key, matchObj] of Object.entries(expressionHandlerMap)) {
-      const regex = new RegExp(matchObj.regex);
-      if (matchObj.regex.test(value)) {
-        return { active: true, handlerID: key } ;
-      }
-    }
-    return { active: false, handlerID: null }
-  },
+  checkExpression: checkExpression,
 
   // invoke respective handler function
   handleExpression: ( handlerID, payload ) => {
-    return this[handlerID](payload);
+    console.log('handlerID is: ', handlerID);
+    return expressionHandlerMap[handlerID].handler(payload, flattenObject);
   }
 
 }
