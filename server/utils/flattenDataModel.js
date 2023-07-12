@@ -25,11 +25,13 @@ const flattenObject = (path, obj) => {
       ));
   }
 
-  const addCompositeMarker = (type, indent) => {
+  const addCompositeMarker = (value, indent) => {
     output.push(nodeObjectFactory(
       nodeID = `marker`, 
       indent, 
-      active = false
+      value,
+      active = false,
+      handlerID = null
       ));
   }
 
@@ -51,6 +53,7 @@ const flattenObject = (path, obj) => {
         }
       });
       addCompositeMarker(']', indent);
+
     } else if (typeof current === 'object' && current !== null) {
       addCompositeMarker('{', indent);
       for (const key in current) {

@@ -20,15 +20,19 @@ checkExpressionDirector takes in a key/value pair representing a line in YAML
 */
 const expressionDirector = {
   // identity and assign expression handler from expression handler map
-  checkExpression: ( value ) => {
+  checkExpression: ( input ) => {
+
+    // extract the exact string from input value obj
+    const value = Object.values(input)[0];
+
     // iterate through expression handler map, checking if value matches regex
     for (const [key, matchObj] of Object.entries(expressionHandlerMap)) {
       const regex = new RegExp(matchObj.regex);
       if (matchObj.regex.test(value)) {
         return { active: true, handlerID: key } ;
       }
-      return { active: false, handlerID: null }
     }
+    return { active: false, handlerID: null }
   },
 
   // invoke respective handler function

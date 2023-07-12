@@ -28,6 +28,7 @@ const generateNodes = (dataFlowArray) => {
   const xIncrement = 25;
   const nodesArray = [];
 
+  console.log('attempting to generate nodes');
   // iterate over each obj in dataFlowArray
   dataFlowArray.forEach((dataFlowObj) => {
     // iterate over each obj inside obj.flattenedDataArray
@@ -37,8 +38,10 @@ const generateNodes = (dataFlowArray) => {
     y += yIncrement;
     const parentId = parent.id;
 
+    console.log('converting current dataflow obj to nodes: ', dataFlowObj);
+
     for (const dataLineObj of dataFlowObj.flattenedDataArray) {
-      const { nodeID, indent, value } = dataLineObj;
+      const { nodeID, indent, value, active, handlerID } = dataLineObj;
       const bodyNode = createBodyNode(
         nodeID,
         indent * xIncrement,
@@ -46,7 +49,9 @@ const generateNodes = (dataFlowArray) => {
         y,
         parentId,
         dataFlowObj.filePath,
-        persistentData
+        persistentData,
+        active,
+        handlerID
       );
 
       nodesArray.push(bodyNode);
@@ -85,7 +90,9 @@ const createBodyNode = (
   y,
   parentId,
   path,
-  persistentData
+  persistentData,
+  active,
+  handlerID
 ) => {
   if (typeof value !== 'string') {
     const [valKey, valValue] = Object.entries(value)[0];
@@ -101,6 +108,8 @@ const createBodyNode = (
     data: {
       label: `${value}`,
       path: path,
+      active,
+      handlerID
     },
     position: { x: indent, y: y },
     parentNode: `${parentId}`,
